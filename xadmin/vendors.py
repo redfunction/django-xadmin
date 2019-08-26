@@ -4,7 +4,7 @@ vendors = {
         'js': {
             'dev': 'xadmin/vendor/bootstrap/js/bootstrap.js',
             'production': 'xadmin/vendor/bootstrap/js/bootstrap.min.js',
-            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js'
+            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js'
         },
         'css': {
             'dev': 'xadmin/vendor/bootstrap/css/bootstrap.css',
