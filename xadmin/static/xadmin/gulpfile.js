@@ -54,6 +54,7 @@ function jqueryUITask() {
         "bower_components/jquery-ui/**/core.js",
         "bower_components/jquery-ui/**/effect.js",
         "bower_components/jquery-ui/**/widget.js",
+        "bower_components/jquery-ui/**/**/sortable.js",
     ];
     return gulp.src(srcs)
         .pipe(gulp.dest('vendor/jquery-ui'));

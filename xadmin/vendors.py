@@ -32,10 +32,10 @@ vendors = {
     'jquery-ui-sortable': {
         "js": {
             'dev': [
-                'xadmin/vendor/jquery-ui/jquery.ui.sortable.js'
+                'xadmin/vendor/jquery-ui/ui/widgets/sortable.js'
             ],
             'production': [
-                'xadmin/vendor/jquery-ui/jquery.ui.sortable.min.js'
+                'xadmin/vendor/jquery-ui/ui/widgets/sortable.js'
             ]
         }
     },
