@@ -7,6 +7,7 @@ function genericTask() {
         "bower_components/**/js/*.js",
         "bower_components/**/locales/*.js",
         "bower_components/**/img/**",
+        "!bower_components/font-awesome/**",
         "!bower_components/flot/**",
         "!bower_components/datejs/**",
         "!bower_components/bootstrap-datepicker/js/**",
@@ -16,7 +17,6 @@ function genericTask() {
         "!bower_components/**/src/**",
         "!bower_components/**/jquery/**",
         "!bower_components/**/jquery.js",
-        "!bower_components/**/js-packages/**",
         "!bower_components/**/docs/**",
     ];
     return gulp.src(srcs)
@@ -47,7 +47,7 @@ function sifterTask() {
 
 function selectizeTask() {
     return gulp.src(["bower_components/selectize/dist/**/*.js",
-                     "bower_components/selectize/dist/**/*.css"])
+        "bower_components/selectize/dist/**/*.css"])
         .pipe(gulp.dest('vendor/selectize'));
 }
 
@@ -68,6 +68,18 @@ function jqueryUITask() {
         .pipe(gulp.dest('vendor/jquery-ui'));
 }
 
+function fontAwesomeTask() {
+    var srcs = [
+        "bower_components/font-awesome/**/*.js",
+        "bower_components/font-awesome/**/*.css",
+        "bower_components/font-awesome/**/otfs/**",
+        "bower_components/font-awesome/**/webfonts/**",
+        "!bower_components/font-awesome/js-packages/**",
+    ];
+    return gulp.src(srcs)
+        .pipe(gulp.dest('vendor/font-awesome'));
+}
+
 function bootstrapTask() {
     var srcs = [
         "bower_components/bootstrap/dist/**/*.css",
@@ -85,6 +97,7 @@ exports.default = gulp.series(
     flotTask,
     sifterTask,
     micropluginTask,
+    fontAwesomeTask,
     selectizeTask,
     datejsTask,
     jqueryUITask,
