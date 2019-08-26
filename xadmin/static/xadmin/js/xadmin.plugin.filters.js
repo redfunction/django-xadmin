@@ -30,7 +30,9 @@
       var end_date = el.find('.calendar.date-end').datepicker({format: 'yyyy-mm-dd', language: 'xadmin'});
       
       var checkAvailable = function(){
-        if(start_date.data('datepicker').getDate().valueOf() <= end_date.data('datepicker').getDate().valueOf()){
+        var start_date_dt = start_date.data('datepicker').getDate();
+        var end_date_dt = end_date.data('datepicker').getDate();
+        if(start_date_dt && end_date_dt && start_date_dt.valueOf() <= end_date_dt.valueOf()){
           el.find('button[type=submit]').removeAttr('disabled');
         } else {
           el.find('button[type=submit]').attr('disabled', 'disabled');
