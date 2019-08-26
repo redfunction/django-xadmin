@@ -3,15 +3,10 @@ vendors = {
     "bootstrap": {
         'js': {
             'dev': [
-
-                'xadmin/vendor/bootstrap/tooltip.js',
-                'xadmin/vendor/bootstrap/popover.js',
-                'xadmin/vendor/bootstrap/js/bootstrap.js',
+                'xadmin/vendor/bootstrap/js/bootstrap.bundle.js',
             ],
             'production': [
-                'xadmin/vendor/bootstrap/tooltip.js',
-                'xadmin/vendor/bootstrap/popover.js',
-                'xadmin/vendor/bootstrap/bootstrap.min.js',
+                'xadmin/vendor/bootstrap/bootstrap.bundle.min.js',
             ],
             'cdn': '"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
