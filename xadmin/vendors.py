@@ -25,8 +25,8 @@ vendors = {
     },
     'jquery-ui-effect': {
         "js": {
-            'dev': 'xadmin/vendor/jquery-ui/jquery.ui.effect.js',
-            'production': 'xadmin/vendor/jquery-ui/jquery.ui.effect.min.js'
+            'dev': 'xadmin/vendor/jquery-ui/ui/effect.js',
+            'production': 'xadmin/vendor/jquery-ui/ui/minified/effect.js'
         }
     },
     'jquery-ui-sortable': {
