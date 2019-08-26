@@ -75,8 +75,12 @@ vendors = {
     },
     "flot": {
         "js": {
-            'dev': ['xadmin/vendor/flot/jquery.flot.js', 'xadmin/vendor/flot/jquery.flot.pie.js', 'xadmin/vendor/flot/jquery.flot.time.js',
-                    'xadmin/vendor/flot/jquery.flot.resize.js','xadmin/vendor/flot/jquery.flot.aggregate.js','xadmin/vendor/flot/jquery.flot.categories.js']
+            'dev': ['xadmin/vendor/flot/js/jquery.flot.js',
+                    'xadmin/vendor/flot/js/jquery.flot.pie.js',
+                    'xadmin/vendor/flot/js/jquery.flot.time.js',
+                    'xadmin/vendor/flot/js/jquery.flot.resize.js',
+                    'xadmin/vendor/flot/js/jquery.flot.aggregate.js',
+                    'xadmin/vendor/flot/js/jquery.flot.categories.js']
         }
     },
     "image-gallery": {
