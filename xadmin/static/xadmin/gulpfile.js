@@ -33,6 +33,12 @@ function flotTask() {
 
 }
 
+function micropluginTask() {
+    return gulp.src("bower_components/microplugin/src/*.js")
+        .pipe(gulp.dest('vendor/microplugin/js'));
+
+}
+
 function sifterTask() {
     return gulp.src("bower_components/sifter/*.js")
         .pipe(gulp.dest('vendor/sifter/js'));
@@ -69,6 +75,7 @@ exports.default = gulp.series(
     jqueryTask,
     flotTask,
     sifterTask,
+    micropluginTask,
     datejsTask,
     jqueryUITask,
     bootstrapTask
