@@ -41,8 +41,8 @@ vendors = {
     },
     "font-awesome": {
         "css": {
-            'dev': 'xadmin/vendor/font-awesome/css/font-awesome.css',
-            'production': 'xadmin/vendor/font-awesome/css/font-awesome.min.css',
+            'dev': 'xadmin/vendor/font-awesome/css/fontawesome.css',
+            'production': 'xadmin/vendor/font-awesome/css/fontawesome.min.css',
         }
     },
     "timepicker": {
