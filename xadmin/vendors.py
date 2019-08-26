@@ -4,14 +4,15 @@ vendors = {
         'js': {
             'dev': 'xadmin/vendor/bootstrap/js/bootstrap.js',
             'production': 'xadmin/vendor/bootstrap/js/bootstrap.min.js',
-            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js'
+            'cdn': '"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
         'css': {
             'dev': 'xadmin/vendor/bootstrap/css/bootstrap.css',
             'production': 'xadmin/vendor/bootstrap/css/bootstrap.css',
-            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css'
+            'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
         },
-        'responsive': {'css':{
+        'responsive': {
+            'css': {
                 'dev': 'xadmin/vendor/bootstrap/bootstrap-responsive.css',
                 'production': 'xadmin/vendor/bootstrap/bootstrap-responsive.css'
             }}
