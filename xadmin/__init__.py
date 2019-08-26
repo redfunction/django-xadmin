@@ -19,7 +19,7 @@ def autodiscover():
     from django.utils.module_loading import module_has_submodule
     from django.apps import apps
 
-    setattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap3')
+    setattr(settings, 'CRISPY_TEMPLATE_PACK', 'bootstrap4')
     setattr(settings, 'CRISPY_CLASS_CONVERTERS', {
         "textinput": "textinput textInput form-control",
         "fileinput": "fileinput fileUpload form-control",
