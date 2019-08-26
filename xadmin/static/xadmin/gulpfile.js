@@ -10,6 +10,7 @@ function genericTask() {
         "!bower_components/flot/**",
         "!bower_components/datejs/**",
         "!bower_components/bootstrap-datepicker/js/**",
+        "!bower_components/selectize/**",
         "!bower_components/sifter/**",
         "!bower_components/bootstrap/**",
         "!bower_components/**/src/**",
@@ -42,6 +43,12 @@ function micropluginTask() {
 function sifterTask() {
     return gulp.src("bower_components/sifter/*.js")
         .pipe(gulp.dest('vendor/sifter/js'));
+}
+
+function selectizeTask() {
+    return gulp.src(["bower_components/selectize/dist/**/*.js",
+                     "bower_components/selectize/dist/**/*.css"])
+        .pipe(gulp.dest('vendor/selectize'));
 }
 
 function datejsTask() {
@@ -78,6 +85,7 @@ exports.default = gulp.series(
     flotTask,
     sifterTask,
     micropluginTask,
+    selectizeTask,
     datejsTask,
     jqueryUITask,
     bootstrapTask
