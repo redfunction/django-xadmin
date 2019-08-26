@@ -11,8 +11,14 @@ vendors = {
             'cdn': '"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
         'css': {
-            'dev': 'xadmin/vendor/bootstrap/css/bootstrap.css',
-            'production': 'xadmin/vendor/bootstrap/css/bootstrap.css',
+            'dev': [
+                'xadmin/vendor/bootstrap/css/bootstrap.css',
+                'xadmin/vendor/bootstrap/css/bootstrap-reboot.css'
+            ],
+            'production': [
+                'xadmin/vendor/bootstrap/css/bootstrap.css',
+                'xadmin/vendor/bootstrap/css/bootstrap-reboot.min.css'
+            ],
             'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
         },
         'responsive': {
