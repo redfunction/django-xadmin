@@ -28,7 +28,7 @@ function jqueryTask() {
 }
 
 function flotTask() {
-    return gulp.src("bower_components/flot/src/*.js")
+    return gulp.src("bower_components/flot/source/*.js")
         .pipe(gulp.dest('vendor/flot/js'));
 
 }
