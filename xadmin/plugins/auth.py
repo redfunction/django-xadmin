@@ -5,6 +5,7 @@ from django.contrib.auth.forms import (UserCreationForm, UserChangeForm,
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
@@ -168,7 +169,10 @@ site.register_plugin(ModelPermissionPlugin, ModelAdminView)
 class AccountMenuPlugin(BaseAdminPlugin):
 
     def block_top_account_menu(self, context, nodes):
-        return '<li><a href="%s"><i class="fa fa-key"></i> %s</a></li>' % (self.get_admin_url('account_password'), _('Change Password'))
+        return render_to_string('xadmin/blocks/comm.top.account_menu.html', context={
+            'password_change_url': self.get_admin_url('account_password')
+        })
+
 
 site.register_plugin(AccountMenuPlugin, CommAdminView)
 

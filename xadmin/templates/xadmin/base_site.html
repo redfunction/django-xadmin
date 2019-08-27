@@ -5,7 +5,7 @@
 {% block body %}
   <!-- Header -->
   {% block top-nav %}
-  <div id="top-nav" class="navbar navbar-expand-md navbar-inverse navbar-fixed-top navbar-light bg-light">
+  <div id="top-nav" class="navbar navbar-expand-md navbar-inverse navbar-fixed-top">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">{% block branding %}{{ site_title }}{% endblock %}</a>
     </div>
@@ -16,11 +16,10 @@
           <li class="nav-item dropdown">
             <a class=" nav-link dropdown-toggle" role="button" data-toggle="dropdown" href="#">
              <strong>{% trans 'Welcome,' %} {% firstof user.first_name user.username %}</strong>
-             <span class="caret"></span>
             </a>
-            <ul id="g-account-menu" class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown">
+            <div id="g-account-menu" class="dropdown-menu" aria-labelledby="navbarDropdown">
               {% view_block 'top_account_menu' %}
-            </ul>
+            </div>
           </li>
         {% endif %}
         <li class="nav-item">

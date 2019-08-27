@@ -88,7 +88,7 @@
   // g-search
   $('#g-search .dropdown-menu a').click(function(){
       $('#g-search').attr('action', $(this).data('action')).submit();
-  })
+  });
 
   // save settings
   $.save_user_settings = function(key, value, success, error){
@@ -105,4 +105,4 @@
     });
   }
   
-})(jQuery)
+})(jQuery);

@@ -28,7 +28,7 @@
     $('#body-content').css('margin-top', (top_nav.height() + 15) + 'px');
 
     if($("#g-theme-menu")){
-      $('#g-theme-menu li>a').click(function(){
+      $('#g-theme-menu a').click(function(){
         var $el = $(this);
         var themeHref = $el.data('css-href');
         
@@ -37,26 +37,21 @@
 
         var modal = $('<div id="load-theme-modal" class="modal fade" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4>'+ 
             'Loading theme</h4></div><div class="modal-body"><h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2></div></div></div></div>');
-        $('body').append(modal);
+        modal.appendTo(document.body);
 
         modal.on('shown.bs.modal', function(){
           $.save_user_settings("site-theme", themeHref, function(){
             $.setCookie('_theme', themeHref);
 
-            var iframe = document.createElement("IFRAME");
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
+            var $iframe = $("<iframe>");
+            $iframe.css("display", 'none');
+            $iframe.appendTo(document.body);
 
-            modal.on('hidden', function(e){
-              if(iframe){
-                $(iframe).unbind('load');
-                iframe.parentNode.removeChild(iframe);
-                iframe = null;
-              }
+            modal.on('hidden', function(e) {
               modal.remove();
             });
 
-            $(iframe).load(function () {
+            $iframe.on("load", function () {
               $('#site-theme').attr('href', themeHref);
 
               setTimeout(function(){
@@ -65,22 +60,19 @@
               }, 500);
 
               modal.modal('hide');
-              iframe.parentNode.removeChild(iframe);
-              iframe = null;
-            })
+              $iframe.remove();
+            });
 
-            var ifmDoc = iframe.contentDocument || iframe.contentWindow.document;
-            ifmDoc.open();
-            ifmDoc.write('<!doctype><html><head></head><body>');
-            ifmDoc.write('<link rel="stylesheet" href="'+themeHref+'" />');
-            ifmDoc.write('</body></html>');
-            ifmDoc.close();
+            $iframe.attr('src', window.location.href);
+            $iframe.append('<!doctype><html><head></head><body>');
+            $iframe.append('<link rel="stylesheet" href="'+themeHref+'" />');
+            $iframe.append('</body></html>');
 
-
-            $('#g-theme-menu li').removeClass('active');
-            $el.parent().addClass('active');
+            // option selected
+            $el.parent().find("a").removeClass('active');
+            $el.addClass('active');
           });
-        })
+        });
 
         modal.modal().css(
             {
