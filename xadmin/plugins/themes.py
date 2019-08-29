@@ -21,11 +21,11 @@ THEME_CACHE_KEY = 'xadmin_themes'
 class ThemePlugin(BaseAdminPlugin):
 
     enable_themes = False
-    # {'name': 'Blank Theme', 'description': '...', 'css': 'http://...', 'thumbnail': '...'}
     user_themes = None
     use_bootswatch = False
+
     default_theme = static('xadmin/css/themes/bootstrap-xadmin.css')
-    bootstrap2_theme = static('xadmin/css/themes/bootstrap-theme.css')
+    bootstrap4_theme = static('xadmin/css/themes/bootstrap.litera.min.css')
 
     def init_request(self, *args, **kwargs):
         return self.enable_themes
@@ -57,7 +57,7 @@ class ThemePlugin(BaseAdminPlugin):
 
         themes = [
             {'name': _(u"Default"), 'description': _(u"Default bootstrap theme"), 'css': self.default_theme},
-            {'name': _(u"Bootstrap2"), 'description': _(u"Bootstrap 2.x theme"), 'css': self.bootstrap2_theme},
+            {'name': _(u"Bootstrap4"), 'description': _(u"Bootstrap 4.x theme"), 'css': self.bootstrap4_theme},
             ]
         select_css = context.get('site_theme', self.default_theme)
 
