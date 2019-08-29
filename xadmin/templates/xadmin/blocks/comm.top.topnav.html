@@ -2,23 +2,23 @@
 {% autoescape off %}
 {% if search_models %}
 <form method="get" class="top-search-form navbar-form navbar-left" id="g-search">
-  <div class="input-group">
-    <input name="{{ search_name }}" class="form-control" type="text">
-    <span class="input-group-btn">
-      <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-search"></i>
-        {% trans "Search" %}
-      </button>
-      <div class="dropdown-menu">
-      {% for m in search_models %}
-          <a class="dropdown-item" data-action="{{m.url}}">
-              <i class="fa fa-search"></i>
-              {{m.title}}
-          </a>
-      {% endfor %}
-      </div>
-    </span>
-  </div>
+    <div class="btn-group">
+        <label for="g-search-text"></label>
+        <input id="g-search-text" class="form-control" name="{{ search_name }}" type="text">
+        <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-search"></i>
+            {% trans "Search" %}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            {% for m in search_models %}
+                <a class="dropdown-item" data-action="{{ m.url }}" >
+                    <i class="fa fa-search"></i>
+                    {{ m.title }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
 </form>
 {% endif %}
 {% if add_models %}
