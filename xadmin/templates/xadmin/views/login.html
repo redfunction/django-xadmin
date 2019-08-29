@@ -41,13 +41,13 @@
       
       {% include 'bootstrap3/errors.html' %}
 
-      <div class="input-group mb-1">
+      <div class="input-group input-group-lg mb-1">
           <div class="input-group-prepend">
               <label class="input-group-text" for="id_username">
                   <i class="fa fa-user fa-fw"></i>
               </label>
           </div>
-          <input class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}"
+          <input class="form-control {% if form.username.errors %}is-invalid{% endif %}"
                  id="id_username" maxlength="254" name="username" type="text"
                  placeholder="{% trans "Username" %}">
           {% for error in form.username.errors %}
@@ -55,13 +55,13 @@
           {% endfor %}
       </div>
 
-      <div class="input-group mb-1">
+      <div class="input-group input-group-lg mb-1">
           <div class="input-group-prepend">
               <label class="input-group-text" for="id_password">
                   <i class="fa fa-lock fa-fw"></i>
               </label>
           </div>
-          <input class="form-control form-control-lg {% if form.password.errors %}is-invalid{% endif %}"
+          <input class="form-control {% if form.password.errors %}is-invalid{% endif %}"
                  id="id_password" name="password" type="password"
                  placeholder="{% trans "Password" %}">
           {% for error in form.password.errors %}
