@@ -51,7 +51,7 @@
                  id="id_username" maxlength="254" name="username" type="text"
                  placeholder="{% trans "Username" %}">
           {% for error in form.username.errors %}
-              <div class="invalid-feedback" id="error_{{ forloop.counter }}_{{ field.auto_id }}">{{ error }}</div>
+              <div class="invalid-feedback" id="error_{{ forloop.counter }}_{{ form.password.auto_id }}">{{ error }}</div>
           {% endfor %}
       </div>
 
@@ -65,7 +65,7 @@
                  id="id_password" name="password" type="password"
                  placeholder="{% trans "Password" %}">
           {% for error in form.password.errors %}
-               <div class="invalid-feedback" id="error_{{ forloop.counter }}_{{ field.auto_id }}">{{ error }}</div>
+               <div class="invalid-feedback" id="error_{{ forloop.counter }}_{{ form.password.auto_id }}">{{ error }}</div>
           {% endfor %}
       </div>
 
