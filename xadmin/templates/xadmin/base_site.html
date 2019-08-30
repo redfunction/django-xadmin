@@ -21,9 +21,9 @@
           </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'xadmin:logout' %}">
-            <i class="d-block-sm fa fa-sign-out-alt" title="{% trans 'Log out' %}"></i>
-            <span class="hide-sm">{% trans 'Log out' %}</span>
+          <a class="nav-link text-nowrap" href="{% url 'xadmin:logout' %}">
+            <i class="fa fa-sign-out-alt" title="{% trans 'Log out' %}"></i>
+            <span class="d-md-none d-lg-inline-block">{% trans 'Log out' %}</span>
           </a>
         </li>
       </ul>
