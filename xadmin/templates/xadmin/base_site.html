@@ -65,28 +65,27 @@
       {% endblock %}
 
     {% block content-nav %}
-        <div class="navbar fixed-top content-navbar navbar-dark bg-dark d-md-none d-sm-block">
-            <div class="clearfix">
+       <div class="navbar content-navbar navbar-light bg-light navbar-expand-sm" data-toggle="breakpoint"
+        data-class-xs="navbar fixed-top content-navbar navbar-dark bg-dark"
+        data-class-sm="navbar content-navbar navbar-light bg-light navbar-expand-sm">
             {% view_block 'nav_toggles' %}
-
             {% block nav_toggles %}
                 {% include "xadmin/includes/toggle_back.html" %}
             {% endblock %}
-
-            <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
+           <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
                 {% block nav_title %}{% endblock %}
             </a>
-            </div>
-
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav mr-auto">
                     {% view_block 'nav_menu' %}
                 </ul>
 
+                <div class="navbar-form mr-auto">
                 {% view_block 'nav_form' %}
                 {% block nav_form %}{% endblock %}
+                </div>
 
-                <div class="navbar-btn float-right hide-xs">
+                <div class="navbar-btn float-right d-sm-none d-md-inline-block">
                     {% view_block 'nav_btns' %}
                     {% block nav_btns %}{% endblock %}
                 </div>
