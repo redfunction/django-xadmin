@@ -25,7 +25,7 @@
 
   $(function(){
     var top_nav = $('#top-nav');
-    $('#body-content').css('margin-top', (top_nav.height() + 15) + 'px');
+    $('#body-content').css('margin-top', (top_nav.height() + 20) + 'px');
 
     if($("#g-theme-menu")){
       $('#g-theme-menu a').click(function(){
@@ -56,7 +56,7 @@
 
               setTimeout(function(){
                 var nav_height = $('#top-nav').height();
-                $('#body-content').animate({'margin-top': (nav_height + 15)}, 500, 'easeOutBounce');
+                $('#body-content').animate({'margin-top': (nav_height + 20)}, 500, 'easeOutBounce');
               }, 500);
 
               modal.modal('hide');
