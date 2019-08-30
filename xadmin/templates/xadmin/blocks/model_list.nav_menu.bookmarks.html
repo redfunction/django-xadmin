@@ -34,15 +34,17 @@
         <a href="#"><i class="fa fa-plus"></i> {% trans "New Bookmark" %}</a>
           <div class="popoverx right dropdown-menu">
               <div class="arrow"></div>
-              <h5 class="popover-title">{% trans "Save current page as Bookmark" %}</h5>
-              <div class="popover-content">
+              <h6 class="popover-title text-nowrap text-info">{% trans "Save current page as Bookmark" %}</h6>
+              <div class="popover-content m-1">
                   <form id="bookmark_form" method="post" action="{{ bk_post_url }}">
                       {% csrf_token %}
+                      <div class="d-flex flex-column">
                       <input type="hidden" name="query" value="{{ bk_current_qs }}"/>
-                      <input name="title" type="text" class="form-control"
+                      <input name="title" type="text" class="form-control mb-1"
                              placeholder="{% trans "Enter bookmark title" %}…"/>
                       <button class="btn btn-success" type="submit"
                               data-loading-text="{% trans "Waiting" %}...">{% trans "Save Bookmark" %}</button>
+                      </div>
                   </form>
               </div>
           </div>
