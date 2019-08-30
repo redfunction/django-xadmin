@@ -146,7 +146,11 @@
   </table>
   {% endblock results_grid %}
   {% else %}
-    <p class="well">{% trans "Empty list" %}</p>
+    <div class="card">
+     <div class="card-body text-muted">
+      {% trans "Empty list" %}
+      </div>
+    </div>
   {% endif %}
   </div>
   {% view_block 'results_bottom' %}
