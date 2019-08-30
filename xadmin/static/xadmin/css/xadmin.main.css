@@ -168,6 +168,15 @@ a { cursor: pointer;}
   text-overflow: ellipsis;
 }
 
+.g-setlang > .dropdown-menu {
+    max-height: 600px;
+    overflow-y: auto;
+}
+.g-theme > .dropdown-menu {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
 .table td .btn-group {
   font-size: 13px;
 }
