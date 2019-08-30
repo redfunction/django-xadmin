@@ -173,7 +173,8 @@ a { cursor: pointer;}
 }
 
 .content-toolbar, .steps-nav {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 /* details dl */
