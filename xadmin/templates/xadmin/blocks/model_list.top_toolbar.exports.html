@@ -1,13 +1,20 @@
 {% load i18n %}
 <div class="btn-group export">
-  <a class="dropdown-toggle btn btn-default btn-sm" data-toggle="dropdown" href="#">
-    <i class="fa fa-share"></i> {% trans "Export" %} <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-    {% for et in export_types %}
-      <li><a data-toggle="modal" data-target="#export-modal-{{et.type}}"><i class="fa fa-arrow-circle-down"></i> {% trans "Export" %} {{et.name}}</a></li>
-    {% endfor %}
-  </ul>
+  <div class="dropdown">
+      <a class="dropdown-toggle btn btn-outline-primary btn-sm"
+         href="#" id="dropdownModalExport"
+         data-toggle="dropdown">
+        <i class="fa fa-share"></i> {% trans "Export" %} <span class="caret"></span>
+      </a>
+      <div class="dropdown-menu" aria-labelledby="dropdownModalExport">
+        {% for et in export_types %}
+          <a class="dropdown-item" data-toggle="modal" data-target="#export-modal-{{et.type}}">
+              <i class="fa fa-arrow-circle-down"></i>
+              {% trans "Export" %} {{et.name}}
+          </a>
+        {% endfor %}
+      </div>
+  </div>
 
   {% for et in export_types %}
     <div id="export-modal-{{et.type}}" class="modal fade">
