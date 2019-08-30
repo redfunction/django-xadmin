@@ -2,7 +2,11 @@
 <div class="dropdown bookmarks">
   <a href="#"  id="drop-bookmark" title="{{bk_menu_title}}" class="dropdown-toggle btn" role="button"
      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  <i class="fa fa-book"></i> {{ bk_menu_title|truncatechars:9 }}<span class="caret"></span></a>
+      <i class="fa fa-book" title="{{ bk_menu_title|truncatechars:9 }}"></i>
+      <span class="hide-sm">{{ bk_menu_title|truncatechars:9 }}
+      <span class="caret"></span>
+      </span>
+  </a>
   <div id="bookmark-menu" class="dropdown-menu" aria-labelledby="drop-bookmark">
     {% if bk_has_selected %}
         <a class="dropdown-item" href="{{ bk_list_base_url }}">

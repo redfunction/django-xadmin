@@ -2,8 +2,8 @@
 <div class="dropdown">
   <a id="drop-filter" class="dropdown-toggle btn" role="button" data-toggle="dropdown" href="#"
         aria-haspopup="true" aria-expanded="false">
-      <i class="fa fa-filter"></i>
-      {% trans "Filters" %}
+      <i class="fa fa-filter" title="{% trans "Filters" %}"></i>
+      <span class="hide-sm">{% trans "Filters" %}</span>
       {% if cl.used_filter_num > 0 %}
         <span class="badge badge-success">{{cl.used_filter_num}}</span>
       {% endif %}
