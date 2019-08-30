@@ -26,10 +26,6 @@
 {% endblock %}
 
 {% block nav_btns %}
-  {% if has_add_permission %}
-    <a href="{{add_url}}" class="btn btn-primary"><i class="fa fa-plus"></i> 
-    {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a>
-  {% endif %}
 {% endblock nav_btns %}
 
 {% block content %}
@@ -37,18 +33,29 @@
     {% view_block 'top_toolbar' %}
     {% block toolbar_column %}
     <div class="btn-group">
-      <a class="dropdown-toggle btn btn-default btn-sm" data-toggle="dropdown" href="#">
-        <i class="fa fa-list-alt"></i> {% trans "Columns" %} <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu model_fields pull-right" role="menu" aria-labelledby="dLabel">
-        <li><a href="{{clean_select_field_url}}"><i class="fa fa-refresh"></i> {% trans "Restore Selected" %}</a></li>
-        <li class="divider"></li>
-        {% for f, selected, flink in model_fields %}
-        <li><a href="{{flink}}">
-          {% if selected %}<i class="fa fa-check"></i>{% else %}<i class="fa fa-blank"></i>{% endif %}
-          {{f.verbose_name}}</a></li>
-        {% endfor %}
-      </ul>
+      <div class="dropdown">
+          <a class="btn btn-outline-primary dropdown-toggle"
+             href="#" role="button" id="dropdownMenuModelFields"
+             data-toggle="dropdown" aria-haspopup="true"
+             aria-expanded="false">
+              <i class="fa fa-list-alt"></i>
+              {% trans "Columns" %}
+              <span class="caret"></span>
+          </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuModelFields">
+            <a class="dropdown-item" href="{{ clean_select_field_url }}">
+                <i class="fa fa-refresh"></i>
+                {% trans "Restore Selected" %}
+            </a>
+            <div class="dropdown-divider"></div>
+            {% for f, selected, flink in model_fields %}
+                <a class="dropdown-item" href="{{ flink }}">
+                    {% if selected %} <i class="fa fa-check"></i>{% else %}<i class="fa fa-blank"></i>{% endif %}
+                    {{ f.verbose_name }}
+                </a>
+            {% endfor %}
+        </div>
+      </div>
     </div>
     {% endblock toolbar_column %}
     {% block toolbar_layouts %}
@@ -86,14 +93,14 @@
       <tr>{% for o in result_headers.cells %}
         <th {{o.tagattrs}}>
           {% if o.btns %}
-            <div class="pull-right">
+            <div class="float-right">
               {% for b in o.btns %}
                 {{b|safe}}
               {% endfor %}
             </div>
           {% endif %}
           {% if o.menus %}
-            <div class="dropdown pull-left">
+            <div class="dropdown float-left">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 {{ o.label }}
               </a>
@@ -117,7 +124,7 @@
       <tr class="grid-item{% if row.css_class %} {{row.css_class}}{%endif%}" {{ row.tagattrs }}>{% for o in row.cells %}
         <td {{o.tagattrs}}>
           {% if o.btns %}
-            <div class="btn-group pull-right">
+            <div class="btn-group float-right">
               {% for b in o.btns %}
                 {{b|safe}}
               {% endfor %}
