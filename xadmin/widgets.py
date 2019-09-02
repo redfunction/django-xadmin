@@ -4,6 +4,8 @@ Form Widget classes specific to the Django admin site.
 from __future__ import absolute_import
 from itertools import chain
 from django import forms
+from django.template.loader import render_to_string
+
 try:
     from django.forms.widgets import ChoiceWidget as RadioChoiceInput
 except:
@@ -29,10 +31,9 @@ class AdminDateWidget(forms.DateInput):
             final_attrs.update(attrs)
         super(AdminDateWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None):
-        input_html = super(AdminDateWidget, self).render(name, value, attrs)
-        return mark_safe('<div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
-                         '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Today')))
+    def render(self, name, value, attrs=None, **kwargs):
+        input_html = super(AdminDateWidget, self).render(name, value, attrs, **kwargs)
+        return mark_safe(render_to_string('xadmin/widgets/date.html', context={'date_input_html': input_html}))
 
 
 class AdminTimeWidget(forms.TimeInput):
@@ -47,10 +48,9 @@ class AdminTimeWidget(forms.TimeInput):
             final_attrs.update(attrs)
         super(AdminTimeWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None):
-        input_html = super(AdminTimeWidget, self).render(name, value, attrs)
-        return mark_safe('<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
-                         '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Now')))
+    def render(self, name, value, attrs=None, **kwargs):
+        input_html = super(AdminTimeWidget, self).render(name, value, attrs, **kwargs)
+        return mark_safe(render_to_string("xadmin/widgets/time.html", context={'time_input_html': input_html}))
 
 
 class AdminSelectWidget(forms.Select):
@@ -71,15 +71,15 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
         # we want to define widgets.
         forms.MultiWidget.__init__(self, widgets, attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, **kwargs):
         if DJANGO_11:
             input_html = [ht for ht in super(AdminSplitDateTime, self).render(name, value, attrs).replace(
                 '/><input', '/>\n<input').split('\n') if ht != '']
             # return input_html
-            return mark_safe('<div class="datetime clearfix"><div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
-                             '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>'
-                             '<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
-                             '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div></div>' % (input_html[0], _(u'Today'), input_html[1], _(u'Now')))
+            return mark_safe(render_to_string('xadmin/widgets/datetime.html', context={
+                'date_input_html': input_html[0],
+                'time_input_html': input_html[1]
+            }))
         else:
             return super(AdminSplitDateTime, self).render(name, value, attrs)
 
