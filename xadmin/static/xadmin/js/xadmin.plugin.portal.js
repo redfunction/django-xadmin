@@ -1,15 +1,16 @@
 jQuery(function() {
     $( ".column" ).sortable({
         connectWith: ".column",
-        handle: '.panel-heading',
+        handle: '.card',
         forcePlaceholderSize: true,
         cursor: "move",
         cancel: ".unsort, .tab-content",
+        helper: 'clone',
         stop: function( event, ui ) {
             var pos = [];
             $('.column').each(function(){
                 var col = [];
-                $(this).find('.panel').each(function(){
+                $(this).find('.card').each(function(){
                     col.push($(this).attr('id'));
                 });
                 pos.push(col.join(','));
@@ -22,10 +23,9 @@ jQuery(function() {
         }
     });
     var callback = function() {
-        $( this ).toggleClass( "fa fa-chevron-up" ).toggleClass( "fa fa-chevron-down" );
-        $( this ).parents( ".panel:first" ).find( ".panel-body" ).toggle('fast');
+        $( this ).find('.icon.chevron').toggleClass( "fa fa-chevron-up" ).toggleClass( "fa fa-chevron-down" );
     };
     // It guarantees that the event will not be registered twice and with that when the
     // quick-form plugin is called make the main form get strange behavior.
-    $(".panel-heading .icon.chevron" ).unbind("click").click(callback);
+    $(".card-header .btn.btn-link" ).unbind("click").click(callback);
 });

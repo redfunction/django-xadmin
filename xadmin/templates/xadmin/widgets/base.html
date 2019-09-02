@@ -3,17 +3,19 @@
 {% load crispy_forms_tags %}
 
 {% block box_attrs %}id="{{ widget_id }}"{% endblock box_attrs %}
-{% block box_class %}widget {{widget_type}}{% endblock box_class %}
+{% block box_class %}widget {{widget_type}} mt-1 mb-2 {% endblock box_class %}
+{% block box_collapse_target_id %}{% block box_collapse_target %}card-collapse-{{ widget_id }}{% endblock %}{% endblock %}
 
 {% block box_title %}
-  {% if widget.dashboard.widget_customiz %}
-    <i class='icon fa fa-wrench pull-right' data-toggle="modal" data-target="#{{ widget_id }}-opts-form"></i>
-  {% endif %}
   {% block title %}
     <i class='{{widget_icon}}'></i>
     {{ widget_title }}
   {% endblock title %}
-{% endblock box_title %}
+
+  {% if widget.dashboard.widget_customiz %}
+    <i class='icon fa fa-wrench ml-4' data-toggle="modal" data-target="#{{ widget_id }}-opts-form"></i>
+  {% endif %}
+{% endblock %}
 
 {% block box_content %}
   {% block content %}
@@ -37,8 +39,8 @@
     <input type="hidden" name="_delete"/>
   </div>
   <div class="modal-footer">
-    <a class="btn btn-danger pull-left btn-remove">{% trans "Remove" %}</a>
-    <a class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</a>
+    <a class="btn btn-danger float-right btn-remove">{% trans "Remove" %}</a>
+    <a class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</a>
     <input class="btn btn-primary" type="submit" value="{% trans 'Save changes' %}"/>
   </div>
   </form>

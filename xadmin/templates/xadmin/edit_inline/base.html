@@ -3,6 +3,7 @@
 
 {% block box_class %}formset fieldset{% if formset.css_class or inline_style %} {{ formset.css_class }} {{ inline_style }}{% endif %}{% endblock box_class %}
 {% block box_attrs %}id="{{ formset.css_id }}" {{ formset.flat_attrs|safe }}{% endblock box_attrs %}
+{% block box_collapse_target_id %}{% block box_collapse_target %}card-collapse-{{ formset.css_id }}{% endblock %}{% endblock %}
 
 {% block box_title %}
   {% if not formset.formset.detail_page %}
