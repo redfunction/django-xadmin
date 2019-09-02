@@ -5,8 +5,8 @@
 
 {% block results_grid %}
 {{ block.super }}
-<div class="panel panel-default thumbnail-panel">
-  <div class="panel-body">
+<div class="card thumbnail-card">
+  <div class="card-body">
   <div class="row">
     {% for obj in results %}
     {% block grid_item %}
@@ -25,14 +25,14 @@
         {% if not o.thumbnail_hidden %}
         <li class="text-right">
           {% if o.btns %}
-            <div class="btn-group pull-right">
+            <div class="btn-group float-right">
               {% for b in o.btns %}
                 {{b|safe}}
               {% endfor %}
             </div>
           {% endif %}
           {% if o.field_label %}
-          <strong class="pull-left">{{o.field_label}}:</strong>
+          <strong class="float-left">{{o.field_label}}:</strong>
           {% endif %}
           {% if o.menus %}
             <div class="dropdown">

@@ -126,7 +126,7 @@ select.selectmultiple {
     float: left;
   }
   .form-horizontal .controls {
-    margin-left: 175px;
+    margin-left: 5px;
   }
   .form-horizontal.short_label .control-label,
   .form-horizontal .short_label .control-label {

@@ -221,7 +221,10 @@ class ModelFormAdminView(ModelAdminView):
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_tag = False
-        helper.label_class = 'col-md-1'
+        helper.html5_required = True
+        helper.label_class = 'col-sm-2'
+        helper.form_class = 'form-horizontal'
+        helper.field_class = 'col-sm-10'
         helper.include_media = False
         helper.add_layout(self.get_form_layout())
 
