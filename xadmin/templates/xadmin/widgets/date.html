@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="input-group date bootstrap-datepicker x">
+<div class="input-group date bootstrap-datepicker">
     <div class="input-group-prepend">
         <div class="input-group-text">
             <i class="fa fa-calendar"></i>
@@ -7,6 +7,6 @@
     </div>
     {{ date_input_html|safe }}
     <span class="input-group-btn">
-        <button class="btn btn-primary" type="button">{% trans 'Today' %}</button>
+        <button class="btn btn-outline-primary" type="button">{% trans 'Today' %}</button>
     </span>
 </div>
