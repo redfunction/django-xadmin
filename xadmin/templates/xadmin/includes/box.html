@@ -1,8 +1,6 @@
 <div class="card {% block box_class %}{% endblock box_class %}" {% block box_attrs %}{% endblock box_attrs %}>
     <div class="card-header d-flex flex-row">
-        <div class="mr-auto">
-            <h4 class="card-title">{% block box_title %}{% endblock box_title %}</h4>
-        </div>
+        <h4 class="card-title mr-auto">{% block box_title %}{% endblock box_title %}</h4>
         <button class="btn btn-link" type="button" data-toggle="collapse"
                 data-target="#{% block box_collapse_target %}{% endblock %}"
                 aria-expanded="true">
