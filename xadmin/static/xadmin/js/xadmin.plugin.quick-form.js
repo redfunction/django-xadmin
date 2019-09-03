@@ -187,12 +187,20 @@
       e.preventDefault()
 
       if(!this.modal){
-        var modal = $('<div class="modal fade quick-form" role="dialog"><div class="modal-dialog"><div class="modal-content">'+
-          '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h3>'+
-          this.$btn.attr('title') +'</h3></div><div class="modal-body"></div>'+
-          '<div class="modal-footer" style="display: none;"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">'+gettext('Close')+'</button>'+
-          '<a class="btn btn-primary btn-submit">'+gettext('Add')+'</a></div></div></div></div>')
-        $('body').append(modal)
+        var modal = $(
+            '<div class="modal fade quick-form"  tabindex="-1" role="dialog">' +
+              '<div class="modal-dialog modal-lg" role="document">' +
+                '<div class="modal-content">'+
+                '<div class="modal-header">' +
+                  '<h4  class="modal-title">'+ this.$btn.attr('title') +'</h4>' +
+                  '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+                '</div>' +
+                '<div class="modal-body"></div>'+
+                '<div class="modal-footer" style="display: none;">' +
+                  '<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">' + gettext('Close') + '</button>'+
+                  '<a class="btn btn-primary btn-submit">' + gettext('Add') + '</a>' +
+            '</div></div></div></div></div>');
+        $('body').append(modal);
 
         var self = this
         modal.find('.modal-body').html('<h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2>')
