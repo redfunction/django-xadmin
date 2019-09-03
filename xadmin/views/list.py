@@ -5,6 +5,7 @@ from django.core.paginator import InvalidPage, Paginator
 from django.core.urlresolvers import NoReverseMatch
 from django.db import models
 from django.http import HttpResponseRedirect
+from django.template.loader import render_to_string
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import six
 from django.utils.encoding import force_text, smart_text
@@ -424,12 +425,27 @@ class ListAdminView(ModelAdminView):
 
     @filter_hook
     def get_page_number(self, i):
+        num_pages_end = self.paginator.num_pages - 1
         if i == DOT:
-            return mark_safe(u'<span class="dot-page">...</span> ')
+            return mark_safe(render_to_string('xadmin/includes/pagination_link.html', context={
+                'num_pages_end': num_pages_end,
+                'page_url': "#",
+                'page_dots': "...",
+                'active': False
+            }))
         elif i == self.page_num:
-            return mark_safe(u'<span class="this-page">%d</span> ' % (i + 1))
+            return mark_safe(render_to_string('xadmin/includes/pagination_link.html', context={
+                'num_pages_end': num_pages_end,
+                'page_url': "#",
+                'page_num': i,
+                'active': True
+            }))
         else:
-            return mark_safe(u'<a href="%s"%s>%d</a> ' % (escape(self.get_query_string({PAGE_VAR: i})), (i == self.paginator.num_pages - 1 and ' class="end"' or ''), i + 1))
+            return mark_safe(render_to_string('xadmin/includes/pagination_link.html', context={
+                'page_url': escape(self.get_query_string({PAGE_VAR: i})),
+                'num_pages_end': self.paginator.num_pages - 1,
+                'page_num': i,
+            }))
 
     # Result List methods
     @filter_hook
@@ -617,8 +633,7 @@ class ListAdminView(ModelAdminView):
         """
         paginator, page_num = self.paginator, self.page_num
 
-        pagination_required = (
-            not self.show_all or not self.can_show_all) and self.multi_page
+        pagination_required = (not self.show_all or not self.can_show_all) and self.multi_page
         if not pagination_required:
             page_range = []
         else:
@@ -653,6 +668,7 @@ class ListAdminView(ModelAdminView):
         need_show_all_link = self.can_show_all and not self.show_all and self.multi_page
         return {
             'cl': self,
+            'page_num': page_num,
             'pagination_required': pagination_required,
             'show_all_url': need_show_all_link and self.get_query_string({ALL_VAR: ''}),
             'page_range': map(self.get_page_number, page_range),

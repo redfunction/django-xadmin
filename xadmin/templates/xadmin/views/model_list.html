@@ -86,10 +86,12 @@
     {% view_block 'top_btns' %}
   </div>
 
-  <ul class="pagination pagination-sm pagination-left pagination-inline">
-    {% view_block 'pagination' 'small' %}
-  </ul>
-  
+  <nav aria-label="changelist pagination small">
+   <ul class="pagination pagination-sm pagination-left pagination-inline">
+     {% view_block 'pagination' 'small' %}
+   </ul>
+  </nav>
+
   <form id="changelist-form" action="" method="post"{% view_block 'result_list_form' %}>{% csrf_token %}
   {% view_block 'results_top' %}
   <div class="results table-responsive">
@@ -171,7 +173,9 @@
   {% view_block 'results_bottom' %}
   </form>
 
-  <ul class="pagination">
-    {% view_block 'pagination' %}
-  </ul>
+  <nav aria-label="changelist pagination">
+    <ul class="pagination">
+     {% view_block 'pagination' %}
+    </ul>
+  </nav>
 {% endblock %}

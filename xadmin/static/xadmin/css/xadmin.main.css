@@ -310,7 +310,7 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
 }
 
 /** import for bp3.0 */
-.pagination.pagination-inline{margin-top: 0px; margin-bottom: 10px;}
+.pagination.pagination-inline{margin-top: 5px; margin-bottom: 5px;}
 .modal { overflow-y: auto;}
 .dropdown {position: relative;}
 .input-group-btn:not(:first-child):not(:last-child) > .btn{
@@ -424,6 +424,6 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
 }
 
 /* change list */
-form#changelist-form + .pagination {
-  margin-top: 0px;
+form#changelist-form + nav > ul.pagination {
+  margin-top: 10px;
 }

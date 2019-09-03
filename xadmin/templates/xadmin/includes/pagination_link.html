@@ -1,0 +1,5 @@
+<li class="page-item {% if active %}active{% endif %}">
+<a href="{{page_url}}" class="page-link {% if page_num == num_pages_end %}end{% endif %}" tabindex="-1">
+    {% if not page_dots and page_num|add:"1" %}{{ page_num|add:"1" }}{% else %}{{ page_dots }}{% endif %}
+</a>
+</li>
