@@ -6,12 +6,12 @@
 {% block box_collapse_target_id %}{% block box_collapse_target %}card-collapse-{{ formset.css_id }}{% endblock %}{% endblock %}
 
 {% block box_title %}
+  {{ formset.opts.verbose_name_plural|title }}
   {% if not formset.formset.detail_page %}
   {% if has_add_permission %}
   <a class="add-row" id="{{ prefix }}-add-row" href="javascript:void(0)"><i class="icon fa fa-plus"></i></a>
   {% endif %}
   {% endif %}
-  {{ formset.opts.verbose_name_plural|title }}
 {% endblock box_title %}
 
 {% block box_content_class %}{{inline_style}} formset-content{% endblock box_content_class %}
