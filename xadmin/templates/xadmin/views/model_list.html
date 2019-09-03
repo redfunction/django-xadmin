@@ -38,15 +38,14 @@
     {% block toolbar_column %}
     <div class="btn-group">
       <div class="dropdown">
-          <a class="btn btn-sm dropdown-toggle"
-             href="#" role="button" id="dropdownMenuModelFields"
+          <a class="btn btn-sm dropdown-toggle " data-offset="-40"
+             href="#" role="button" id="dropdown-menu-modelfields"
              data-toggle="dropdown" aria-haspopup="true"
              aria-expanded="false">
               <i class="fa fa-list-alt"></i>
               {% trans "Columns" %}
-              <span class="caret"></span>
           </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuModelFields">
+        <div class="dropdown-menu " aria-labelledby="dropdown-menu-modelfields">
             <a class="dropdown-item" href="{{ clean_select_field_url }}">
                 <i class="fa fa-refresh"></i>
                 {% trans "Restore Selected" %}
