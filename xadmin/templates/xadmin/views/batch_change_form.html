@@ -5,11 +5,17 @@
 {% load crispy_forms_tags %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-    <li><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-    <li><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
-    <li>{% trans 'Change multiple objects' %}</li>
-</ul>
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    </li>
+    <li class="breadcrumb-item">{% trans 'Change multiple objects' %}</li>
+</ol>
+</nav>
 {% endblock %}
 
 {% block nav_title %}{% if model_icon %}<i class="{{model_icon}}"><sub class="fa fa-pencil"></sub></i> {% endif %}
@@ -34,8 +40,8 @@
 
   {% crispy form %}
 
-  <div class="form-actions well well-sm">
-    <input type="submit" value="{% trans 'Change Multiple' %}" class="default btn btn-primary" name="_save"/>
+  <div class="form-actions">
+    <input type="submit" value="{% trans 'Change Multiple' %}" class="btn btn-primary" name="_save"/>
   </div>
 </form>
 {% endblock %}
