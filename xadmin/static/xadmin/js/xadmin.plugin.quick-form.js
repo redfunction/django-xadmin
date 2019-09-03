@@ -62,13 +62,13 @@
           this.$form.find('.alert-success').hide();
 
           if(data['result'] != 'success' && data['errors']){
-            var non_fields_errors = [];
-            for (var i = data['errors'].length - 1; i >= 0; i--) {
+            var err_html, index, non_fields_errors = [];
+            for (index = data['errors'].length - 1; i >= 0; i--) {
               var e = data['errors'][i];
               var errdiv = this.$form.find('#div_' + e['id']);
               if(errdiv.length){
                 errdiv.addClass('has-error');
-                var err_html = [];
+                err_html = [];
                 var err_id;
                 for (var j = e['errors'].length - 1; j >= 0; j--) {
                   err_id = 'error_' + j + '_' + e['id'];
@@ -84,8 +84,8 @@
               }
             }
             if(non_fields_errors.length){
-              var err_html = [];
-              for (var i = non_fields_errors.length - 1; i >= 0; i--) {
+              err_html = [];
+              for (index = non_fields_errors.length - 1; i >= 0; i--) {
                 err_html.push('<p class="text-danger"><strong>'+e['errors'][i]+'</strong></p>')
               }
               this.$form.prepend(err_html.join('\n'))
