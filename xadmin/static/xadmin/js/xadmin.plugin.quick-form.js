@@ -61,32 +61,32 @@
           this.$form.find('submit, button[type=submit], input[type=submit]').removeClass('disabled');
           this.$form.find('.alert-success').hide();
 
-          if(data['result'] != 'success' && data['errors']){
+          if(data['result'] !== 'success' && data['errors']){
             var err_html, index, non_fields_errors = [];
-            for (index = data['errors'].length - 1; i >= 0; i--) {
-              var e = data['errors'][i];
-              var errdiv = this.$form.find('#div_' + e['id']);
+            for (index = data['errors'].length - 1; index >= 0; index--) {
+              var error = data['errors'][index];
+              var errdiv = this.$form.find('#div_' + error['id']);
               if(errdiv.length){
                 errdiv.addClass('has-error');
                 err_html = [];
                 var err_id;
-                for (var j = e['errors'].length - 1; j >= 0; j--) {
-                  err_id = 'error_' + j + '_' + e['id'];
+                for (var j = error['errors'].length - 1; j >= 0; j--) {
+                  err_id = 'error_' + j + '_' + error['id'];
 
                   // Prevent the message from being repeated several times.
                   errdiv.find("#"+err_id).remove();
 
-                  err_html.push('<span id="'+ err_id + '" class="text-danger">' + e['errors'][j] + '</span>')
+                  err_html.push('<span id="'+ err_id + '" class="text-danger">' + error['errors'][j] + '</span>')
                 }
                 errdiv.find('.controls').append(err_html.join('\n'))
               } else {
-                non_fields_errors = non_fields_errors.concat(e['errors'])
+                non_fields_errors = non_fields_errors.concat(error['errors'])
               }
             }
             if(non_fields_errors.length){
               err_html = [];
-              for (index = non_fields_errors.length - 1; i >= 0; i--) {
-                err_html.push('<p class="text-danger"><strong>'+e['errors'][i]+'</strong></p>')
+              for (index = non_fields_errors.length - 1; index >= 0; index--) {
+                err_html.push('<p class="text-danger"><strong>'+error['errors'][index]+'</strong></p>')
               }
               this.$form.prepend(err_html.join('\n'))
             }
