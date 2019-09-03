@@ -1,7 +1,7 @@
 jQuery(function($){
     //full screen btn
     $('.layout-btns .layout-full').click(function(e){
-        var icon = $(this).find('i')
+        var icon = $(this).find('i');
         if($(this).hasClass('active')){
             // reset
             $('#left-side, ul.breadcrumb').show('fast');
@@ -19,11 +19,11 @@ jQuery(function($){
     });
 
     $('.layout-btns .layout-normal').click(function(e){
-        $('.results table').removeClass('table-condensed');
+        $('.results table').removeClass('table-sm');
     });
 
     $('.layout-btns .layout-condensed').click(function(e){
-        $('.results table').addClass('table-condensed');
+        $('.results table').addClass('table-sm');
     });
 
 });
