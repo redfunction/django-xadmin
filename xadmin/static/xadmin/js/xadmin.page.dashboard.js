@@ -5,14 +5,21 @@ jQuery(function() {
     if(btn.is('a')){
       form_url = btn.attr('href');
     }
-    if(form_url == undefined){
+    if(form_url === undefined){
       form_url = btn.data('form-url');
     }
     if(!btn.data('form-modal')){
-      var modal = $('<div class="modal hide fade quick-form" role="dialog"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3>'+ 
-        btn.attr('title') +'</h3></div><div class="modal-body"></div>'+
-        '<div class="modal-footer"><button class="btn btn-default" data-dismiss="modal" aria-hidden="true">'+gettext('Close')+'</button>'+
-        '<a class="btn btn-primary btn-submit">'+gettext('Save changes')+'</a></div></div>');
+      var modal = $(
+          '<div class="modal hide fade quick-form" tabindex="-1" role="dialog">' +
+          '<div class="modal-dialog" role="document">' +
+            '<div class="modal-header">' +
+              '<h3>' + btn.attr('title') +'</h3>' +
+              '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+            '</div><div class="modal-body"></div>'+
+              '<div class="modal-footer">' +
+                '<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">'+ gettext('Close') +'</button>'+
+                '<a class="btn btn-primary btn-submit">' + gettext('Save changes') +'</a>' +
+            '</div></div></div>');
       $('body').append(modal);
       btn.data('form-modal', modal);
       modal.find('.modal-body').load(form_url, function(form_html, status, xhr){
@@ -28,27 +35,27 @@ jQuery(function() {
             url: form.attr('action'),
             data: form.serialize(),
             success: function(data){
-              if(data['result'] != 'success' && data['errors']){
-                var non_fields_errors = [];
-                for (var i = data['errors'].length - 1; i >= 0; i--) {
-                  var e = data['errors'][i];
+              if(data['result'] !== 'success' && data['errors']){
+                var err_html, index, non_fields_errors = [];
+                for (index = data['errors'].length - 1; index >= 0; index--) {
+                  var e = data['errors'][index];
                   var errdiv = form.find('#div_' + e['id']);
                   if(errdiv.length){
                     errdiv.addClass('error');
-                    var err_html = [];
+                    err_html = [];
                     for (var i = e['errors'].length - 1; i >= 0; i--) {
                       err_html.push('<span id="error_'+i+'_'+ e['id'] +'" class="help-inline error"><strong>'+e['errors'][i]+'</strong></span>');
-                    };
+                    }
                     errdiv.find('.controls').append(err_html.join('\n'));
                   } else {
                     non_fields_errors = non_fields_errors.concat(e['errors']);
                   }
-                };
+                }
                 if(non_fields_errors.length){
-                  var err_html = [];
-                  for (var i = non_fields_errors.length - 1; i >= 0; i--) {
-                    err_html.push('<p class="text-error"><strong>'+e['errors'][i]+'</strong></p>');
-                  };
+                  err_html = [];
+                  for (index = non_fields_errors.length - 1; index >= 0; index--) {
+                    err_html.push('<p class="text-error"><strong>'+e['errors'][index]+'</strong></p>');
+                  }
                   form.prepend(err_html.join('\n'));
                 }
               } else {
