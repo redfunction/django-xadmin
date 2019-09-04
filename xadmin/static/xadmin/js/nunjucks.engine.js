@@ -21,6 +21,10 @@ JqueryTemplateEngine.prototype.getSource = function (name) {
 };
 
 $.fn.nujunks_env = new nunjucks.Environment(new JqueryTemplateEngine({}));
+// translation filter
+$.fn.nujunks_env.addFilter('gettext', function(text) {
+    return gettext(text);
+});
 
 $.fn.template_render = function (ctx) {
     return $.fn.nujunks_env.render("#" + this.attr('id'), ctx);
