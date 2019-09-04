@@ -13,7 +13,7 @@ from django.utils.encoding import force_text, smart_text
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
-from xadmin.layout import Field, render_field
+from xadmin.layout import Field, render_field, render_to_string
 from xadmin.plugins.inline import Inline
 from xadmin.plugins.actions import BaseActionView
 from xadmin.plugins.inline import InlineModelAdmin
@@ -125,23 +125,24 @@ class ReversionPlugin(BaseAdminPlugin):
     # Block Views
     def block_top_toolbar(self, context, nodes):
         recoverlist_url = self.admin_view.model_admin_url('recoverlist')
-        nodes.append(mark_safe('<div class="btn-group"><a class="btn btn-default btn-sm" href="%s"><i class="fa fa-trash-o"></i> %s</a></div>' % (recoverlist_url, _(u"Recover"))))
+        nodes.append(render_to_string('xadmin/blocks/model_list.top_toobar.xversion.recover.html', context={
+            'revision_list_url': recoverlist_url
+        }))
 
     def block_nav_toggles(self, context, nodes):
-        obj = getattr(
-            self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
+        obj = getattr(self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
         if obj:
-            revisionlist_url = self.admin_view.model_admin_url(
-                'revisionlist', quote(obj.pk))
-            nodes.append(mark_safe('<a href="%s" class="navbar-toggle pull-right"><i class="fa fa-calendar"></i></a>' % revisionlist_url))
+            nodes.append(render_to_string('xadmin/blocks/comm.top.xversion.nav_toogles_calendar.html', context={
+                'revision_list_url': self.admin_view.model_admin_url('revisionlist', quote(obj.pk))
+            }))
 
     def block_nav_btns(self, context, nodes):
-        obj = getattr(
-            self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
+        obj = getattr(self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
         if obj:
-            revisionlist_url = self.admin_view.model_admin_url(
-                'revisionlist', quote(obj.pk))
-            nodes.append(mark_safe('<a href="%s" class="btn btn-default"><i class="fa fa-calendar"></i> <span>%s</span></a>' % (revisionlist_url, _(u'History'))))
+            revisionlist_url = self.admin_view.model_admin_url('revisionlist', quote(obj.pk))
+            nodes.append(render_to_string('xadmin/blocks/comm.top.xversion.nav_btns_calendar.html', context={
+                'revision_list_url': revisionlist_url
+            }))
 
 # action revision
 class ActionRevisionPlugin(BaseAdminPlugin):
