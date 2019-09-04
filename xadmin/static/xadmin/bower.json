@@ -16,7 +16,8 @@
     "selectize": ">=0.12.6",
     "datejs": "datejs/Datejs",
     "bootstrap-multiselect": ">=0.9.13",
-    "clockpicker": ">=0.0.7"
+    "clockpicker": ">=0.0.7",
+    "nunjucks": ">=3.1.2"
   },
   "homepage": "https://github.com/alexsilva/django-xadmin",
   "description": "Drop-in replacement of Django admin comes with lots of goodies, fully extensible with plugin support, pretty UI based on Twitter Bootstrap.",

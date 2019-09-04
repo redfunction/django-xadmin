@@ -9,7 +9,9 @@ function genericTask() {
         "bower_components/**/dist/*.less",
         "bower_components/**/dist/*.js",
         "bower_components/**/locales/*.js",
+        "bower_components/**/LICENSE",
         "bower_components/**/img/**",
+        "!bower_components/nunjucks/**",
         "!bower_components/font-awesome/**",
         "!bower_components/flot/**",
         "!bower_components/datejs/**",
@@ -30,6 +32,12 @@ function jqueryTask() {
     return gulp.src("bower_components/jquery/dist/**")
         .pipe(gulp.dest('vendor/jquery'));
 }
+
+function nunjunksTask() {
+    return gulp.src(["bower_components/nunjucks/browser/**/*.js"])
+        .pipe(gulp.dest('vendor/nunjucks'));
+}
+
 
 function flotTask() {
     return gulp.src("bower_components/flot/source/*.js")
@@ -97,6 +105,7 @@ function bootstrapTask() {
 exports.default = gulp.series(
     genericTask,
     jqueryTask,
+    nunjunksTask,
     flotTask,
     sifterTask,
     micropluginTask,
