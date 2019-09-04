@@ -9,18 +9,14 @@ jQuery(function() {
       form_url = btn.data('form-url');
     }
     if(!btn.data('form-modal')){
-      var modal = $(
-          '<div class="modal hide fade quick-form" tabindex="-1" role="dialog">' +
-          '<div class="modal-dialog" role="document">' +
-            '<div class="modal-header">' +
-              '<h3>' + btn.attr('title') +'</h3>' +
-              '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
-            '</div><div class="modal-body"></div>'+
-              '<div class="modal-footer">' +
-                '<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">'+ gettext('Close') +'</button>'+
-                '<a class="btn btn-primary btn-submit">' + gettext('Save changes') +'</a>' +
-            '</div></div></div>');
-      $('body').append(modal);
+      var modal = $("#nunjuks-modal-main").template_render$({
+          header: {title: btn.attr('title')},
+          confirm_button: {
+            text: gettext('Save changes'),
+            class: 'btn-submit',
+            tag: 'a'
+          }
+      }).appendTo('body');
       btn.data('form-modal', modal);
       modal.find('.modal-body').load(form_url, function(form_html, status, xhr){
         var form = $(this).find('form');

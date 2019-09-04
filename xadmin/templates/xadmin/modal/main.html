@@ -4,19 +4,35 @@
         <div class="modal-content">
             <div class="modal-header">
                 {% block title %}
-                <{{ header.tag|default('h4') }} class="modal-title">{{header.title}}</{{ header.tag|default('h4') }}>
+                {% set h4 = header.tag|default('h4')  %}
+                <{{h4}} class="modal-title">{{header.title}}</{{h4}}>
                 {% endblock %}
-                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close'|gettext }}">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                {% block modal_body %}{% endblock %}
+                {% block modal_body %}
+                {% if body %}{{ body|safe }}{% endif %}
+                {% endblock %}
             </div>
             <div class="modal-footer">
                 {% block modal_footer %}
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{button.cancel.text}}</button>
-                <button type="button" class="btn btn-primary">{{ button.confirm.text }}</button>
+                {% if footer %}
+                    {{footer | safe }}
+                {% else %}
+                    {% set button = cancel_button.tag|default('button') %}
+                    <{{button}} {% if button == 'button' %}type="button"{% endif %} class="btn btn-secondary {{ cancel_button.class }}" data-dismiss="modal">
+                        {{ cancel_button.text|default('Close'|gettext) }}
+                    </{{button}}>
+                    {% if confirm_button %}
+                    {% set button = confirm_button.tag|default('button') %}
+                    <{{button}} {% if button == 'button' %}type="button"{% endif %} class="btn btn-primary {{ confirm_button.class }}">
+                        {% if confirm_button.icon %}<i class="{{ confirm_button.icon }}"></i>{% endif %}
+                        {{ confirm_button.text }}
+                    </{{button}}>
+                    {% endif %}
+                {% endif %}
                 {% endblock %}
             </div>
         </div>
