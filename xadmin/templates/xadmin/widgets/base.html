@@ -13,7 +13,9 @@
   {% endblock title %}
 
   {% if widget.dashboard.widget_customiz %}
-    <i class='icon fa fa-wrench ml-4' data-toggle="modal" data-target="#{{ widget_id }}-opts-form"></i>
+    <a href="#" data-toggle="modal" data-target="#modal-{{ widget_id }}-opts-form">
+        <i class='icon fa fa-wrench ml-4'></i>
+    </a>
   {% endif %}
 {% endblock %}
 
@@ -24,26 +26,28 @@
 {% endblock box_content %}
 
 {% block box_extra %}
-<div class="modal fade widget_options" tabindex="-1" role="dialog" id="{{ widget_id }}-opts-form">
-    <div class="modal-content">
-        <form method="post" class="box-form form-horizontal short_label widget-form exform">
-            {% csrf_token %}
+<div class="modal fade widget_options" tabindex="-1" role="dialog" id="modal-{{ widget_id }}-opts-form">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">{% trans "Widget Options" %}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
-                {% block form %}
-                    {% crispy form %}
-                {% endblock form %}
-                <input type="hidden" name="_delete"/>
+                <form method="post" class="box-form form-horizontal short_label widget-form exform">
+                    {% csrf_token %}
+                    {% block form %}
+                        {% crispy form %}
+                    {% endblock form %}
+                    <input type="hidden" name="_delete"/>
+                    <div class="modal-footer">
+                    <a class="btn btn-danger float-right btn-remove">{% trans "Remove" %}</a>
+                    <a class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</a>
+                    <input class="btn btn-primary" type="submit" value="{% trans 'Save changes' %}"/>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <a class="btn btn-danger float-right btn-remove">{% trans "Remove" %}</a>
-                <a class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</a>
-                <input class="btn btn-primary" type="submit" value="{% trans 'Save changes' %}"/>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock box_extra %}
