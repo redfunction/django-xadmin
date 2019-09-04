@@ -2,6 +2,13 @@
 {% load i18n xadmin_tags %}
 {% block title %}{{ title }} | {{ site_title }}{% endblock %}
 
+{% block extrahead %}
+ {{ block.super }}
+ <script type="application/nunjuks-tmpl" id="nunjuks-modal-main">
+  {% include 'xadmin/modal/main.html' %}
+ </script>
+{% endblock %}
+
 {% block body %}
   <!-- Header -->
   {% block top-nav %}

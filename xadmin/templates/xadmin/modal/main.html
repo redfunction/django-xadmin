@@ -1,0 +1,25 @@
+{% verbatim %}
+<div class="modal" tabindex="-1" role="dialog" {% if modal.id %}id="{{ modal.id }}"{% endif %}>
+    <div class="modal-dialog {{ modal.size|default('modal-sm') }}" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% block title %}
+                <{{ header.tag|default('h4') }} class="modal-title">{{header.title}}</{{ header.tag|default('h4') }}>
+                {% endblock %}
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% block modal_body %}{% endblock %}
+            </div>
+            <div class="modal-footer">
+                {% block modal_footer %}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{button.cancel.text}}</button>
+                <button type="button" class="btn btn-primary">{{ button.confirm.text }}</button>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endverbatim %}
