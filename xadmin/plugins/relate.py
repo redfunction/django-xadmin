@@ -3,6 +3,7 @@ from itertools import chain
 
 from django.core.urlresolvers import reverse
 from django.db.models.options import PROXY_PARENTS
+from django.template.loader import render_to_string
 from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.encoding import smart_str
@@ -69,7 +70,7 @@ class RelateMenuPlugin(BaseAdminPlugin):
         return self._related_acts
 
     def related_link(self, instance):
-        links = []
+        menu_links = []
         for rel, view_perm, add_perm in self.get_related_list():
             opts = rel.related_model._meta
 
@@ -82,27 +83,31 @@ class RelateMenuPlugin(BaseAdminPlugin):
             verbose_name = force_text(opts.verbose_name)
             lookup_name = '%s__%s__exact' % (field.name, rel_name)
 
-            link = ''.join(('<li class="with_menu_btn">',
+            menu = {
+                'view_link': {
+                    'has_perm': view_perm,
+                    'title': verbose_name
+                },
+                'add_link': {
+                    'has_perm': add_perm
+                }
+            }
+            if view_perm:
+                menu['view_link']['url'] = reverse('%s:%s_%s_changelist' % (self.admin_site.app_name, label, model_name))
+                menu['view_link']['url'] += "?%(query)s=%(pk)s" % {
+                    'query': RELATE_PREFIX + lookup_name,
+                    'pk': instance.pk
+                }
+            if add_perm:
+                menu['add_link']['url'] = reverse('%s:%s_%s_add' % ( self.admin_site.app_name, label, model_name))
+                menu['add_link']['url'] += "?%(query)s=%(pk)s" % {
+                    'query': RELATE_PREFIX + lookup_name,
+                    'pk': instance.pk
+                }
 
-                            '<a href="%s?%s=%s" title="%s"><i class="icon fa fa-th-list"></i> %s</a>' %
-                          (
-                            reverse('%s:%s_%s_changelist' % (
-                                    self.admin_site.app_name, label, model_name)),
-                            RELATE_PREFIX + lookup_name, str(instance.pk), verbose_name, verbose_name) if view_perm else
-                            '<a><span class="text-muted"><i class="icon fa fa-blank"></i> %s</span></a>' % verbose_name,
+            menu_links.append(menu)
+        return render_to_string('xadmin/plugins/related_links.html', context={'menu_links': menu_links})
 
-                            '<a class="add_link dropdown-menu-btn" href="%s?%s=%s"><i class="icon fa fa-plus pull-right"></i></a>' %
-                          (
-                            reverse('%s:%s_%s_add' % (
-                                    self.admin_site.app_name, label, model_name)),
-                            RELATE_PREFIX + lookup_name, str(
-                instance.pk)) if add_perm else "",
-
-                '</li>'))
-            links.append(link)
-        ul_html = '<ul class="dropdown-menu" role="menu">%s</ul>' % ''.join(
-            links)
-        return '<div class="dropdown related_menu pull-right"><a title="%s" class="relate_menu dropdown-toggle" data-toggle="dropdown"><i class="icon fa fa-list"></i></a>%s</div>' % (_('Related Objects'), ul_html)
     related_link.short_description = '&nbsp;'
     related_link.allow_tags = True
     related_link.allow_export = False
