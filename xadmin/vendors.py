@@ -35,8 +35,10 @@ vendors = {
     },
     'nunjucks': {
         "js": {
-            'dev': 'xadmin/vendor/nunjucks/nunjucks.js',
-            'production': 'xadmin/vendor/nunjucks/nunjucks.min.js',
+            'dev': ['xadmin/vendor/nunjucks/nunjucks.js',
+                    'xadmin/js/nunjucks.engine.js'],
+            'production': ['xadmin/vendor/nunjucks/nunjucks.min.js',
+                           'xadmin/js/nunjunks.engine.js'],
         }
     },
     'jquery-ui-effect': {
