@@ -8,6 +8,7 @@ from django.forms.forms import DeclarativeFieldsMetaclass
 from django.forms.utils import flatatt
 from django.template import loader
 from django.http import Http404
+from django.template.loader import render_to_string
 from django.test.client import RequestFactory
 from django.utils.encoding import force_text, smart_text
 from django.utils.html import escape
@@ -33,14 +34,14 @@ class WidgetTypeSelect(forms.Widget):
         super(WidgetTypeSelect, self).__init__(attrs)
         self._widgets = widgets
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, **kwargs):
         if value is None:
             value = ''
         if DJANGO_11:
             final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
         else:
             final_attrs = self.build_attrs(attrs, name=name)
-        final_attrs['class'] = 'nav nav-pills nav-stacked'
+        final_attrs['class'] = 'nav nav-pills flex-column'
         output = [u'<ul%s>' % flatatt(final_attrs)]
         options = self.render_options(force_text(value), final_attrs['id'])
         if options:
@@ -51,18 +52,15 @@ class WidgetTypeSelect(forms.Widget):
         return mark_safe(u'\n'.join(output))
 
     def render_option(self, selected_choice, widget, id):
-        if widget.widget_type == selected_choice:
-            selected_html = u' class="active"'
-        else:
-            selected_html = ''
-        return (u'<li%s><a onclick="' +
-                'javascript:$(this).parent().parent().find(\'>li\').removeClass(\'active\');$(this).parent().addClass(\'active\');' +
-                '$(\'#%s_input\').attr(\'value\', \'%s\')' % (id, widget.widget_type) +
-                '"><h4><i class="%s"></i> %s</h4><p>%s</p></a></li>') % (
-                    selected_html,
-                    widget.widget_icon,
-                    widget.widget_title or widget.widget_type,
-                    widget.description)
+        is_active = widget.widget_type == selected_choice
+        return render_to_string('xadmin/plugins/dashboard_widget_options.html', context={
+            'widget_title': widget.widget_title or widget.widget_type,
+            'widget_description': widget.description,
+            'widget_type': widget.widget_type,
+            'widget_icon': widget.widget_icon,
+            'is_active': is_active,
+            'id': id
+        })
 
     def render_options(self, selected_choice, id):
         # Normalize to strings.
@@ -544,8 +542,7 @@ class Dashboard(CommAdminView):
     def get_widgets(self):
 
         if self.widget_customiz:
-            portal_pos = UserSettings.objects.filter(
-                user=self.user, key=self.get_portal_key())
+            portal_pos = UserSettings.objects.filter(user=self.user, key=self.get_portal_key())
             if len(portal_pos):
                 portal_pos = portal_pos[0].value
                 widgets = []

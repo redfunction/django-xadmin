@@ -1,0 +1,18 @@
+{% load xadmin_tags %}
+<li class="nav-item">
+    <a class="nav-link {% if is_active %} active{% endif %}" id="nav_item_{{ id|xslugify }}_{{widget_type|xslugify }}">
+        <h4><i class="{{ widget_icon }}"></i>{{  widget_title }}</h4>
+        <span class="text-dark">{{ widget_description }}</span>
+    </a>
+</li>
+<script type="application/javascript">
+    $(function() {
+        var $link = $("#nav_item_{{ id|xslugify }}_{{widget_type|xslugify }}");
+        $link.click(function () {
+            $link.parent().parent().find('a')
+                .removeClass("active");
+            $link.addClass("active");
+            $("#{{ id }}_input").attr("value", "{{ widget_type }}");
+        })
+    });
+</script>

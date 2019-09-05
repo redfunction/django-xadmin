@@ -1,3 +1,5 @@
+import re
+
 from django import template
 from django.template import Library
 from django.utils import six
@@ -33,6 +35,11 @@ def admin_urlname(value, arg):
     return 'xadmin:%s_%s_%s' % (value.app_label, value.model_name, arg)
 
 static = register.simple_tag(static)
+
+
+@register.filter
+def xslugify(value):
+    return re.sub('\W+', "_", value, re.I)
 
 
 @register.simple_tag(takes_context=True)
