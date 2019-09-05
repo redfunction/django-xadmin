@@ -72,9 +72,9 @@
       {% endblock %}
 
     {% block content-nav %}
-       <div class="navbar content-navbar navbar-light bg-light navbar-expand-sm" data-toggle="breakpoint"
-        data-class-xs="navbar fixed-top content-navbar navbar-dark bg-dark"
-        data-class-sm="navbar content-navbar navbar-light bg-light navbar-expand-sm">
+       <div class="navbar content-navbar navbar-expand-sm navbar-light bg-light" data-toggle="breakpoint"
+        data-class-xs="navbar content-navbar navbar-expand-md navbar-dark bg-dark fixed-top"
+        data-class-sm="navbar content-navbar navbar-expand-sm navbar-light bg-light">
             {% view_block 'nav_toggles' %}
             {% block nav_toggles %}
                 {% include "xadmin/includes/toggle_back.html" %}
