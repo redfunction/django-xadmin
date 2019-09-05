@@ -32,6 +32,10 @@ select.selectmultiple {
   margin-bottom: 5px;
 }
 
+.formset-inline-content {
+  padding-top: 1px;
+}
+
 .control-wrap {
   display: block;
   width: 100%;
@@ -73,48 +77,58 @@ select.selectmultiple {
 
 @media (min-width: 768px) {
 
-  .text-field, 
+  .text-field,
   .textinput,
   .url-field,
   select,
   .input-group ~ .text-field,
   .input-group ~ .textinput,
-  .input-group ~ .url-field
-   {
+  .input-group ~ .url-field {
     max-width: 450px;
   }
-  .input-group.date{ max-width: 300px;}
-  .input-group.time{ max-width: 180px;}
+
+  .input-group.date {
+    max-width: 300px;
+  }
+
+  .input-group.time {
+    max-width: 180px;
+  }
+
   .int-field {
     max-width: 100px;
   }
+
   .datetime > .input-group {
     float: left;
     margin-right: 5px;
   }
+
   .datetime > .input-group:last-child {
     margin-right: 0px;
   }
+
   select.selectmultiple {
     max-width: 350px;
   }
-  .select2-container, .selectize-control{
+
+  .select2-container, .selectize-control {
     max-width: 450px;
   }
 
   .form-actions.fixed {
-    position:fixed;
+    position: fixed;
     bottom: 25px;
-    z-index:295;
+    z-index: 295;
     margin-left: -10px;
     right: 10px;
     border-radius: 3px;
     -webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-       -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   }
 
-  .form-actions.fixed .float-right{
+  .form-actions.fixed .float-right {
     float: none !important;
     margin-left: 10px;
   }
@@ -123,22 +137,23 @@ select.selectmultiple {
     width: 170px;
     float: left;
   }
+
   .form-horizontal.short_label .control-label,
   .form-horizontal .short_label .control-label {
     width: 120px;
   }
+
   .form-horizontal .form-group {
     margin-bottom: 24px;
   }
+
   .form-horizontal .form-inline .form-group {
     margin: 0px;
     padding-left: 0px;
     padding-right: 0px;
   }
-  .form-horizontal .fieldset .card-body {
-    padding-top: 24px;
-  }
 }
+
 @media (min-width: 768px) and (max-width: 991px) {
   .form-horizontal .control-label {
     width: 150px;
