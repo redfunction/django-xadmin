@@ -1,7 +1,10 @@
 {% load i18n %}
-<li class="dropdown-submenu filter-fk-search">
-  <a><i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i> {{ title }}</a>
-  <div class="popover right">
+<div class="dropdown-submenu filter-fk-search">
+  <a class="dropdown-item">
+      <i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i>
+      {{ title }}
+  </a>
+  <div class="popover right p-2">
     <div class="arrow"></div>
     <h3 class="popover-title">
       {% trans "Search" %} {{title}}
@@ -28,4 +31,4 @@
       </form>
     </div>
   </div>
-</li>
+</div>

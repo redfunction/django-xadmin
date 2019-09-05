@@ -1,7 +1,10 @@
 {% load i18n %}
-<li class="dropdown-submenu filter-char">
-  <a><i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i> {{ title }}</a>
-  <div class="popover right">
+<div class="dropdown-submenu filter-char">
+  <a class="dropdown-item">
+      <i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i>
+      {{ title }}
+  </a>
+  <div class="popover right p-2">
     <div class="arrow"></div>
     <h3 class="popover-title">
       {% trans "Search" %} {{title}}
@@ -13,12 +16,12 @@
           <input name="{{search_name}}" class="input-char form-control" type="text" value="{{search_val}}" placeholder="{% trans "Enter" %} {{title}}…"/>
           <span class="input-group-btn">
           {% if search_val %}
-            <a class="btn btn-default" href="{{remove_url}}">x</a>
+            <a class="btn btn-primary" href="{{remove_url}}">x</a>
           {% endif %}
-            <button class="btn btn-success" type="submit"><i class="fa fa-search"></i></button>
+            <button class="btn btn-success  mt-1" type="submit"><i class="fa fa-search"></i></button>
           </span>
         </div>
       </form>
     </div>
   </div>
-</li>
+</div>

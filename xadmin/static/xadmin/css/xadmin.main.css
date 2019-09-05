@@ -8,10 +8,11 @@ a { cursor: pointer;}
 }
 
 .popover{
-  width: auto;
+  min-width: 200px;
+  display: none
 }
+
 .dropdown-submenu .popover {
-  padding: 0px;
   max-width: none;
   left: 100%;
 }
@@ -30,6 +31,7 @@ a { cursor: pointer;}
 }
 .dropdown-submenu .popover form input {
   min-width: 120px;
+  max-width: 150px;
 }
 .dropdown-submenu .popover form > .input-group {
   width: 100%;
@@ -48,12 +50,12 @@ a { cursor: pointer;}
 .filter-date .menu-date-range .ranges .btn{
   margin-top: 10px;
 }
-@media (min-width: 768px) {
+@media (min-width: 1175px) {
   .filter-date .menu-date-range .popover {
     width: 600px;
-    left: 10px;
+    left: 5px;
     top: 35px;
-    margin-top: -2px;
+    margin-top: -5px;
     margin-left: -40px;
   }
   .filter-date .menu-date-range .popover .arrow {
@@ -369,8 +371,6 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
   padding-right: 20px;
   padding-left: 20px;
 }
-
-.popover { display: none }
 
 .dropdown-submenu:hover > .dropdown-menu,
 .dropdown-submenu:hover > .popover {
