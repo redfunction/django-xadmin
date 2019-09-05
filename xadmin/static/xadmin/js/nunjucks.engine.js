@@ -20,14 +20,14 @@ JqueryTemplateEngine.prototype.getSource = function (name) {
     }
 };
 
-$.fn.nujunks_env = new nunjucks.Environment(new JqueryTemplateEngine({}));
+$.fn.nunjucks_env = new nunjucks.Environment(new JqueryTemplateEngine({}));
 // translation filter
-$.fn.nujunks_env.addFilter('gettext', function(text) {
+$.fn.nunjucks_env.addFilter('gettext', function(text) {
     return gettext(text);
 });
 
 $.fn.template_render = function (ctx) {
-    return $.fn.nujunks_env.render("#" + this.attr('id'), ctx);
+    return $.fn.nunjucks_env.render("#" + this.attr('id'), ctx);
 }
 
 $.fn.template_render$ = function (ctx, options) {
