@@ -61,13 +61,17 @@
           this.$form.find('submit, button[type=submit], input[type=submit]').removeClass('disabled');
           this.$form.find('.alert-success').hide();
 
+          // reset
+          $("div.quick-form.invalid-feedback").remove();
+          $("input.quick-form.is-invalid").removeClass('is-invalid');
+
           if(data['result'] !== 'success' && data['errors']){
             var err_html, index, non_fields_errors = [];
             for (index = data['errors'].length - 1; index >= 0; index--) {
               var error = data['errors'][index];
               var errdiv = this.$form.find('#div_' + error['id']);
-              if(errdiv.length){
-                errdiv.addClass('has-error');
+              if(errdiv.length) {
+                errdiv.find("#" + error['id']).addClass("quick-form is-invalid");
                 err_html = [];
                 var err_id;
                 for (var j = error['errors'].length - 1; j >= 0; j--) {
@@ -76,7 +80,10 @@
                   // Prevent the message from being repeated several times.
                   errdiv.find("#"+err_id).remove();
 
-                  err_html.push('<span id="'+ err_id + '" class="text-danger">' + error['errors'][j] + '</span>')
+                  err_html.push($.fn.nunjucks_env.renderString(
+                      '<div class="quick-form invalid-feedback" id="{{id}}">{{message}}</div>',
+                      {message: error['errors'][j], id: err_id}
+                  ))
                 }
                 errdiv.find('.controls').append(err_html.join('\n'))
               } else {
@@ -86,7 +93,10 @@
             if(non_fields_errors.length){
               err_html = [];
               for (index = non_fields_errors.length - 1; index >= 0; index--) {
-                err_html.push('<p class="text-danger"><strong>'+error['errors'][index]+'</strong></p>')
+                err_html.push($.fn.nunjucks_env.renderString(
+                    '<p class="text-danger"><strong>{{message}}</strong></p>',
+                    {message: error['errors'][index]}
+                ))
               }
               this.$form.prepend(err_html.join('\n'))
             }
