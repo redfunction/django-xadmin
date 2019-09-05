@@ -8,7 +8,7 @@ vendors = {
             'production': [
                 'xadmin/vendor/bootstrap/bootstrap.bundle.min.js',
             ],
-            'cdn': '"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
+            'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
         'css': {
             'dev': [
