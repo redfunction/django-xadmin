@@ -2,7 +2,7 @@
 .empty-form {
     display: none;
 }
-.formset:not(.one) > .panel-body {
+.formset:not(.one) > .card-body {
     padding-top: 0px !important;
 }
 .formset .row-deleted{
@@ -36,7 +36,7 @@
 .formset .nav.nav-tabs{
     padding: 10px 10px 0px;
 }
-.formset .panel-body.tabs {
+.formset .card-body.tabs {
     padding-left: 0px;
     padding-right: 0px;
 }

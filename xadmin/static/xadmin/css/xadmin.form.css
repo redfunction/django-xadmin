@@ -53,7 +53,7 @@ select.selectmultiple {
   margin: 0px !important;
 }
 
-.fieldset .panel-body {
+.fieldset .card-body {
   padding-bottom: 0px;
 }
 
@@ -121,7 +121,7 @@ select.selectmultiple {
     padding-left: 0px;
     padding-right: 0px;
   }
-  .form-horizontal .fieldset .panel-body {
+  .form-horizontal .fieldset .card-body {
     padding-top: 24px;
   }
 }
