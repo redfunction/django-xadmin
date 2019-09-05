@@ -370,6 +370,8 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
   padding-left: 20px;
 }
 
+.popover { display: none }
+
 .dropdown-submenu:hover > .dropdown-menu,
 .dropdown-submenu:hover > .popover {
   display: none;
