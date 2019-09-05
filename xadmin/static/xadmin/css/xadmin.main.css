@@ -425,5 +425,6 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
 
 /* change list */
 form#changelist-form + nav > ul.pagination {
-  margin-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
