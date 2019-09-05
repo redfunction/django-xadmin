@@ -7,12 +7,15 @@
 
 {% block box_title %}
   {{ formset.opts.verbose_name_plural|title }}
-  {% if not formset.formset.detail_page %}
-  {% if has_add_permission %}
-  <a class="add-row" id="{{ prefix }}-add-row" href="javascript:void(0)"><i class="icon fa fa-plus"></i></a>
-  {% endif %}
-  {% endif %}
 {% endblock box_title %}
+
+{% block box_header %}
+ {% if not formset.formset.detail_page %}
+  {% if has_add_permission %}
+  <button class="btn btn-link add-row" id="{{ prefix }}-add-row" href="javascript:void(0)"><i class="icon fa fa-plus"></i></button>
+  {% endif %}
+ {% endif %}
+{% endblock box_header %}
 
 {% block box_content_class %}{{inline_style}} formset-content{% endblock box_content_class %}
 {% block box_content_attrs %}id="{{ formset.css_id }}-{{inline_style}}" data-prefix="{{ prefix }}" data-style="{{inline_style}}"{% endblock box_content_attrs %}
