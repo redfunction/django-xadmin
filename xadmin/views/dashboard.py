@@ -95,8 +95,7 @@ class UserWidgetAdmin(object):
                                      widget=form_widget, label=_('Widget Type'))
         if 'page_id' in self.request.GET and db_field.name == 'page_id':
             kwargs['widget'] = forms.HiddenInput
-        field = super(
-            UserWidgetAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        field = super(UserWidgetAdmin, self).formfield_for_dbfield(db_field, **kwargs)
         return field
 
     def get_widget_params_form(self, wizard):
@@ -251,8 +250,7 @@ class BaseWidget(forms.Form):
 class HtmlWidget(BaseWidget):
     widget_type = 'html'
     widget_icon = 'fa fa-file-o'
-    description = _(
-        u'Html Content Widget, can write any html content in widget.')
+    description = _(u'Html Content Widget, can write any html content in widget.')
 
     content = forms.CharField(label=_(
         'Html Content'), widget=exwidgets.AdminTextareaWidget, required=False)
