@@ -31,6 +31,7 @@ class IDC(models.Model):
     contact = models.CharField(max_length=32)
     telphone = models.CharField(max_length=32)
     address = models.CharField(max_length=128)
+    is_valid = models.BooleanField(default=False)
     customer_id = models.CharField(max_length=128)
     groups = models.ManyToManyField(Group)  # many
 
