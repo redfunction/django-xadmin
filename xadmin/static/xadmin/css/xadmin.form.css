@@ -57,6 +57,20 @@ select.selectmultiple {
   padding-bottom: 0px;
 }
 
+.form-inline label {
+    display: block !important;
+}
+
+@media (min-width: 992px) {
+    .form-group.row > label {
+        text-align: right;
+        max-width: 300px;
+    }
+    .form-group.row > .offset-lg-3 {
+        margin-left: 2px;
+    }
+}
+
 @media (min-width: 768px) {
 
   .text-field, 
