@@ -12,12 +12,12 @@
         <div class="dropdown-divider"></div>
     {% endif %}
     {% for bk in bk_bookmarks %}
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-between align-items-center mt-1">
             <a class="dropdown-item {% if bk.selected %}active {% endif %}{% if bk.edit_url %}with_menu_btn{% endif %}" title="{{ bk.title }}"
                href="{{bk.url}}" title="{{bk.title}}"><i class="fa fa-bookmark"></i> {{bk.title}}
             </a>
             {% if bk.edit_url and has_change_permission_bookmark %}
-                <a href="{{ bk.edit_url }}" class="mr-3 ml-2">
+                <a href="{{ bk.edit_url }}" class="btn btn-outline-success btn-sm mr-4">
                     <i class="fa fa-pencil-alt"></i>
                 </a>
             {% endif %}
