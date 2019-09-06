@@ -33,7 +33,9 @@
 {% endblock nav_btns %}
 
 {% block content %}
-  <div class="content-toolbar btn-toolbar float-right clearfix">
+<div class="row flex-row-reverse no-gutters">
+  <div class="col-sm">
+  <div class="content-toolbar btn-toolbar">
     {% view_block 'top_toolbar' %}
     {% block toolbar_column %}
     <div class="btn-group">
@@ -84,12 +86,15 @@
     {% endblock toolbar_fullscreen %}
     {% view_block 'top_btns' %}
   </div>
-
+  </div>
+  <div class="col-sm">
   <nav aria-label="changelist pagination small">
    <ul class="pagination pagination-sm pagination-left pagination-inline">
      {% view_block 'pagination' 'small' %}
    </ul>
   </nav>
+  </div>
+</div>
 
   <form id="changelist-form" action="" method="post"{% view_block 'result_list_form' %}>{% csrf_token %}
   {% view_block 'results_top' %}

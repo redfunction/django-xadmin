@@ -213,6 +213,12 @@
 
 }
 
+@media screen and (min-width: 570px) {
+ .content-toolbar.btn-toolbar{
+    float: right;
+  }
+}
+
 @media (max-width: 767px) {
   .show-sm, .show-md, .show-lg, .hide-xs{
     display: none !important;
