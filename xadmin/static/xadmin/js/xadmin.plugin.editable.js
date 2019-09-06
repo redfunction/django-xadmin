@@ -5,53 +5,40 @@
   // ===============================
 
   var Editpop = function (element, options) {
-    this.einit('editpop', element, options)
+    this.$element = $(element);
+    this.einit('editpop', element, options || {})
   }
 
-  Editpop.DEFAULTS = $.extend({} , $.fn.popover.Constructor.DEFAULTS, {
+  Editpop.Default = $.extend({} , $.fn.popover.Constructor.Default, {
     container: 'body'
   , trigger: 'manual'
-  , placement: function(tip, el) {
-    var $tip = $(tip);
-    var $el = $(el);
-
-    var tip_width = $tip.width(),
-        tip_height = $tip.height(),
-        el_width = $el.width(),
-        el_height = $el.height(),
-        client_width = document.body.clientWidth,
-        body = $("body"),
-        gap = 20;
-
-    var top_gap = $el.offset().top - body.scrollTop() - 40,
-        left_gap = $el.offset().left - body.scrollLeft(),
-        right_gap = client_width - left_gap - el_width;
-
-    if(top_gap > tip_height + gap && left_gap > tip_width/2 + gap && right_gap > tip_width/2 + gap){
-      return 'top'
-    }
-    if(top_gap > tip_height/2){
-      if(right_gap > tip_width + gap){
-        return 'right'
-      } else if(left_gap > tip_width + gap) {
-        return 'left'
-      }
-    }
-    return 'bottom'
-  }
-  , template: '<div class="popover editpop editable"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+  , template: '<div class="popover editpop editable" role="tooltip">' +
+          '<div class="arrow"></div><h3 class="popover-header"></h3>' +
+          '<div class="popover-body"></div>' +
+          '</div>'
   });
 
+  function copyStatic(constructor, staticClass, props) {
+      var value;
+      for (var index=0; index < props.length; index++) {
+          value = Object.getOwnPropertyDescriptor($.fn.popover.Constructor, props[index]);
+          Object.defineProperty(constructor, props[index], value);
+      }
+  }
+
+  copyStatic(Editpop, $.fn.popover.Constructor, [
+      "DATA_KEY", "EVENT_KEY", "Event", "DefaultType", "NAME"
+  ]);
 
   // NOTE: POPOVER EXTENDS tooltip.js
   // ================================
-
-  Editpop.prototype = $.extend({}, $.fn.popover.Constructor.prototype);
+  Editpop.prototype = Object.create($.fn.popover.Constructor.prototype);
 
   Editpop.prototype.constructor = Editpop;
 
   Editpop.prototype.einit = function (type, element, options) {
-    this.init(type, element, options);
+    $.fn.popover.Constructor.call(this, element, options);
+    this.type = type; // editpop
     this.content = null;
     this.$element.on('click.' + this.type, $.proxy(this.beforeToggle, this));
 
@@ -60,7 +47,7 @@
   }
 
   Editpop.prototype.getDefaults = function () {
-    return Editpop.DEFAULTS
+    return Editpop.Default;
   }
 
   Editpop.prototype.beforeToggle = function() {
@@ -74,7 +61,7 @@
         success: function(content){
           $el.find('>i').removeClass('fa fa-spinner fa-spin').addClass('fa fa-edit');
           that.content = content;
-          that.toggle()
+          that.show();
         },
         dataType: 'html'
       })
@@ -84,41 +71,41 @@
   }
 
   Editpop.prototype.setContent = function () {
-    var $tip    = this.tip();
+    var $tip = $(this.getTipElement());
     var title   = this.getTitle();
 
-    $tip.find('.popover-title').html('<button class="close" data-dismiss="editpop">&times;</button>' + title);
-    $tip.find('.popover-content').html(this.content);
+    $tip.find('.popover-header').html('<button class="close" data-dismiss="editpop">&times;</button>' + title);
+    $tip.find('.popover-body').html(this.content);
 
-    var $form = $tip.find('.popover-content > form');
+    var $form = $tip.find('.popover-body > form');
+
     $form.exform();
     $form.submit($.proxy(this.submit, this));
 
     this.$form = $form;
     this.$mask = $('<div class="mask"><h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2></div>');
-    $tip.find('.popover-content').prepend(this.$mask);
+    $tip.find('.popover-body').prepend(this.$mask);
 
     $tip.removeClass('fade top bottom left right in');
 
     //bind events
-    $tip.find('[data-dismiss=editpop]').on('click.' + this.type, $.proxy(this.leave, this, this));
+    $tip.find('[data-dismiss=editpop]').on('click.' + this.type, $.proxy(this.hide, this));
 
-    var me = ((Math.random() * 10) + "").replace(/\D/g, '');
-    var click_event_ns = "click." + me + " touchstart." + me;
+    //var me = ((Math.random() * 10) + "").replace(/\D/g, '');
+    //var click_event_ns = "click." + me + " touchstart." + me;
     var that = this;
 
     // $('body').on(click_event_ns, function(e) {
     //   if ( !$tip.has(e.target).length ) { that.hide() }
     // })
 
-    $(document).bind('keyup.editpop', function(e) {
-      if (e.keyCode == 27) { that.leave(that) }
-      return
-    })
+    $(document).on('keyup.editpop', function(e) {
+      if (e.keyCode === 27) { that.hide(); }
+    });
   }
 
   Editpop.prototype.hasContent = function () {
-    return this.getTitle() || this.content
+    return this.getTitle() || this.content;
   }
 
   Editpop.prototype.submit = function(e) {
@@ -128,20 +115,24 @@
       $.when(this.save())
       .done($.proxy(function(data) {
         this.$mask.hide();
-        this.$mask.parents('.popover').hide();
+        this.$form.find(".is-invalid." + this.type).removeClass("is-invalid"); // remove error class
+        this.$form.find(".invalid-feedback." + this.type).remove(); // remove old errors
         if(data['result'] !== 'success' && data['errors']){
-          var err_html = [];
+          var err_id, $input;
           for (var i = data['errors'].length - 1; i >= 0; i--) {
             var e = data['errors'][i];
+            $input = this.$form.find("#" + e['id']).addClass('is-invalid');
             for (var j = e['errors'].length - 1; j >= 0; j--) {
-              err_html.push('<span class="help-block error">'+e['errors'][j]+'</span>')
+              err_id = "div_" + e['id'] + j;
+              $input.after($.fn.nunjucks_env.renderString(
+                '<div class="{{err_cls}} invalid-feedback" id="{{id}}">{{message}}</div>',
+                {message: e['errors'][j], id: err_id, err_cls: this.type}
+              ));
             }
           }
-          this.$form.find(".control-group").addClass('has-error');
-          this.$form.find('.controls').append(err_html.join('\n'))
         } else {
           this.$text.html(data['new_html'][this.field]);
-          this.leave(this)
+          this.hide();
         }
       }, this))
       .fail($.proxy(function(xhr) {
@@ -187,7 +178,7 @@
       var options = typeof option == 'object' && options;
 
       if (!data) $this.data('bs.editpop', (data = new Editpop(this, options)));
-      if (typeof option == 'string') data[option]()
+      if (typeof option == 'string') data[option]();
     })
   }
 
