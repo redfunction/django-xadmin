@@ -18,7 +18,7 @@ vendors = {
                 'xadmin/vendor/bootstrap/css/bootstrap-reboot.css'
             ],
             'production': [
-                'xadmin/vendor/bootstrap/css/bootstrap.css',
+                'xadmin/vendor/bootstrap/css/bootstrap.min.css',
                 'xadmin/vendor/bootstrap/css/bootstrap-reboot.min.css'
             ],
             'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
