@@ -20,10 +20,11 @@
         el_width = $el.width(),
         el_height = $el.height(),
         client_width = document.body.clientWidth,
+        body = $("body"),
         gap = 20;
 
-    var top_gap = $el.offset().top - $("body").scrollTop() - 40,
-        left_gap = $el.offset().left - $("body").scrollLeft(),
+    var top_gap = $el.offset().top - body.scrollTop() - 40,
+        left_gap = $el.offset().left - body.scrollLeft(),
         right_gap = client_width - left_gap - el_width;
 
     if(top_gap > tip_height + gap && left_gap > tip_width/2 + gap && right_gap > tip_width/2 + gap){
@@ -86,7 +87,7 @@
     var $tip    = this.tip();
     var title   = this.getTitle();
 
-    $tip.find('.popover-title').html('<button class="close" data-dismiss="editpop">&times;</button>' + title)
+    $tip.find('.popover-title').html('<button class="close" data-dismiss="editpop">&times;</button>' + title);
     $tip.find('.popover-content').html(this.content);
 
     var $form = $tip.find('.popover-content > form');
@@ -94,7 +95,7 @@
     $form.submit($.proxy(this.submit, this));
 
     this.$form = $form;
-    this.$mask = $('<div class="mask"><h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2></div>')
+    this.$mask = $('<div class="mask"><h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2></div>');
     $tip.find('.popover-content').prepend(this.$mask);
 
     $tip.removeClass('fade top bottom left right in');
@@ -128,7 +129,7 @@
       .done($.proxy(function(data) {
         this.$mask.hide();
         this.$mask.parents('.popover').hide();
-        if(data['result'] != 'success' && data['errors']){
+        if(data['result'] !== 'success' && data['errors']){
           var err_html = [];
           for (var i = data['errors'].length - 1; i >= 0; i--) {
             var e = data['errors'][i];
