@@ -122,6 +122,10 @@ class ReversionPlugin(BaseAdminPlugin):
         with do_create_revision(request):
             return __()
 
+    def _check_object_recover(self, obj):
+        """Checks if the object is being recovered (does not exist yet in bd)"""
+        return self.admin_view.queryset().filter(pk=obj.pk).exists()
+
     # Block Views
     def block_top_toolbar(self, context, nodes):
         recoverlist_url = self.admin_view.model_admin_url('recoverlist')
@@ -131,14 +135,14 @@ class ReversionPlugin(BaseAdminPlugin):
 
     def block_nav_toggles(self, context, nodes):
         obj = getattr(self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
-        if obj:
+        if obj and self._check_object_recover(obj):
             nodes.append(render_to_string('xadmin/blocks/comm.top.xversion.nav_toogles_calendar.html', context={
                 'revision_list_url': self.admin_view.model_admin_url('revisionlist', quote(obj.pk))
             }))
 
     def block_nav_btns(self, context, nodes):
         obj = getattr(self.admin_view, 'org_obj', getattr(self.admin_view, 'obj', None))
-        if obj:
+        if obj and self._check_object_recover(obj):
             revisionlist_url = self.admin_view.model_admin_url('revisionlist', quote(obj.pk))
             nodes.append(render_to_string('xadmin/blocks/comm.top.xversion.nav_btns_calendar.html', context={
                 'revision_list_url': revisionlist_url
