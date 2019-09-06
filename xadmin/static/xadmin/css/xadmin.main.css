@@ -7,7 +7,8 @@ a { cursor: pointer;}
   margin-right: 0px;
 }
 
-.popover{
+/* editpop: plugin editable */
+.popover:not(.editpop) {
   min-width: 200px;
   display: none
 }
