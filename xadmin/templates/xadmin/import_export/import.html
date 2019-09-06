@@ -7,11 +7,13 @@
 {% load xadmin_tags %}
 
 {% block breadcrumbs %}
-    <ul class="breadcrumb">
-        <li><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-        <li><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
-        <li>{% trans 'Import' %}</li>
-    </ul>
+<nav aria-label="breadcrumb">
+ <ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
+  <li class="breadcrumb-item"><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+  <li class="breadcrumb-item active">{% trans 'Import' %}</li>
+ </ol>
+</nav>
 {% endblock %}
 {% block nav_title %}
     <i class="glyphicon glyphicon-import"></i> {{title}}

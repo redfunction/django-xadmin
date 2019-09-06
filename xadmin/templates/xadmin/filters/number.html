@@ -29,7 +29,7 @@
           </div>
           <div class="input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text"><</span>
+                <span class="input-group-text"></span>
               <a class="btn btn-outline-dark toggle{%if lte_val%} active{%endif%}" data-toggle="button" data-off-name="{{lt_name}}" data-on-name="{{lte_name}}">=</a>
             </div>
             <input name="{%if lte_val %}{{lte_name}}{% else %}{{lt_name}}{%endif%}" class="form-control" type="number" value="{%if lte_val %}{{lte_val}}{% else %}{{lt_val}}{%endif%}" placeholder="{% trans "Enter Number" %}"/>

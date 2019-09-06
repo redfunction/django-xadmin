@@ -53,21 +53,18 @@
     <div id="content-block" class="col-sm-12 col-md-10">
       {% block breadcrumbs %}
       <nav aria-label="breadcrumb">
-      {% if breadcrumbs %}
-      <ol class="breadcrumb">
-      {% for bc in breadcrumbs %}
-        <li class="breadcrumb-item">
+       <ol class="breadcrumb">
+       {% for bc in breadcrumbs %}
+        <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
           {% if forloop.last or not bc.url %}{{bc.title}}
-          {% else %}<a href="{{bc.url}}">{{bc.title}}</a>{% endif %}
+          {% else %}<a href="{{bc.url}}">{{bc.title}}</a>
+          {% endif %}
         </li>
-      {% endfor %}
-      {% else %}
-       <li class="breadcrumb-item">
-          <a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a>
-        </li>
-        {% if title %}{{ title }}{% endif %}
-      </ol>
-      {% endif %}
+       {% empty %}
+        <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
+        {% if title %}<li class="breadcrumb-item active">{{ title }}</li>{% endif %}
+       {% endfor %}
+       </ol>
       </nav>
       {% endblock %}
 
