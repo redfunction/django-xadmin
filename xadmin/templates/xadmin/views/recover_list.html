@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="alert alert-info">
+  <div class="alert alert-info mt-2">
       {% blocktrans %}Choose a date from the list below to recover a deleted version of an object.{% endblocktrans %}
   </div>
   <div class="module">
@@ -42,7 +42,7 @@
         </tbody>
       </table>
     {% else %}
-      <div class="jumbotron">
+      <div class="d-flex justify-content-center bg-light p-2">
        <p>{% trans "There are no deleted objects to recover." %}</p>
        </div>
     {% endif %}
