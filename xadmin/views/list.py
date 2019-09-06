@@ -520,11 +520,11 @@ class ListAdminView(ModelAdminView):
             item.btns.append('<a class="toggle" href="%s"><i class="fa fa-%s"></i></a>' % (
                 self.get_query_string({ORDER_VAR: '.'.join(o_list_toggle)}), 'sort-up' if order_type == "asc" else 'sort-down'))
 
-        item.menus.extend(['<li%s><a href="%s" class="active"><i class="fa fa-%s"></i> %s</a></li>' %
-                         (
-                             (' class="active"' if sorted and order_type == i[
-                              0] else ''),
-                           self.get_query_string({ORDER_VAR: '.'.join(i[1])}), i[2], i[3]) for i in menus])
+        item.menus.extend(['<a class="dropdown-item %(link_active)s" href="%(link)s">'
+                           '<i class="fa fa-%(link_icon)s"></i> %(link_label)s</a>' % {
+                            'link_active': ('active' if sorted and order_type == i[0] else ''),
+                            'link': self.get_query_string({ORDER_VAR: '.'.join(i[1])}),
+                            'link_icon': i[2], 'link_label': i[3]} for i in menus])
         item.classes.extend(th_classes)
 
         return item

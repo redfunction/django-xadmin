@@ -118,11 +118,11 @@
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 {{ o.label }}
               </a>
-              <ul class="dropdown-menu" role="menu">
+              <div class="dropdown-menu">
                 {% for m in o.menus %}
                   {{m|safe}}
                 {% endfor %}
-              </ul>
+              </div>
             </div>
           {% else %}
             {{ o.label }}
