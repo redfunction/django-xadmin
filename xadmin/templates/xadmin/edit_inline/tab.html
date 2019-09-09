@@ -8,7 +8,8 @@
   <ul class="nav nav-tabs">
     {% for fs in formset.formset %}
     <li class="nav-item">
-      <a class="nav-link {% if forloop.first%} active{% endif %}" href="#{{ prefix }}-{{ forloop.counter0 }}-body"
+      <a class="nav-link{% if fs.is_bound and not fs.is_valid %} border border-danger{% endif %} {% if forloop.first%} active{% endif %}"
+         href="#{{ prefix }}-{{ forloop.counter0 }}-body"
          data-toggle="tab"{% if fs.instance.pk %} title="{{ fs.instance }}"{% endif %}>
       {% if fs.instance.pk %}{{ fs.instance|truncatechars:12 }}{% else %}#<span class="formset-num">{{ forloop.counter }}</span>{% endif %}
     </a></li>
