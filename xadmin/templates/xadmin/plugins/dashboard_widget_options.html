@@ -1,7 +1,7 @@
 {% load xadmin_tags %}
 <li class="nav-item">
     <a class="nav-link {% if is_active %} active{% endif %}" id="nav_item_{{ id|xslugify }}_{{widget_type|xslugify }}">
-        <h4><i class="{{ widget_icon }}"></i>{{  widget_title }}</h4>
+        <h4><i class="{{ widget_icon }} mr-1"></i>{{  widget_title }}</h4>
         <span class="text-dark">{{ widget_description }}</span>
     </a>
 </li>
