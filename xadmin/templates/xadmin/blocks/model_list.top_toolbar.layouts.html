@@ -5,8 +5,9 @@
   </a>
   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
     {% for r in layouts %}
-      <li{% if r.selected %} class="active"{% endif %}>
-      <a href="{{r.url}}"><i class="{{r.icon}}"></i> {{r.name}}</a></li>
+      <a class="dropdown-item {% if r.selected %} active{% endif %}" href="{{r.url}}">
+          <i class="{{r.icon}}"></i> {{r.name}}
+      </a>
     {% endfor %}
   </ul>
 </div>
