@@ -110,7 +110,10 @@
     $.fn.formset.styles = {
         'tab': {
             added: function(row, $$){
-                var new_tab = $('<li><a data-toggle="tab" href="#'+ row.attr('id') +'">#<span class="formset-num">'+ (row.data('row-index') + 1) +'</span></a></li>');
+                var new_tab = $('<li class="nav-item">' +
+                                 '<a class="nav-link" data-toggle="tab" href="#'+ row.attr('id') +'">#' +
+                                 '<span class="formset-num">'+ (row.data('row-index') + 1) +'</span></a>' +
+                                '</li>');
                 $$.parent().find('.nav-tabs').append(new_tab);
                 new_tab.find('a').tab('show');
             },
