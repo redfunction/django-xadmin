@@ -275,7 +275,7 @@ class RevisionListView(BaseReversionView):
         for field_name, pks in obj_version.m2m_data.items():
             f = self.opts.get_field(field_name)
             if f.rel and isinstance(f.rel, models.ManyToManyRel):
-                setattr(obj, f.name, f.rel.to._default_manager.get_query_set(
+                setattr(obj, f.name, f.rel.to._default_manager.get_queryset(
                 ).filter(pk__in=pks).all())
 
         detail = self.get_model_view(DetailAdminUtil, self.model, obj)
