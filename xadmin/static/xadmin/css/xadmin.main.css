@@ -9,7 +9,7 @@ a { cursor: pointer;}
 
 /* editpop: plugin editable */
 .popover:not(.editpop) {
-  min-width: 200px;
+  min-width: 260px;
   display: none
 }
 
