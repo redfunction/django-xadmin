@@ -35,20 +35,21 @@
                 <h4 class="modal-title">{% trans "Widget Options" %}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
-            <div class="modal-body">
-                <form method="post" class="box-form form-horizontal short_label widget-form exform">
+
+            <form method="post" class="box-form form-horizontal short_label widget-form exform">
+                <div class="modal-body m-2">
                     {% csrf_token %}
                     {% block form %}
                         {% crispy form %}
                     {% endblock form %}
                     <input type="hidden" name="_delete"/>
-                    <div class="modal-footer">
-                    <a class="btn btn-danger float-right btn-remove">{% trans "Remove" %}</a>
-                    <a class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</a>
-                    <input class="btn btn-primary" type="submit" value="{% trans 'Save changes' %}"/>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                  <a class="btn btn-danger btn-sm btn-remove">{% trans "Remove" %}</a>
+                  <a class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Close" %}</a>
+                  <input class="btn btn-primary btn-sm" type="submit" value="{% trans 'Save changes' %}"/>
+                </div>
+            </form>
         </div>
     </div>
 </div>
