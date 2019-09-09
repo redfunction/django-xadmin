@@ -15,6 +15,7 @@
   <button class="btn btn-link add-row" id="{{ prefix }}-add-row" href="javascript:void(0)"><i class="icon fa fa-plus"></i></button>
   {% endif %}
  {% endif %}
+ {{ block.super }}
 {% endblock box_header %}
 
 {% block box_content_class %}{{inline_style}} formset-inline-content formset-content{% endblock box_content_class %}

@@ -2,13 +2,14 @@
     <div class="card-header">
         <div class=" d-flex flex-row">
         <h5 class="card-title mr-auto">{% block box_title %}{% endblock box_title %}</h5>
-        {% block box_header %}{% endblock box_header %}
+        {% block box_header %}
         <button class="btn btn-link" type="button" data-toggle="collapse"
                 data-target="#{% block box_collapse_target %}{% endblock %}"
                 aria-expanded="true">
             <i class='icon chevron fa fa-chevron-up'></i>
         </button>
         </div>
+        {% endblock box_header %}
     </div>
     <div id="{% block box_collapse_target_id %}{% endblock %}" class="collapse show">
         <div class="card-body {% block box_content_class %}{% endblock box_content_class %}"
