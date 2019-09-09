@@ -14,12 +14,12 @@
         {{ form_params|safe }}
         <div class="input-group">
           <input name="{{search_name}}" class="input-char form-control" type="text" value="{{search_val}}" placeholder="{% trans "Enter" %} {{title}}…"/>
-          <span class="input-group-btn">
+          <div class="input-group-btn">
           {% if search_val %}
-            <a class="btn btn-primary" href="{{remove_url}}">x</a>
+            <a class="btn btn-danger" href="{{remove_url}}"><span class="text-monospace">x</span></a>
           {% endif %}
-            <button class="btn btn-success  mt-1" type="submit"><i class="fa fa-search"></i></button>
-          </span>
+            <button class="btn btn-success " type="submit"><i class="fa fa-search"></i></button>
+          </div>
         </div>
       </form>
     </div>
