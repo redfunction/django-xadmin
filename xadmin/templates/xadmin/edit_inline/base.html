@@ -10,7 +10,7 @@
 {% endblock box_title %}
 
 {% block box_header %}
- {% if not formset.formset.detail_page %}
+ {% if not formset.formset.detail_page and not formset.inline_style == 'one' %}
   {% if has_add_permission %}
   <button class="btn btn-link add-row" id="{{ prefix }}-add-row" href="javascript:void(0)"><i class="icon fa fa-plus"></i></button>
   {% endif %}
