@@ -11,6 +11,7 @@ function genericTask() {
         "bower_components/**/locales/*.js",
         "bower_components/**/LICENSE",
         "bower_components/**/img/**",
+        "!bower_components/select2/**",
         "!bower_components/popper.js/**",
         "!bower_components/nunjucks/**",
         "!bower_components/font-awesome/**",
@@ -61,6 +62,14 @@ function selectizeTask() {
     return gulp.src(["bower_components/selectize/dist/**/*.js",
         "bower_components/selectize/dist/**/*.css"])
         .pipe(gulp.dest('vendor/selectize'));
+}
+
+function select2Task() {
+    return gulp.src(["bower_components/select2/dist/**/*.js",
+                     "bower_components/select2/dist/**/*.css",
+                     "bower_components/select2/dist/**/i18n/*.js",
+                     "!bower_components/select2/dist/**/select2.full*"])
+        .pipe(gulp.dest('vendor/select2'));
 }
 
 function datejsTask() {
@@ -118,6 +127,7 @@ exports.default = gulp.series(
     micropluginTask,
     fontAwesomeTask,
     selectizeTask,
+    select2Task,
     datejsTask,
     jqueryUITask,
     bootstrapTask
