@@ -72,10 +72,8 @@ class ThemePlugin(BaseAdminPlugin):
                 ex_themes = []
                 try:
                     headers = {"Accept": "application/json", "User-Agent": self.request.META['HTTP_USER_AGENT']}
-                    content = requests.get("https://bootswatch.com/api/4.json", headers=headers)
-                    if six.PY3:
-                        content = content.text.decode()
-                    watch_themes = json.loads(content)['themes']
+                    content = requests.get("https://bootswatch.com/api/4.json", headers=headers).json()
+                    watch_themes = content['themes']
                     ex_themes.extend([
                         {'name': t['name'], 'description': t['description'],
                             'css': t['cssMin'], 'thumbnail': t['thumbnail']}

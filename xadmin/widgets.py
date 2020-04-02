@@ -2,7 +2,10 @@
 Form Widget classes specific to the Django admin site.
 """
 from __future__ import absolute_import
+
+import re
 from itertools import chain
+
 from django import forms
 from django.template.loader import render_to_string
 
@@ -14,9 +17,8 @@ from django.utils.encoding import force_text
 
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
-from django.utils.translation import ugettext as _
 
-from .util import vendor, DJANGO_11
+from .util import vendor
 
 
 class AdminDateWidget(forms.DateInput):
@@ -72,16 +74,12 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
         forms.MultiWidget.__init__(self, widgets, attrs)
 
     def render(self, name, value, attrs=None, **kwargs):
-        if DJANGO_11:
-            input_html = [ht for ht in super(AdminSplitDateTime, self).render(name, value, attrs).replace(
-                '/><input', '/>\n<input').split('\n') if ht != '']
-            # return input_html
-            return mark_safe(render_to_string('xadmin/widgets/datetime.html', context={
-                'date_input_html': input_html[0],
-                'time_input_html': input_html[1]
-            }))
-        else:
-            return super(AdminSplitDateTime, self).render(name, value, attrs)
+        input_html = super(AdminSplitDateTime, self).render(name, value, attrs)
+        input_html = re.findall('<input.+?>', input_html)
+        return mark_safe(render_to_string('xadmin/widgets/datetime.html', context={
+            'date_input_html': input_html[0],
+            'time_input_html': input_html[1]
+        }))
 
     def format_output(self, rendered_widgets):
         return mark_safe(u'<div class="datetime clearfix">%s%s</div>' %
