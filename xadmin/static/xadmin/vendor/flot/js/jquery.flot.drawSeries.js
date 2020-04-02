@@ -42,7 +42,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     continue;
                 }
 
-                if(steps){
+                if (steps) {
                     if (mx !== null && my !== null) {
                         // if middle point exists, transfer p2 -> p1 and p1 -> mp
                         x2 = x1;
@@ -202,7 +202,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     continue;
                 }
 
-                if(steps){
+                if (steps) {
                     if (mx !== null && my !== null) {
                         // if middle point exists, transfer p2 -> p1 and p1 -> mp
                         x2 = x1;
@@ -482,8 +482,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     drawLeft = true;
                     drawRight = false;
                 }
-            }
-            else {
+            } else {
                 drawLeft = drawRight = drawTop = true;
                 drawBottom = false;
                 left = x + barLeft;
@@ -587,7 +586,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                 var points = datapoints.points,
                     ps = datapoints.pointsize,
                     fillTowards = series.bars.fillTowards || 0,
-                    calculatedBottom = fillTowards > axisy.min ? Math.min(axisy.max, fillTowards) : axisy.min;
+                    defaultBottom = fillTowards > axisy.min ? Math.min(axisy.max, fillTowards) : axisy.min;
 
                 for (var i = 0; i < points.length; i += ps) {
                     if (points[i] == null) {
@@ -595,7 +594,7 @@ This plugin is used by flot for drawing lines, plots, bars or area.
                     }
 
                     // Use third point as bottom if pointsize is 3
-                    var bottom = ps === 3 ? points[i + 2] : calculatedBottom;
+                    var bottom = ps === 3 ? points[i + 2] : defaultBottom;
                     drawBar(points[i], points[i + 1], bottom, barLeft, barRight, fillStyleCallback, axisx, axisy, ctx, series.bars.horizontal, series.bars.lineWidth);
                 }
             }

@@ -11,7 +11,7 @@
 
 /* global define, module, require */
 
-;(function(factory) {
+;(function (factory) {
   'use strict'
   if (typeof define === 'function' && define.amd) {
     // Register as an anonymous AMD module:
@@ -22,12 +22,12 @@
     // Browser globals:
     factory(window.loadImage)
   }
-})(function(loadImage) {
+})(function (loadImage) {
   'use strict'
 
   var originalTransform = loadImage.transform
 
-  loadImage.transform = function(img, options, callback, file, data) {
+  loadImage.transform = function (img, options, callback, file, data) {
     originalTransform.call(
       loadImage,
       loadImage.scale(img, options, data),
@@ -41,12 +41,12 @@
   // Transform image coordinates, allows to override e.g.
   // the canvas orientation based on the orientation option,
   // gets canvas, options passed as arguments:
-  loadImage.transformCoordinates = function() {}
+  loadImage.transformCoordinates = function () {}
 
   // Returns transformed options, allows to override e.g.
   // maxWidth, maxHeight and crop options based on the aspectRatio.
   // gets img, options passed as arguments:
-  loadImage.getTransformedOptions = function(img, options) {
+  loadImage.getTransformedOptions = function (img, options) {
     var aspectRatio = options.aspectRatio
     var newOptions
     var i
@@ -75,7 +75,7 @@
   }
 
   // Canvas render method, allows to implement a different rendering algorithm:
-  loadImage.renderImageToCanvas = function(
+  loadImage.renderImageToCanvas = function (
     canvas,
     img,
     sourceX,
@@ -85,26 +85,31 @@
     destX,
     destY,
     destWidth,
-    destHeight
+    destHeight,
+    options
   ) {
-    canvas
-      .getContext('2d')
-      .drawImage(
-        img,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
-        destX,
-        destY,
-        destWidth,
-        destHeight
-      )
+    var ctx = canvas.getContext('2d')
+    if (options.imageSmoothingEnabled === false) {
+      ctx.imageSmoothingEnabled = false
+    } else if (options.imageSmoothingQuality) {
+      ctx.imageSmoothingQuality = options.imageSmoothingQuality
+    }
+    ctx.drawImage(
+      img,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      destX,
+      destY,
+      destWidth,
+      destHeight
+    )
     return canvas
   }
 
   // Determines if the target image should be a canvas element:
-  loadImage.hasCanvasOption = function(options) {
+  loadImage.hasCanvasOption = function (options) {
     return options.canvas || options.crop || !!options.aspectRatio
   }
 
@@ -113,7 +118,7 @@
   // Returns a canvas object if the browser supports canvas
   // and the hasCanvasOption method returns true or a canvas
   // object is passed as image, else the scaled image:
-  loadImage.scale = function(img, options, data) {
+  loadImage.scale = function (img, options, data) {
     // eslint-disable-next-line no-param-reassign
     options = options || {}
     var canvas = document.createElement('canvas')
@@ -246,7 +251,8 @@
             0,
             0,
             canvas.width,
-            canvas.height
+            canvas.height,
+            options
           )
           sourceX = 0
           sourceY = 0
@@ -266,7 +272,8 @@
             0,
             0,
             sourceWidth,
-            sourceHeight
+            sourceHeight,
+            options
           )
         }
       }
@@ -283,7 +290,8 @@
         0,
         0,
         destWidth,
-        destHeight
+        destHeight,
+        options
       )
     }
     img.width = destWidth
