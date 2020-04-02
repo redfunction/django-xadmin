@@ -24,11 +24,9 @@
   }
 
   $(function(){
-    var top_nav = $('#top-nav');
-    $('#body-content').css('margin-top', (top_nav.outerHeight() + 5) + 'px');
-
     if($("#g-theme-menu")){
       $('#g-theme-menu a').click(function(){
+        var top_nav = $('#top-nav');
         var $el = $(this);
         var themeHref = $el.data('css-href');
         
