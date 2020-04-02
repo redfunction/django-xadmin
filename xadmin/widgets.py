@@ -130,10 +130,7 @@ class AdminCheckboxSelect(forms.CheckboxSelectMultiple):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs
-        if DJANGO_11:
-            final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
-        else:
-            final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
         output = []
         # Normalize to strings
         str_values = set([force_text(v) for v in value])
@@ -169,7 +166,10 @@ class AdminSelectMultiple(forms.SelectMultiple):
 
 
 class AdminFileWidget(forms.ClearableFileInput):
-    """For compatibility"""
+    template_with_initial = (u'<p class="file-upload">%s</p>'
+                             % forms.ClearableFileInput.initial_text)
+    template_with_clear = (u'<span class="clearable-file-input">%s</span>'
+                           % forms.ClearableFileInput.clear_checkbox_label)
 
 
 class AdminTextareaWidget(forms.Textarea):

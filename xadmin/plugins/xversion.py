@@ -62,10 +62,10 @@ def _register_model(admin, model):
                 fk_name = getattr(inline, 'fk_name', None)
                 if not fk_name:
                     for field in inline_model._meta.fields:
-                        if isinstance(field, (models.ForeignKey, models.OneToOneField)) and issubclass(model, field.rel.to):
+                        if isinstance(field, (models.ForeignKey, models.OneToOneField)) and issubclass(model, field.remote_field.model):
                             fk_name = field.name
                 _autoregister(admin, inline_model, follow=[fk_name])
-                if not inline_model._meta.get_field(fk_name).rel.is_hidden():
+                if not inline_model._meta.get_field(fk_name).remote_field.is_hidden():
                     accessor = inline_model._meta.get_field(fk_name).remote_field.get_accessor_name()
                     inline_fields.append(accessor)
         _autoregister(admin, model, inline_fields)
@@ -79,11 +79,13 @@ def register_models(admin_site=None):
         if getattr(admin, 'reversion_enable', False):
             _register_model(admin, model)
 
+
 @contextmanager
 def do_create_revision(request):
     with create_revision():
         set_user(request.user)
         yield
+
 
 class ReversionPlugin(BaseAdminPlugin):
 
@@ -149,6 +151,8 @@ class ReversionPlugin(BaseAdminPlugin):
             }))
 
 # action revision
+
+
 class ActionRevisionPlugin(BaseAdminPlugin):
 
     reversion_enable = False
@@ -209,7 +213,7 @@ class RecoverListView(BaseReversionView):
 
         return TemplateResponse(
             request, self.recover_list_template or self.get_template_list(
-                "views/recover_list.html"), 
+                "views/recover_list.html"),
             context)
 
 
@@ -386,7 +390,7 @@ class DiffField(Field):
         html = ''
         for field in self.fields:
             html += ('<div class="diff_field" rel="tooltip"><textarea class="org-data" style="display:none;">%s</textarea>%s</div>' %
-                    (_('Current: %s') % self.attrs.pop('orgdata', ''), render_field(field, form, form_style, context, template_pack=template_pack, attrs=self.attrs)))
+                     (_('Current: %s') % self.attrs.pop('orgdata', ''), render_field(field, form, form_style, context, template_pack=template_pack, attrs=self.attrs)))
         return html
 
 
@@ -407,7 +411,7 @@ class RevisionView(BaseRevisionView):
         helper = super(RevisionView, self).get_form_helper()
         diff_fields = {}
         version_data = self.version.field_dict
-        
+
         for f in self.opts.fields:
             fvalue = f.value_from_object(self.org_obj)
             vvalue = version_data.get(f.name, None)
@@ -589,6 +593,7 @@ class VersionInline(object):
     model = Version
     extra = 0
     style = 'accordion'
+
 
 class ReversionAdmin(object):
     model_icon = 'fa fa-exchange'

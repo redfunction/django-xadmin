@@ -307,7 +307,7 @@ class AdminSite(object):
         return self.get_view_class(admin_view_class, option_class).as_view()
 
     def get_urls(self):
-        from django.conf.urls import url, include
+        from django.urls import include, path, re_path
         from xadmin.views.base import BaseAdminView
 
         if settings.DEBUG:
@@ -316,39 +316,40 @@ class AdminSite(object):
         def wrap(view, cacheable=False):
             def wrapper(*args, **kwargs):
                 return self.admin_view(view, cacheable)(*args, **kwargs)
+            wrapper.admin_site = self
             return update_wrapper(wrapper, view)
 
         # Admin-site-wide views.
         urlpatterns = [
-            url(r'^jsi18n/$', wrap(self.i18n_javascript, cacheable=True), name='jsi18n')
+            path('jsi18n/', wrap(self.i18n_javascript, cacheable=True), name='jsi18n')
         ]
 
         # Registed admin views
         # inspect[isclass]: Only checks if the object is a class. With it lets you create an custom view that
         # inherits from multiple views and have more of a metaclass.
         urlpatterns += [
-            url(
-                path,
+            re_path(
+                _path,
                 wrap(self.create_admin_view(clz_or_func))
                 if inspect.isclass(clz_or_func) and issubclass(clz_or_func, BaseAdminView)
                 else include(clz_or_func(self)),
                 name=name
             )
-            for path, clz_or_func, name in self._registry_views
+            for _path, clz_or_func, name in self._registry_views
         ]
 
         # Add in each model's views.
         for model, admin_class in six.iteritems(self._registry):
             view_urls = [
-                url(
-                    path,
+                re_path(
+                    _path,
                     wrap(self.create_model_admin_view(clz, model, admin_class)),
                     name=name % (model._meta.app_label, model._meta.model_name)
                 )
-                for path, clz, name in self._registry_modelviews
+                for _path, clz, name in self._registry_modelviews
             ]
             urlpatterns += [
-                url(r'^%s/%s/' % (model._meta.app_label, model._meta.model_name), include(view_urls))
+                re_path(r'^%s/%s/' % (model._meta.app_label, model._meta.model_name), include(view_urls))
             ]
         return urlpatterns
 
@@ -363,18 +364,17 @@ class AdminSite(object):
         This takes into account the USE_I18N setting. If it's set to False, the
         generated JavaScript will be leaner and faster.
         """
-        if settings.USE_I18N:
-            from django.views.i18n import javascript_catalog
-        else:
-            from django.views.i18n import null_javascript_catalog as javascript_catalog
+        from django.views.i18n import JavaScriptCatalog
         # Gives plugins the ability to add your translation scripts.
         packages = getattr(settings, 'XADMIN_I18N_JAVASCRIPT_PACKAGES', [])
         try:
-            packages.extend(['django.conf', 'xadmin'])
+            packages.extend(['django.contrib.admin',
+                             'xadmin'])
         except AttributeError:
             raise ImproperlyConfigured('Expected list type as attribute '
                                        'in "XADMIN_I18N_JAVASCRIPT_PACKAGES"')
-        return javascript_catalog(request, packages=packages)
+        return JavaScriptCatalog.as_view(packages=packages)(request)
+
 
 # This global object represents the default admin site, for the common case.
 # You can instantiate AdminSite in your own code to create a custom admin site.

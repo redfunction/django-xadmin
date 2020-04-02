@@ -1,7 +1,7 @@
 # coding=UTF-8
 from itertools import chain
 
-from django.core.urlresolvers import reverse
+from django.urls.base import reverse
 from django.db.models.options import PROXY_PARENTS
 from django.template.loader import render_to_string
 from django.utils import six
@@ -47,7 +47,6 @@ class RelateMenuPlugin(BaseAdminPlugin):
                          if include_hidden or not f.remote_field.field.remote_field.is_hidden())
             fields = chain(fields, relations)
         return list(fields)
-
 
     def get_related_list(self):
         if hasattr(self, '_related_acts'):

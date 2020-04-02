@@ -1,5 +1,7 @@
 from collections import OrderedDict
-from django import forms
+
+from django import forms, VERSION as django_version
+from django.contrib.admin.utils import get_deleted_objects
 from django.core.exceptions import PermissionDenied
 from django.db import router
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,10 +10,8 @@ from django.template.response import TemplateResponse
 from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _, ungettext
 from django.utils.text import capfirst
-
-from django.contrib.admin.utils import get_deleted_objects
+from django.utils.translation import ugettext as _, ungettext
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
@@ -19,18 +19,20 @@ from xadmin.util import model_format_dict, model_ngettext
 from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.views.base import filter_hook, ModelAdminView
 
-
 ACTION_CHECKBOX_NAME = '_selected_action'
 checkbox = forms.CheckboxInput({'class': 'action-select'}, lambda value: False)
 
 
 def action_checkbox(obj):
     return checkbox.render(ACTION_CHECKBOX_NAME, force_text(obj.pk))
+
+
 action_checkbox.short_description = mark_safe(
     '<input type="checkbox" id="action-toggle" />')
 action_checkbox.allow_tags = True
 action_checkbox.allow_export = False
 action_checkbox.is_column = False
+
 
 class BaseActionView(ModelAdminView):
     action_name = None
@@ -51,6 +53,13 @@ class BaseActionView(ModelAdminView):
     def do_action(self, queryset):
         pass
 
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        if django_version > (2, 0):
+            for model in self.admin_site._registry:
+                if not hasattr(self.admin_site._registry[model], 'has_delete_permission'):
+                    setattr(self.admin_site._registry[model], 'has_delete_permission', self.has_delete_permission)
+
 
 class DeleteSelectedAction(BaseActionView):
 
@@ -70,7 +79,7 @@ class DeleteSelectedAction(BaseActionView):
         n = queryset.count()
         if n:
             if self.delete_models_batch:
-                self.log('delete', _('Batch delete %(count)d %(items)s.') % { "count": n, "items": model_ngettext(self.opts, n) })
+                self.log('delete', _('Batch delete %(count)d %(items)s.') % {"count": n, "items": model_ngettext(self.opts, n)})
                 queryset.delete()
             else:
                 for obj in queryset:
@@ -86,12 +95,17 @@ class DeleteSelectedAction(BaseActionView):
         if not self.has_delete_permission():
             raise PermissionDenied
 
-        using = router.db_for_write(self.model)
-
         # Populate deletable_objects, a data structure of all related objects that
         # will also be deleted.
-        deletable_objects, model_count, perms_needed, protected = get_deleted_objects(
-            queryset, self.opts, self.user, self.admin_site, using)
+
+        if django_version > (2, 1):
+            deletable_objects, model_count, perms_needed, protected = get_deleted_objects(
+                queryset, self.opts, self.admin_site)
+        else:
+            using = router.db_for_write(self.model)
+            deletable_objects, model_count, perms_needed, protected = get_deleted_objects(
+                queryset, self.opts, self.user, self.admin_site, using)
+
 
         # The user has already confirmed the deletion.
         # Do the deletion and return a None to display the change list view again.

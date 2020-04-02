@@ -1,44 +1,35 @@
-from django.apps import apps
 
 PLUGINS = (
-    'actions', 
-    'filters', 
-    'bookmark', 
-    'export', 
-    'layout', 
+    'actions',
+    'filters',
+    'bookmark',
+    'export',
+    'layout',
     'refresh',
     'details',
-    'editable', 
-    'relate', 
-    'chart', 
-    'ajax', 
-    'relfield', 
-    'inline', 
-    'topnav', 
-    'portal', 
+    'editable',
+    'relate',
+    'chart',
+    'ajax',
+    'relfield',
+    'inline',
+    'topnav',
+    'portal',
     'quickform',
-    'wizard', 
-    'images', 
-    'auth', 
-    'multiselect', 
-    'themes', 
-    'aggregation', 
-    'mobile', 
+    'wizard',
+    'images',
+    'auth',
+    'multiselect',
+    'themes',
+    'aggregation',
+    # 'mobile',
     'passwords',
-    'sitemenu', 
-    'language', 
+    'sitemenu',
+    'language',
     'quickfilter',
-    'sortablelist'
+    'sortablelist',
+    'importexport'
 )
-
-try:
-    # Fix: LogEntry doesn't declare an explicit app_label...
-    apps.get_app_config("admin")
-    # This plugin depends on django.contrib.admin installed but it does
-    # not always make sense to have two admin interfaces installed.
-    PLUGINS += ('importexport',)
-except LookupError:
-    pass
 
 
 def register_builtin_plugins(site):

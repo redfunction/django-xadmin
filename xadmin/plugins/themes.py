@@ -58,7 +58,7 @@ class ThemePlugin(BaseAdminPlugin):
         themes = [
             {'name': _(u"Default"), 'description': _(u"Default bootstrap theme"), 'css': self.default_theme},
             {'name': _(u"Bootstrap4"), 'description': _(u"Bootstrap 4.x theme"), 'css': self.bootstrap4_theme},
-            ]
+        ]
         select_css = context.get('site_theme', self.default_theme)
 
         if self.user_themes:
@@ -75,9 +75,11 @@ class ThemePlugin(BaseAdminPlugin):
                     content = requests.get("https://bootswatch.com/api/4.json", headers=headers)
                     if six.PY3:
                         content = content.text.decode()
-                    watch_themes = json.loads(content.text)['themes']
-                    ex_themes.extend([{'name': t['name'], 'description': t['description'], 'css': t['cssMin'],
-                                       'thumbnail': t['thumbnail']} for t in watch_themes])
+                    watch_themes = json.loads(content)['themes']
+                    ex_themes.extend([
+                        {'name': t['name'], 'description': t['description'],
+                            'css': t['cssMin'], 'thumbnail': t['thumbnail']}
+                        for t in watch_themes])
                 except Exception as e:
                     print(e)
 
