@@ -19,7 +19,7 @@
               </a>
             </div>
             <input name="{%if ne_val %}{{ne_name}}{% else %}{{equal_name}}{%endif%}" class="form-control" type="number" value="{%if ne_val %}{{ne_val}}{% else %}{{equal_val}}{%endif%}" placeholder="{% trans "Enter Number" %}"/>
-            <a class="btn btn-danger remove">x</a>
+            <a class="btn btn-outline-danger remove">x</a>
           </div>
           <div class="input-group">
             <div class="input-group-prepend">
@@ -29,7 +29,7 @@
                 </a>
             </div>
             <input name="{%if gte_val %}{{gte_name}}{% else %}{{gt_name}}{%endif%}" class="form-control" type="number" value="{%if gte_val %}{{gte_val}}{% else %}{{gt_val}}{%endif%}" placeholder="{% trans "Enter Number" %}"/>
-            <a class="btn btn-danger remove">x</a>
+            <a class="btn btn-outline-danger remove">x</a>
           </div>
           <div class="input-group">
             <div class="input-group-prepend">
@@ -39,12 +39,12 @@
               </a>
             </div>
             <input name="{%if lte_val %}{{lte_name}}{% else %}{{lt_name}}{%endif%}" class="form-control" type="number" value="{%if lte_val %}{{lte_val}}{% else %}{{lt_val}}{%endif%}" placeholder="{% trans "Enter Number" %}"/>
-            <a class="btn btn-danger remove">x</a>
+            <a class="btn btn-outline-danger remove">x</a>
           </div>
         </div>
-          <button type="submit" class="btn btn-success">{% trans "Apply" %}</button>
+          <button type="submit" class="btn btn-success btn-sm">{% trans "Apply" %}</button>
         {% if spec.used_params %}
-          <a class="btn btn-danger" href="{{remove_url}}">{% trans "Clean" %}</a>
+          <a class="btn btn-danger btn-sm" href="{{remove_url}}">{% trans "Clean" %}</a>
         {% endif %}
       </form>
     </div>

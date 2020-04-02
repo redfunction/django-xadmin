@@ -24,9 +24,9 @@
           {% endif %}
           </select>
 
-          <button type="submit" class="btn btn-success">{% trans "Apply" %}</button>
+          <button type="submit" class="btn btn-success btn-sm">{% trans "Apply" %}</button>
         {% if spec.used_params %}
-          <a class="btn btn-default" href="{{remove_url}}">{% trans "Clean" %}</a>
+          <a class="btn btn-danger btn-sm" href="{{remove_url}}">{% trans "Clean" %}</a>
         {% endif %}
       </form>
     </div>

@@ -12,37 +12,55 @@
     {% endfor %}
     <div class="dropdown-submenu menu-choice-date{% if choice_selected %} active{% endif %}">
       <a class="dropdown-item">{% trans "Choice Date" %}</a>
-      <div class="popover right p-2">
+      <div class="popover right">
         <div class="arrow"></div>
-        <h6 class="popover-title">{% trans "Choice Date" %}</h6>
+        <div class="row justify-content-center hide-xs">
+          <h6 class="popover-title">{% trans "Choice Date" %}</h6>
+        </div>
         <div class="popover-content">
           <form method="get" action="">
-            <div class="form-row">
-              <div class="col">
+            <div class="form-row justify-content-center">
+              <div class="col-auto">
                 {{ form_params|safe }}
-                <div class="input-group row">
-                  <div class="input-group-append">
-                  <span class="input-group-text">{% trans "YY" %}</span>
-                  </div>
-                 <input name="{{year_name}}" class="choice-year form-control  float-left" type="text" placeholder="{% trans "year" %}" size="4" value="{{year_val}}">
-                </div>
 
-                <div class="input-group row">
-                 <div class="input-group-append">
-                  <span class="input-group-text">{% trans "MM" %}</span>
-                 </div>
-                 <input name="{{month_name}}" class="choice-month form-control" type="text" placeholder="{% trans "month" %}" size="2" value="{{month_val}}">
-                </div>
-
+              <div class="row">
+              <div class="col">
+                <label class="sr-only" for="id_{{ year_name }}">{% trans "year" %}</label>
                 <div class="input-group">
                   <div class="input-group-append">
-                   <span class="input-group-text">{% trans "DD" %}</span>
+                  <span class="input-group-text text-monospace">{% trans "YY" %}</span>
                   </div>
-                  <input name="{{day_name}}" class="choice-day form-control" type="text" placeholder="{% trans "day" %}" size="2" value="{{day_val}}">
+                 <input type="text" name="{{year_name}}" id="id_{{ year_name }}" class="choice-year form-control" placeholder="{% trans "year" %}" size="4" value="{{year_val}}">
+                </div>
+              </div>
+              </div>
+
+              <div class="row">
+              <div class="col">
+                <label class="sr-only" for="id_{{ month_name }}">{% trans "month" %}</label>
+                <div class="input-group">
+                 <div class="input-group-append">
+                  <span class="input-group-text text-monospace">{% trans "MM" %}</span>
                  </div>
+                 <input type="text" name="{{month_name}}" id="id_{{ month_name }}" class="choice-month form-control" placeholder="{% trans "month" %}" size="2" value="{{month_val}}">
+                </div>
+              </div>
+              </div>
+
+              <div class="row">
+               <div class="col">
+                <label class="sr-only" for="id_{{ day_name }}">{% trans "day" %}</label>
+                <div class="input-group">
+                  <div class="input-group-append">
+                   <span class="input-group-text text-monospace">{% trans "DD" %}</span>
+                  </div>
+                  <input type="text" name="{{day_name}}" id="id_{{ month_name }}" class="choice-day form-control" placeholder="{% trans "day" %}" size="2" value="{{day_val}}">
+                 </div>
+                </div>
+               </div>
 
                 <div class="row justify-content-center">
-                <button class="btn btn-success btn-block mt-3" type="submit">{% trans "Apply" %}</button>
+                 <button class="btn btn-success btn-sm mt-1 pl-5 pr-5" type="submit">{% trans "Apply" %}</button>
                 </div>
               </div>
             </div>
@@ -84,7 +102,7 @@
                  </div>
               </div>
               <div class="row justify-content-center">
-                <button type="submit" class="btn btn-success  pl-5 pr-5">{% trans "Apply" %}</button>
+                <button type="submit" class="btn btn-success btn-sm pl-5 pr-5">{% trans "Apply" %}</button>
                </div>
              </div>
             </div>
