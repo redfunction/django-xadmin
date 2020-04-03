@@ -1,3 +1,5 @@
+import uuid
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
@@ -15,6 +17,7 @@ class Fieldset(layout.Fieldset):
     def __init__(self, legend, *fields, **kwargs):
         self.description = kwargs.pop('description', None)
         self.collapsed = kwargs.pop('collapsed', None)
+        kwargs.setdefault('css_id', str(uuid.uuid1()))
         super(Fieldset, self).__init__(legend, *fields, **kwargs)
 
 
