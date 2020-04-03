@@ -14,14 +14,18 @@
 
 {% block nav_toggles %}
 {% include "xadmin/includes/toggle_menu.html" %}
+{% endblock %}
+
+{% block nav_brand %}
+{{block.super}}
+<button class="navbar-toggler" data-toggle="collapse" data-target=".content-navbar .navbar-collapse">
+  <span class="fa fa-filter"></span>
+</button>
 {% if has_add_permission %}
-  <a href="{{add_url}}" class="navbar-toggler float-right">
+  <a href="{{add_url}}" class="navbar-toggler">
       <span class="fa fa-plus"></span>
   </a>
 {% endif %}
-<button class="navbar-toggler float-right" data-toggle="collapse" data-target=".content-navbar .navbar-collapse">
-  <span class="fa fa-filter"></span>
-</button>
 {% endblock %}
 
 {% block nav_btns %}

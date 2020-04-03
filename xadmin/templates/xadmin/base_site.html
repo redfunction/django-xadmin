@@ -12,7 +12,7 @@
 {% block body %}
   <!-- Header -->
   {% block top-nav %}
-  <div id="top-nav" class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+  <nav id="top-nav" class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
     <a class="navbar-brand" href="#">{% block branding %}{{ site_title }}{% endblock %}</a>
       <div class="navbar-collapse collapse" >
       <ul class="navbar-nav mr-auto">
@@ -36,7 +36,7 @@
       </ul>
       {% view_block 'top_navbar' %}
     </div>
-  </div>
+  </nav>
   {% endblock %}
   <div id="body-content" class="clearfix row">
     <div id="left-side" class="col-sm-5 col-md-2">
@@ -69,32 +69,32 @@
       {% endblock %}
 
     {% block content-nav %}
-       <div class="navbar content-navbar navbar-expand-sm navbar-light bg-light" data-toggle="breakpoint"
-        data-class-xs="navbar content-navbar navbar-expand-md navbar-dark bg-dark fixed-top"
-        data-class-sm="navbar content-navbar navbar-expand-sm navbar-light bg-light">
-            {% block nav_toggles %}
-                {% include "xadmin/includes/toggle_back.html" %}
-            {% endblock %}
-           <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
-                {% block nav_title %}{% endblock %}
+       <nav class="navbar content-navbar navbar-expand-md navbar-light bg-light" data-toggle="breakpoint"
+        data-class-xs="navbar content-navbar navbar-expand-xs navbar-dark bg-dark fixed-top"
+        data-class-sm="navbar content-navbar navbar-expand-sm navbar-light bg-light"
+        data-class-md="navbar content-navbar navbar-expand-md navbar-light bg-light">
+           {% block nav_toggles %}
+             {% include "xadmin/includes/toggle_back.html" %}
+           {% endblock %}
+           {% block nav_brand %}
+            <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
+             {% block nav_title %}{% endblock %}
             </a>
+           {% endblock %}
            {% view_block 'nav_toggles' %}
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav mr-auto">
                     {% view_block 'nav_menu' %}
                 </ul>
-
-                <div class="navbar-form mr-auto">
                 {% view_block 'nav_form' %}
                 {% block nav_form %}{% endblock %}
-                </div>
 
-                <div class="navbar-btn float-right d-none d-md-block">
+                <div class="navbar-btn d-none d-md-block ml-1">
                     {% view_block 'nav_btns' %}
                     {% block nav_btns %}{% endblock %}
                 </div>
             </div>
-        </div>
+        </nav>
 
     {% endblock %}
 
