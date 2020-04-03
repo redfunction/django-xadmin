@@ -16,10 +16,10 @@
 }
 
 /** panel **/
-.panel-default {
+.card {
   border-radius: 2px;
 }
-.panel-default > .panel-heading {
+.card > .card-header {
   background-color: #F8F8F8;
   background-image: -moz-linear-gradient(top, #FDFDFD, #F6F6F6);
   background-image: -ms-linear-gradient(top, #FDFDFD, #F6F6F6);
