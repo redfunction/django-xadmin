@@ -1,12 +1,12 @@
 jQuery(function() {
-    $( ".column" ).sortable({
-        connectWith: ".column",
-        handle: '.card',
+    $(sortable(".column", {
+        acceptFrom: ".column",
+        handle: '.card-header',
+        hoverClass: "cursor-move",
+        items: ":not(.unsort)",
         forcePlaceholderSize: true,
-        cursor: "move",
-        cancel: ".unsort, .tab-content",
-        helper: 'clone',
-        stop: function( event, ui ) {
+    })).each(function () {
+        this.addEventListener('sortupdate',function( e ) {
             var pos = [];
             $('.column').each(function(){
                 var col = [];
@@ -20,7 +20,7 @@ jQuery(function() {
             $.save_user_settings(key, pos_val, function(){
                 //alert('success');
             });
-        }
+        });
     });
     var callback = function() {
         $( this ).find('.icon.chevron').toggleClass( "fa fa-chevron-up" ).toggleClass( "fa fa-chevron-down" );
