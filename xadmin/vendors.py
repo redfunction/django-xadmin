@@ -52,14 +52,10 @@ vendors = {
     'jquery-ui-sortable': {
         "js": {
             'dev': [
-                'xadmin/vendor/jquery-ui/ui/widget.js',
-                'xadmin/vendor/jquery-ui/ui/widgets/mouse.js',
-                'xadmin/vendor/jquery-ui/ui/widgets/sortable.js'
+                'xadmin/vendor/html5sortable/html5sortable.js',
             ],
             'production': [
-                'xadmin/vendor/jquery-ui/ui/minified/widget.js',
-                'xadmin/vendor/jquery-ui/ui/minified/mouse.js',
-                'xadmin/vendor/jquery-ui/ui/widgets/sortable.js'
+                'xadmin/vendor/html5sortable/html5sortable.min.js'
             ]
         }
     },
