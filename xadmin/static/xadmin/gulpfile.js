@@ -14,7 +14,8 @@ function genericTask() {
         "!bower_components/select2/**",
         "!bower_components/popper.js/**",
         "!bower_components/nunjucks/**",
-        "!bower_components/font-awesome/**",
+        "!bower_components/nunjucks/**",
+        "!bower_components/html5sortable/**",
         "!bower_components/flot/**",
         "!bower_components/datejs/**",
         "!bower_components/bootstrap-datepicker/js/**",
@@ -88,10 +89,19 @@ function jqueryUITask() {
         "bower_components/jquery-ui/**/effect.js",
         "bower_components/jquery-ui/**/widget.js",
         "bower_components/jquery-ui/**/**/mouse.js",
-        "bower_components/jquery-ui/**/**/sortable.js",
+        //"bower_components/jquery-ui/**/**/sortable.js",
     ];
     return gulp.src(srcs)
         .pipe(gulp.dest('vendor/jquery-ui'));
+}
+
+function html5SortableTask() {
+    var srcs = [
+        "bower_components/html5sortable/dist/html5sortable.js",
+        "bower_components/html5sortable/dist/html5sortable.min.js"
+    ];
+    return gulp.src(srcs)
+        .pipe(gulp.dest('vendor/html5sortable'));
 }
 
 function fontAwesomeTask() {
@@ -130,5 +140,6 @@ exports.default = gulp.series(
     select2Task,
     datejsTask,
     jqueryUITask,
+    html5SortableTask,
     bootstrapTask
 );

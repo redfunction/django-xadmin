@@ -18,7 +18,8 @@
     "bootstrap-multiselect": ">=0.9.13",
     "clockpicker": ">=0.0.7",
     "nunjucks": ">=3.1.2",
-    "popper.js": ">=1.15.0"
+    "popper.js": ">=1.15.0",
+    "html5sortable": "lukasoppermann/html5sortable"
   },
   "homepage": "https://github.com/alexsilva/django-xadmin",
   "description": "Drop-in replacement of Django admin comes with lots of goodies, fully extensible with plugin support, pretty UI based on Twitter Bootstrap.",
