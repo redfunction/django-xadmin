@@ -1,11 +1,16 @@
+/*jquery sortable compatible plugin */
+jQuery.fn.sortable = function (options) {
+    return $(sortable(this, options));
+};
+
 jQuery(function() {
-    $(sortable(".column", {
+    $(".column").sortable({
         acceptFrom: ".column",
         handle: '.card-header',
         hoverClass: "cursor-move",
         items: ":not(.unsort)",
         forcePlaceholderSize: true,
-    })).each(function () {
+    }).each(function () {
         this.addEventListener('sortupdate',function( e ) {
             var pos = [];
             $('.column').each(function(){
