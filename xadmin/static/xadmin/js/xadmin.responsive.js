@@ -122,10 +122,12 @@
       lastMode = mode;
     }
   });
-  $('[data-toggle=breakpoint]').each(function(){
+  var $nav = $('[data-toggle=breakpoint]');
+  $nav.each(function(){
     $(this).data('class-org', $(this)[0].className);
   });
-  //$(document).scrollTop(0);
+  // the navbar when fixed to the top makes the browser lose its relative positioning.
+  $(document).scrollTop($(document).scrollTop() - $nav.outerHeight());
   $(window).trigger('resize');
   })
 
