@@ -218,6 +218,7 @@ class ModelFormAdminView(ModelAdminView):
 
         return layout
 
+    @filter_hook
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_tag = False
