@@ -2,11 +2,9 @@
 import cgi
 import urllib.parse
 
-import requests
-import six
+import httplib2
 from django.core.cache import cache
 from django.template import loader
-from django.utils import six
 from django.utils.translation import ugettext as _
 
 from xadmin.models import UserSettings
