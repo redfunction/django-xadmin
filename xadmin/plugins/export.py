@@ -1,31 +1,25 @@
+import copy
 import datetime
 import sys
-import copy
 import threading
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import BooleanField, NullBooleanField
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.utils import six
-if six.PY2:
-    # python 2.x need to work with unicode
-    from django.utils.encoding import \
-        smart_unicode as smart_text, \
-        force_unicode as force_text
-else:
-    from django.utils.encoding import force_text, smart_text
+from django.utils.encoding import force_text, smart_text
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.db.models import BooleanField, NullBooleanField
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
-from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.util import json
+from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.views.list import ALL_VAR
 
 try:
@@ -47,12 +41,12 @@ except:
 
 
 class ExportMenuPlugin(BaseAdminPlugin):
+    export_menu_block_template = 'xadmin/blocks/model_list.top_toolbar.exports.html'
 
     list_export = ('xlsx', 'xls', 'csv', 'xml', 'json')
     export_names = {'xlsx': 'Excel 2007', 'xls': 'Excel', 'csv': 'CSV',
                     'xml': 'XML', 'json': 'JSON'}
-
-    export_menu_block_template = 'xadmin/blocks/model_list.top_toolbar.exports.html'
+    export_to_email = True
 
     def init_request(self, *args, **kwargs):
         self.list_export = [
@@ -65,6 +59,7 @@ class ExportMenuPlugin(BaseAdminPlugin):
                 'show_export_all': self.admin_view.paginator.count > self.admin_view.list_per_page and not ALL_VAR in self.admin_view.request.GET,
                 'form_params': self.admin_view.get_form_params({'_do_': 'export'}, ('export_type',)),
                 'export_types': [{'type': et, 'name': self.export_names[et]} for et in self.list_export],
+                'export_to_email': self.export_to_email
             })
             nodes.append(loader.render_to_string(self.export_menu_block_template,
                                                  context=get_context_dict(context)))
@@ -186,8 +181,7 @@ class ExportPlugin(BaseAdminPlugin):
         if isinstance(t, bool):
             return _('Yes') if t else _('No')
         t = t.replace('"', '""').replace(',', '\,')
-        cls_str = str if six.PY3 else basestring
-        if isinstance(t, cls_str):
+        if isinstance(t, str):
             t = '"%s"' % t
         return t
 

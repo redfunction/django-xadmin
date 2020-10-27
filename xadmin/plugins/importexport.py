@@ -60,10 +60,7 @@ from import_export.forms import (
 )
 from import_export.results import RowResult
 from import_export.signals import post_export, post_import
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.template.response import TemplateResponse
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
@@ -366,7 +363,8 @@ class ExportMixin(object):
 
     def get_export_filename(self, file_format):
         date_str = datetime.now().strftime('%Y-%m-%d-%H%M%S')
-        filename = "%s-%s.%s" % (self.opts.verbose_name.encode('utf-8'),
+        filename = "%s-%s.%s" % (force_text(self.opts.verbose_name,
+                                            encoding='utf-8'),
                                  date_str,
                                  file_format.get_extension())
         return filename
@@ -444,12 +442,15 @@ class ExportMenuPlugin(ExportMixin, BaseAdminPlugin):
         form = ExportForm(formats)
         self._form_bootstrap_styles(form)
         context = get_context_dict(context or {})  # no error!
+        context.setdefault('export_to_email', bool(self.import_export_args.get('export_to_email', True)))
         context.update({
             'form': form,
             'opts': self.opts,
-            'form_params': self.admin_view.get_form_params({'_action_': 'export'}),
+            'form_params': self.admin_view.get_form_params({'_action_': 'export'})
         })
-        nodes.append(loader.render_to_string('xadmin/blocks/model_list.top_toolbar.importexport.export.html',
+        template_name = self.import_export_args.get('template',
+                                                    'xadmin/blocks/model_list.top_toolbar.importexport.export.html')
+        nodes.append(loader.render_to_string(template_name,
                                              context=context))
 
 

@@ -50,8 +50,8 @@ class QuickFilterPlugin(BaseAdminPlugin):
 
         # Last term in lookup is a query term (__exact, __startswith etc)
         # This term can be ignored.
-        if len(parts) > 1 and parts[-1] in QUERY_TERMS:
-            parts.pop()
+        # if len(parts) > 1 and parts[-1] in QUERY_TERMS:
+        #    parts.pop()
 
         # Special case -- foo__id__exact and foo__id queries are implied
         # if foo has been specificially included in the lookup list; so
@@ -139,7 +139,10 @@ class QuickFilterPlugin(BaseAdminPlugin):
                 use_distinct = True  # (use_distinct orlookup_needs_distinct(self.opts, field_path))
                 if spec and spec.has_output():
                     try:
-                        new_qs = spec.do_filte(queryset)
+                        if hasattr(spec, 'do_filte'):
+                            new_qs = spec.do_filte(queryset)
+                        else:
+                            new_qs = spec.do_filter(queryset)
                     except ValidationError as e:
                         new_qs = None
                         self.admin_view.message_user(_("<b>Filtering error:</b> %s") % e.messages[0], 'error')
@@ -150,9 +153,7 @@ class QuickFilterPlugin(BaseAdminPlugin):
 
         self.has_filters = bool(self.filter_specs)
         self.admin_view.quickfilter['filter_specs'] = self.filter_specs
-        obj = filter(lambda f: f.is_used, self.filter_specs)
-        if six.PY3:
-            obj = list(obj)
+        obj = [fspec for fspec in self.filter_specs if fspec.is_used]
         self.admin_view.quickfilter['used_filter_num'] = len(obj)
 
         if use_distinct:
@@ -163,5 +164,6 @@ class QuickFilterPlugin(BaseAdminPlugin):
     def block_left_navbar(self, context, nodes):
         nodes.append(loader.render_to_string('xadmin/blocks/modal_list.left_navbar.quickfilter.html',
                                              get_context_dict(context)))
+
 
 site.register_plugin(QuickFilterPlugin, ListAdminView)

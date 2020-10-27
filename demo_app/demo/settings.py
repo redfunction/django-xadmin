@@ -26,7 +26,7 @@ DEBUG = True
 LANGUAGES = (
     ('en', _('English')),
     ('zh-hans', _('Chinese')),
-    ('pt-BR', _('Portuguese'))
+    ('pt-br', _('Portuguese')),
 )
 
 ROOT_URLCONF = 'demo.urls'
@@ -53,6 +53,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+# extra optional plugin
+# XADMIN_INCLUDE_PLUGINS = ('comments',)
 
 # Application definition
 
@@ -63,7 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    # 'django.contrib.sites',
+    # 'django_comments',
     'xadmin',
     'crispy_forms',
     'reversion',

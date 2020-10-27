@@ -28,7 +28,7 @@ class AdminDateWidget(forms.DateInput):
         return vendor('datepicker.js', 'datepicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'date-field form-control', 'size': '10'}
+        final_attrs = {'class': 'date-field form-control', 'size': '10', 'autocomplete': 'off'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminDateWidget, self).__init__(attrs=final_attrs, format=format)
@@ -45,7 +45,7 @@ class AdminTimeWidget(forms.TimeInput):
         return vendor('datepicker.js', 'clockpicker.js', 'clockpicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'time-field form-control', 'size': '8'}
+        final_attrs = {'class': 'time-field form-control', 'size': '8',  'autocomplete': 'off'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminTimeWidget, self).__init__(attrs=final_attrs, format=format)
@@ -71,7 +71,10 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
         widgets = [AdminDateWidget, AdminTimeWidget]
         # Note that we're calling MultiWidget, not SplitDateTimeWidget, because
         # we want to define widgets.
-        forms.MultiWidget.__init__(self, widgets, attrs)
+        final_attrs = {'autocomplete': 'off'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        forms.MultiWidget.__init__(self, widgets, attrs=final_attrs)
 
     def render(self, name, value, attrs=None, **kwargs):
         input_html = super(AdminSplitDateTime, self).render(name, value, attrs)
@@ -114,7 +117,7 @@ class AdminRadioFieldRenderer(forms.RadioSelect):
         choice = self.choices[idx]  # Let the IndexError propogate
         return AdminRadioInput(self.name, self.value, self.attrs.copy(), choice, idx)
 
-    def render(self):
+    def render(self, *args, **kwargs):
         return mark_safe(u'\n'.join([force_text(w) for w in self]))
 
 
@@ -124,7 +127,7 @@ class AdminRadioSelect(forms.RadioSelect):
 
 class AdminCheckboxSelect(forms.CheckboxSelectMultiple):
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), **kwargs):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs

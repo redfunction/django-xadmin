@@ -119,8 +119,8 @@ class ModelFormAdminView(ModelAdminView):
             if attrs:
                 return attrs
 
-        if hasattr(db_field, "rel") and db_field.rel:
-            related_modeladmin = self.admin_site._registry.get(db_field.rel.to)
+        if hasattr(db_field, "remote_field") and db_field.remote_field:
+            related_modeladmin = self.admin_site._registry.get(db_field.remote_field.model)
             if related_modeladmin and hasattr(related_modeladmin, 'relfield_style'):
                 attrs = self.get_field_style(
                     db_field, related_modeladmin.relfield_style, **kwargs)
@@ -187,10 +187,7 @@ class ModelFormAdminView(ModelAdminView):
     @filter_hook
     def get_form_layout(self):
         layout = copy.deepcopy(self.form_layout)
-        arr = self.form_obj.fields.keys()
-        if six.PY3:
-            arr = [k for k in arr]
-        fields = arr + list(self.get_readonly_fields())
+        fields = list(self.form_obj.fields.keys()) + list(self.get_readonly_fields())
 
         if layout is None:
             layout = Layout(Container(Col('full',
@@ -291,13 +288,12 @@ class ModelFormAdminView(ModelAdminView):
             self.save_models()
             self.save_related()
             response = self.post_response()
-            cls_str = str if six.PY3 else basestring
-            if isinstance(response, cls_str):
+            if isinstance(response, str):
                 return HttpResponseRedirect(response)
             else:
                 return response
-
-        return self.get_response()
+        else:
+            return self.get_response()
 
     @filter_hook
     def get_context(self):

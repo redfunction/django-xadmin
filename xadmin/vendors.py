@@ -99,6 +99,7 @@ vendors = {
         },
         "js": {
             'dev': 'xadmin/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
+            'production': 'xadmin/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js',
         }
     },
     "flot": {
@@ -123,8 +124,10 @@ vendors = {
             'production': 'xadmin/vendor/bootstrap-image-gallery/css/bootstrap-image-gallery.css',
         },
         "js": {
-            'dev': ['xadmin/vendor/load-image/load-image.js', 'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js'],
-            'production': ['xadmin/vendor/load-image/load-image.min.js', 'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js']
+            'dev': ['xadmin/vendor/load-image/load-image.js',
+                    'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js'],
+            'production': ['xadmin/vendor/load-image/load-image.min.js',
+                           'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js']
         }
     },
     "select": {
@@ -135,14 +138,21 @@ vendors = {
         },
         "js": {
             'dev': [
+                # required by selectize
+                'xadmin/vendor/sifter/sifter.js',
+                'xadmin/vendor/microplugin/microplugin.js',
                 'xadmin/vendor/selectize/js/standalone/selectize.js',
                 'xadmin/vendor/select2/js/select2.js',
                 'xadmin/vendor/select2/js/i18n/%(lang)s.js'],
             'production': [
+                # required by selectize
+                'xadmin/vendor/sifter/sifter.min.js',
+                'xadmin/vendor/microplugin/microplugin.js',
                 'xadmin/vendor/selectize/standalone/selectize.min.js',
                 'xadmin/vendor/select2/js/select2.min.js',
-                'xadmin/vendor/select2/js/i18n/%(lang)s.js']
-            }
+                'xadmin/vendor/select2/js/i18n/%(lang)s.js'
+            ]
+        }
     },
     "multiselect": {
         "css": {

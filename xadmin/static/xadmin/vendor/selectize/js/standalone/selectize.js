@@ -655,7 +655,7 @@
 
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		define('selectize', ['jquery','sifter','microplugin'], factory);
+		define(['jquery','sifter','microplugin'], factory);
 	} else if (typeof exports === 'object') {
 		module.exports = factory(require('jquery'), require('sifter'), require('microplugin'));
 	} else {
@@ -685,8 +685,8 @@
 					middlebit.parentNode.replaceChild(spannode, middlebit);
 					skip = 1;
 				}
-			} 
-			// Recurse element node, looking for child text nodes to highlight, unless element 
+			}
+			// Recurse element node, looking for child text nodes to highlight, unless element
 			// is childless, <script>, <style>, or already highlighted: <span class="hightlight">
 			else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName) && ( node.className !== 'highlight' || node.tagName !== 'SPAN' )) {
 				for (var i = 0; i < node.childNodes.length; ++i) {
@@ -713,8 +713,8 @@
 			parent.normalize();
 		}).end();
 	};
-	
-	
+
+
 	var MicroEvent = function() {};
 	MicroEvent.prototype = {
 		on: function(event, fct){
@@ -778,7 +778,7 @@
 	
 	// for now, android support in general is too spotty to support validity
 	var SUPPORTS_VALIDITY_API = !/android/i.test(window.navigator.userAgent) && !!document.createElement('input').validity;
-	
+
 	
 	var isset = function(object) {
 		return typeof object !== 'undefined';
@@ -1023,7 +1023,7 @@
 		}
 	
 		Selectize.$testInput.text(str);
-	
+
 		transferStyles($parent, Selectize.$testInput, [
 			'letterSpacing',
 			'fontSize',
@@ -1104,18 +1104,18 @@
 	
 	var domToString = function(d) {
 		var tmp = document.createElement('div');
-	
+
 		tmp.appendChild(d.cloneNode(true));
-	
+
 		return tmp.innerHTML;
 	};
-	
+
 	var logError = function(message, options){
 		if(!options) options = {};
 		var component = "Selectize";
-	
+
 		console.error(component + ": " + message)
-	
+
 		if(options.explanation){
 			// console.group is undefined in <IE11
 			if(console.group) console.group();
@@ -1123,8 +1123,8 @@
 			if(console.group) console.groupEnd();
 		}
 	}
-	
-	
+
+
 	var Selectize = function($input, settings) {
 		var key, i, n, dir, input, self = this;
 		input = $input[0];
@@ -1214,7 +1214,7 @@
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	
 	MicroEvent.mixin(Selectize);
-	
+
 	if(typeof MicroPlugin !== "undefined"){
 		MicroPlugin.mixin(Selectize);
 	}else{
@@ -1225,7 +1225,7 @@
 				"load Selectize."}
 		);
 	}
-	
+
 	
 	// methods
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1255,7 +1255,7 @@
 			var classes;
 			var classes_plugins;
 			var inputId;
-	
+
 			inputMode         = self.settings.mode;
 			classes           = $input.attr('class') || '';
 	
@@ -1270,7 +1270,7 @@
 				$control_input.attr('id', inputId + '-selectized');
 				$("label[for='"+inputId+"']").attr('for', inputId + '-selectized');
 			}
-	
+
 			if(self.settings.copyClassesToDropdown) {
 				$dropdown.addClass(classes);
 			}
@@ -1307,7 +1307,7 @@
 				$control_input.attr('autocapitalize', $input.attr('autocapitalize'));
 			}
 			$control_input[0].type = $input[0].type;
-	
+
 			self.$wrapper          = $wrapper;
 			self.$control          = $control;
 			self.$control_input    = $control_input;
@@ -1550,21 +1550,21 @@
 		 */
 		onPaste: function(e) {
 			var self = this;
-	
+
 			if (self.isFull() || self.isInputHidden || self.isLocked) {
 				e.preventDefault();
 				return;
 			}
-	
+
 			// If a regex or string is included, this will split the pasted
 			// input and create Items for each separate value
 			if (self.settings.splitOn) {
-	
+
 				// Wait for pasted text to be recognized in value
 				setTimeout(function() {
 					var pastedText = self.$control_input.val();
 					if(!pastedText.match(self.settings.splitOn)){ return }
-	
+
 					var splitInput = $.trim(pastedText).split(self.settings.splitOn);
 					for (var i = 0, n = splitInput.length; i < n; i++) {
 						self.createItem(splitInput[i]);
@@ -2245,7 +2245,7 @@
 					html_children = document.createDocumentFragment();
 					html_children.appendChild(self.render('optgroup_header', self.optgroups[optgroup]));
 					html_children.appendChild(groups[optgroup]);
-	
+
 					html.appendChild(self.render('optgroup', $.extend({}, self.optgroups[optgroup], {
 						html: domToString(html_children),
 						dom:  html_children
@@ -2577,21 +2577,21 @@
 		 */
 		addItems: function(values, silent) {
 			this.buffer = document.createDocumentFragment();
-	
+
 			var childNodes = this.$control[0].childNodes;
 			for (var i = 0; i < childNodes.length; i++) {
 				this.buffer.appendChild(childNodes[i]);
 			}
-	
+
 			var items = $.isArray(values) ? values : [values];
 			for (var i = 0, n = items.length; i < n; i++) {
 				this.isPending = (i < n - 1);
 				this.addItem(items[i], silent);
 			}
-	
+
 			var control = this.$control[0];
 			control.insertBefore(this.buffer, control.firstChild);
-	
+
 			this.buffer = null;
 		},
 	
@@ -2651,7 +2651,7 @@
 	
 					self.updatePlaceholder();
 					self.trigger('item_add', value, $item);
-	
+
 					if (!self.isPending) {
 						self.updateOriginalInput({silent: silent});
 					}
@@ -2782,7 +2782,7 @@
 			this.refreshValidityState();
 			this.refreshClasses();
 		},
-	
+
 		/**
 		 * Update the `required` attribute of both input and control input.
 		 *
@@ -2793,9 +2793,9 @@
 		 */
 		refreshValidityState: function() {
 			if (!this.isRequired) return false;
-	
+
 			var invalid = !this.items.length;
-	
+
 			this.isInvalid = invalid;
 			this.$control_input.prop('required', invalid);
 			this.$input.prop('required', !invalid);
@@ -2909,7 +2909,7 @@
 	
 			if (self.settings.mode === 'single' && self.items.length) {
 				self.hideInput();
-	
+
 				// Do not trigger blur while inside a blur event,
 				// this fixes some weird tabbing behavior in FF and IE.
 				// See #1164
@@ -2974,13 +2974,13 @@
 			var caret = Math.min(this.caretPos, this.items.length);
 			var el = $el[0];
 			var target = this.buffer || this.$control[0];
-	
+
 			if (caret === 0) {
 				target.insertBefore(el, target.firstChild);
 			} else {
 				target.insertBefore(el, target.childNodes[caret]);
 			}
-	
+
 			this.setCaret(caret + 1);
 		},
 	
@@ -3220,7 +3220,7 @@
 				Selectize.$testInput.remove();
 				Selectize.$testInput = undefined;
 			}
-	
+
 			$(window).off(eventNS);
 			$(document).off(eventNS);
 			$(document.body).off(eventNS);
@@ -3757,12 +3757,12 @@
 			}, options);
 	
 			var singleClose = function(thisRef, options) {
-	
+
 				options.className = 'remove-single';
-	
+
 				var self = thisRef;
 				var html = '<a href="javascript:void(0)" class="' + options.className + '" tabindex="-1" title="' + escape_html(options.title) + '">' + options.label + '</a>';
-	
+
 				/**
 				 * Appends an element as a child (with raw HTML).
 				 *
@@ -3774,7 +3774,7 @@
 					return $('<span>').append(html_container)
 						.append(html_element);
 				};
-	
+
 				thisRef.setup = (function() {
 					var original = self.setup;
 					return function() {
@@ -3782,29 +3782,29 @@
 						if (options.append) {
 							var id = $(self.$input.context).attr('id');
 							var selectizer = $('#'+id);
-	
+
 							var render_item = self.settings.render.item;
 							self.settings.render.item = function(data) {
 								return append(render_item.apply(thisRef, arguments), html);
 							};
 						}
-	
+
 						original.apply(thisRef, arguments);
-	
+
 						// add event listener
 						thisRef.$control.on('click', '.' + options.className, function(e) {
 							e.preventDefault();
 							if (self.isLocked) return;
-	
+
 							self.clear();
 						});
-	
+
 					};
 				})();
 			};
-	
+
 			var multiClose = function(thisRef, options) {
-	
+
 				var self = thisRef;
 				var html = '<a href="javascript:void(0)" class="' + options.className + '" tabindex="-1" title="' + escape_html(options.title) + '">' + options.label + '</a>';
 	
@@ -3856,8 +3856,8 @@
 				multiClose(this, options);
 			}
 	});
-	
-	
+
+
 	Selectize.define('restore_on_backspace', function(options) {
 		var self = this;
 	

@@ -80,10 +80,9 @@ class ResultField(object):
                                      return_attr=False
                                      )
         try:
-            f, attr, value = lookup_field(
-                self.field_name, self.obj, self.admin_view)
+            f, attr, value = lookup_field(self.field_name, self.obj, self.admin_view)
         except (AttributeError, ObjectDoesNotExist):
-            self.text
+            pass
         else:
             if f is None:
                 self.allow_tags = getattr(attr, 'allow_tags', False)
@@ -115,12 +114,11 @@ class ResultField(object):
 
 
 def replace_field_to_value(layout, cb):
-    cls_str = str if six.PY3 else basestring
     for i, lo in enumerate(layout.fields):
         if isinstance(lo, Field) or issubclass(lo.__class__, Field):
             layout.fields[i] = ShowField(
                 cb, *lo.fields, attrs=lo.attrs, wrapper_class=lo.wrapper_class)
-        elif isinstance(lo, cls_str):
+        elif isinstance(lo, str):
             layout.fields[i] = ShowField(cb, lo)
         elif hasattr(lo, 'get_field_names'):
             replace_field_to_value(lo, cb)
@@ -214,8 +212,7 @@ class DetailAdminView(ModelAdminView):
         layout = self.get_form_layout()
         replace_field_to_value(layout, self.get_field_result)
         helper.add_layout(layout)
-        cls_str = str if six.PY3 else basestring
-        helper.filter(cls_str, max_level=20).wrap(ShowField, admin_view=self)
+        helper.filter(str, max_level=20).wrap(ShowField, admin_view=self)
         return helper
 
     @csrf_protect_m

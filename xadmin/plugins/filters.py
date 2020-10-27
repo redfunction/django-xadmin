@@ -60,7 +60,7 @@ class FilterPlugin(BaseAdminPlugin):
                 # later.
                 return True
             if hasattr(field, 'remote_field'):
-                model = field.remote_field.to
+                model = field.remote_field.model
                 rel_name = field.remote_field.get_related_field().name
             elif is_related_field(field):
                 model = field.model
@@ -136,7 +136,10 @@ class FilterPlugin(BaseAdminPlugin):
                                     lookup_needs_distinct(self.opts, field_path))
                 if spec and spec.has_output():
                     try:
-                        new_qs = spec.do_filte(queryset)
+                        if hasattr(spec, 'do_filte'):
+                            new_qs = spec.do_filte(queryset)
+                        else:
+                            new_qs = spec.do_filter(queryset)
                     except ValidationError as e:
                         new_qs = None
                         self.admin_view.message_user(_("<b>Filtering error:</b> %s") % e.messages[0], 'error')
@@ -147,15 +150,12 @@ class FilterPlugin(BaseAdminPlugin):
 
         self.has_filters = bool(self.filter_specs)
         self.admin_view.filter_specs = self.filter_specs
-        obj = filter(lambda f: f.is_used, self.filter_specs)
-        if six.PY3:
-            obj = list(obj)
+        obj = [fspec for fspec in self.filter_specs if fspec.is_used]
         self.admin_view.used_filter_num = len(obj)
 
         try:
             for key, value in lookup_params.items():
-                use_distinct = (
-                    use_distinct or lookup_needs_distinct(self.opts, key))
+                use_distinct = (use_distinct or lookup_needs_distinct(self.opts, key))
         except FieldDoesNotExist as e:
             raise IncorrectLookupParameters(e)
 
@@ -212,18 +212,14 @@ class FilterPlugin(BaseAdminPlugin):
 
     # Media
     def get_media(self, media):
-        arr = filter(lambda s: isinstance(s, DateFieldListFilter), self.filter_specs)
-        if six.PY3:
-            arr = list(arr)
-        if bool(arr):
+        filter_specs = [fspec for fspec in self.filter_specs if isinstance(fspec, DateFieldListFilter)]
+        if bool(filter_specs):
             media = media + self.vendor('datepicker.css', 'datepicker.js',
                                         'xadmin.widget.datetime.js')
-        arr = filter(lambda s: isinstance(s, RelatedFieldSearchFilter), self.filter_specs)
-        if six.PY3:
-            arr = list(arr)
-        if bool(arr):
-            media = media + self.vendor(
-                'select.js', 'select.css', 'xadmin.widget.select.js')
+        filter_specs = [fspec for fspec in self.filter_specs if isinstance(fspec, RelatedFieldSearchFilter)]
+        if bool(filter_specs):
+            media = media + self.vendor('select.js', 'select.css',
+                                        'xadmin.widget.select.js')
         return media + self.vendor('xadmin.plugin.filters.js')
 
     # Block Views
