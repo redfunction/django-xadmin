@@ -3,11 +3,11 @@
         <div class=" d-flex flex-row">
         <h5 class="card-title mr-auto">{% block box_title %}{% endblock box_title %}</h5>
         {% block box_header %}
-        <button class="btn btn-link" type="button" data-toggle="collapse"
-                data-target="#{% block box_collapse_target %}{% endblock %}"
-                aria-expanded="true">
-            <i class='icon chevron fa fa-chevron-up'></i>
-        </button>
+        <a class="btn btn-link" href="#" type="button" data-toggle="collapse"
+            data-target="#{% block box_collapse_target %}{% endblock %}"
+            aria-expanded="true">
+            <i class='icon fa fa-chevron-up chevron'></i>
+        </a>
         </div>
         {% endblock box_header %}
     </div>
