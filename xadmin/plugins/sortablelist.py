@@ -4,9 +4,6 @@ Make items sortable by drag-drop in list view. Diffierent from
 builtin plugin sortable, it touches model field indeed intead
 of only for display.
 """
-
-from __future__ import unicode_literals
-
 from django.template.loader import render_to_string
 from django.urls.base import reverse
 from django.db import transaction

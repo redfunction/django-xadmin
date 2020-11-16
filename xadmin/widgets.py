@@ -1,24 +1,18 @@
 """
 Form Widget classes specific to the Django admin site.
 """
-from __future__ import absolute_import
-
 import re
 from itertools import chain
 
 from django import forms
 from django.template.loader import render_to_string
-
-try:
-    from django.forms.widgets import ChoiceWidget as RadioChoiceInput
-except:
-    from django.forms.widgets import RadioFieldRenderer, RadioChoiceInput
+from django.forms.widgets import ChoiceWidget as RadioChoiceInput
 from django.utils.encoding import force_text
 
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 
-from .util import vendor
+from xadmin.util import vendor
 
 
 class AdminDateWidget(forms.DateInput):
