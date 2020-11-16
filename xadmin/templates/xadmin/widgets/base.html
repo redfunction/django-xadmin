@@ -15,9 +15,9 @@
 
 {% block box_header %}
   {% if widget.dashboard.widget_customiz %}
-    <button class="btn btn-link" data-toggle="modal" data-target="#modal-{{ widget_id }}-opts-form">
+    <a class="btn btn-link" href="#" role="button" data-toggle="modal" data-target="#modal-{{ widget_id }}-opts-form">
         <i class='icon fa fa-wrench ml-4'></i>
-    </button>
+    </a>
   {% endif %}
   {{ block.super }}
 {% endblock %}
