@@ -18,7 +18,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'setuptools',
-        'django>=2',
+        'django>=2,<3',
         'requests',
         'django-crispy-forms>=1.6.0',
         'django-import-export>=0.5.1',
