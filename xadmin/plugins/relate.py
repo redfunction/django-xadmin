@@ -119,7 +119,7 @@ class RelateMenuPlugin(BaseAdminPlugin):
         return list_display
 
 
-class RelateObject(object):
+class RelateObject:
 
     def __init__(self, admin_view, lookup, value):
         self.admin_view = admin_view
@@ -152,7 +152,7 @@ class RelateObject(object):
         else:
             to_model_name = force_text(self.to_model._meta.verbose_name)
 
-        return mark_safe(u"<span class='rel-brand'>%s <i class='fa fa-caret-right'></i></span> %s" % (to_model_name, force_text(self.opts.verbose_name_plural)))
+        return mark_safe("<span class='rel-brand'>%s <i class='fa fa-caret-right'></i></span> %s" % (to_model_name, force_text(self.opts.verbose_name_plural)))
 
 
 class BaseRelateDisplayPlugin(BaseAdminPlugin):

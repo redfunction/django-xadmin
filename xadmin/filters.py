@@ -26,7 +26,7 @@ from xadmin.util import (
 )
 
 
-class BaseFilter(object):
+class BaseFilter:
     title = None
     template = 'xadmin/filters/list.html'
 
@@ -77,7 +77,7 @@ class BaseFilter(object):
         return mark_safe(tpl.render(context=self.get_context()))
 
 
-class FieldFilterManager(object):
+class FieldFilterManager:
     _field_list_filters = []
     _take_priority_index = 0
 

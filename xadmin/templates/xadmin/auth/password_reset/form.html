@@ -6,9 +6,8 @@
 {% block body %}
 <div class="container">
 
-  <form action="" method="post" id="password-reset-form">
+  <form action="" method="post" id="password-reset-form" {% view_block 'form_tag_attrs' %}>
     <div class="card card-single" style="max-width: 500px;">
-
       {% csrf_token %}
       <div class="card-header">
         <h3 class="form-signin-heading">{% trans "Password reset" %}</h3>

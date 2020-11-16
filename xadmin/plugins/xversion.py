@@ -108,15 +108,15 @@ class ReversionPlugin(BaseAdminPlugin):
             comment = ''
             admin_view = self.admin_view
             if isinstance(admin_view, CreateAdminView):
-                comment = _(u"Initial version.")
+                comment = _("Initial version.")
             elif isinstance(admin_view, UpdateAdminView):
-                comment = _(u"Change version.")
+                comment = _("Change version.")
             elif isinstance(admin_view, RevisionView):
-                comment = _(u"Revert version.")
+                comment = _("Revert version.")
             elif isinstance(admin_view, RecoverView):
-                comment = _(u"Rercover version.")
+                comment = _("Rercover version.")
             elif isinstance(admin_view, DeleteAdminView):
-                comment = _(u"Deleted %(verbose_name)s.") % {
+                comment = _("Deleted %(verbose_name)s.") % {
                     "verbose_name": self.opts.verbose_name}
             self.revision_context_manager.set_comment(comment)
             return __()
@@ -127,7 +127,7 @@ class ReversionPlugin(BaseAdminPlugin):
             return __()
 
     def _check_object_recover(self, obj):
-        """Checks if the object is being recovered (does not exist yet in bd)"""
+        """Checks if the object is being recovered (does not exist yet in db)"""
         return self.admin_view.queryset().filter(pk=obj.pk).exists()
 
     # Block Views
@@ -279,11 +279,11 @@ class RevisionListView(BaseReversionView):
         obj._state.db = self.obj._state.db
 
         for field_name, pks in obj_version.m2m_data.items():
-            f = self.opts.get_field(field_name)
-            if f.rel and isinstance(f.rel, models.ManyToManyRel):
-                setattr(obj, f.name, f.rel.to._default_manager.get_queryset(
-                ).filter(pk__in=pks).all())
-
+            field = self.opts.get_field(field_name)
+            if hasattr(field, 'remote_field') and isinstance(field.remote_field, models.ManyToManyRel):
+                getattr(obj, field.name).set(
+                    field.remote_field.model._default_manager.get_queryset().filter(pk__in=pks).all()
+                )
         detail = self.get_model_view(DetailAdminUtil, self.model, obj)
 
         return obj, detail
@@ -329,7 +329,7 @@ class RevisionListView(BaseReversionView):
             if type(value_a) in (list, tuple) and type(value_b) in (list, tuple) \
                     and len(value_a) == len(value_b) and is_diff:
                 is_diff = False
-                for i in xrange(len(value_a)):
+                for i in range(len(value_a)):
                     if value_a[i] != value_a[i]:
                         is_diff = True
                         break
@@ -421,7 +421,7 @@ class RevisionView(BaseRevisionView):
             if fvalue is None and vvalue == '':
                 vvalue = None
             if is_related_field2(f):
-                vvalue = version_data.get(f.name + '_' + f.rel.get_related_field().name, None)
+                vvalue = version_data.get(f.name + '_' + f.remote_field.get_related_field().name, None)
 
             if fvalue != vvalue:
                 diff_fields[f.name] = self.detail.get_field_result(f.name).val
@@ -524,7 +524,7 @@ class InlineRevisionPlugin(BaseAdminPlugin):
         object_id = obj.pk
         # Get the fk name.
         try:
-            fk_name = formset.fk.name + '_' + formset.fk.rel.get_related_field().name
+            fk_name = formset.fk.name + '_' + formset.fk.remote_field.get_related_field().name
         except AttributeError:
             # This is a GenericInlineFormset, or similar.
             fk_name = formset.ct_fk_field.name
@@ -560,7 +560,7 @@ class InlineRevisionPlugin(BaseAdminPlugin):
         # Reconstruct the forms with the new revision data.
         formset.initial = initial
         formset.forms = [formset._construct_form(
-            n) for n in xrange(len(initial))]
+            n) for n in range(len(initial))]
         # Hack the formset to force a save of everything.
 
         def get_changed_data(form):
@@ -575,8 +575,7 @@ class InlineRevisionPlugin(BaseAdminPlugin):
 
         if self.request.method == 'GET' and formset.helper and formset.helper.layout:
             helper = formset.helper
-            cls_str = str if six.PY3 else basestring
-            helper.filter(cls_str).wrap(InlineDiffField)
+            helper.filter(str).wrap(InlineDiffField)
             fake_admin_class = type(str('%s%sFakeAdmin' % (self.opts.app_label, self.opts.model_name)), (object, ), {'model': self.model})
             for form in formset.forms:
                 instance = form.instance
@@ -591,13 +590,13 @@ class InlineRevisionPlugin(BaseAdminPlugin):
         return formset
 
 
-class VersionInline(object):
+class VersionInline:
     model = Version
     extra = 0
     style = 'accordion'
 
 
-class ReversionAdmin(object):
+class ReversionAdmin:
     model_icon = 'fa fa-exchange'
 
     list_display = ('__str__', 'date_created', 'user', 'comment')
@@ -605,6 +604,7 @@ class ReversionAdmin(object):
 
     list_filter = ('date_created', 'user')
     inlines = [VersionInline]
+
 
 site.register(Revision, ReversionAdmin)
 

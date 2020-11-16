@@ -32,7 +32,7 @@ class FooResource(resources.ModelResource):
 
 
 @xadmin.sites.register(Foo)
-class FooAdmin(object):
+class FooAdmin:
     import_export_args = {'import_resource_class': FooResource, 'export_resource_class': FooResource}
 
 ++++++++++++++++
@@ -229,9 +229,9 @@ class ImportView(ImportBaseView):
                     data = force_text(data, self.from_encoding)
                 dataset = input_format.create_dataset(data)
             except UnicodeDecodeError as e:
-                return HttpResponse(_(u"<h1>Imported file has a wrong encoding: %s</h1>" % e))
+                return HttpResponse(_("<h1>Imported file has a wrong encoding: %s</h1>" % e))
             except Exception as e:
-                return HttpResponse(_(u"<h1>{0!s} encountered while trying to read file: {1:s}</h1>"
+                return HttpResponse(_("<h1>{0!s} encountered while trying to read file: {1:s}</h1>"
                                       .format(type(e).__name__, import_file.name)))
 
             result = resource.import_data(dataset, dry_run=True,
@@ -319,7 +319,7 @@ class ImportProcessView(ImportBaseView):
             return HttpResponseRedirect(url)
 
 
-class ExportMixin(object):
+class ExportMixin:
     #: resource class
     resource_class = None
     #: template for change_list view
