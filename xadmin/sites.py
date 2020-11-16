@@ -387,6 +387,9 @@ class AdminSite(object):
                                        'in "XADMIN_I18N_JAVASCRIPT_PACKAGES"')
         return JavaScriptCatalog.as_view(packages=packages)(request)
 
+    # Disables login to script translations.
+    i18n_javascript.need_site_permission = False
+
 
 # This global object represents the default admin site, for the common case.
 # You can instantiate AdminSite in your own code to create a custom admin site.
