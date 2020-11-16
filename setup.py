@@ -26,7 +26,6 @@ setup(
         'django-formtools>=2.1',
         'django-contrib-comments>=1.9.2',
         'httplib2==0.18.1',
-        'future',
         'six'
     ],
     extras_require={
