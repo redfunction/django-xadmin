@@ -59,7 +59,7 @@ class Container(layout.Div):
     css_class = "form-container row clearfix"
 
 
-# Override bootstrap3
+# Override bootstrap4
 class InputGroup(layout.Field):
 
     template = "xadmin/layout/input_group.html"
