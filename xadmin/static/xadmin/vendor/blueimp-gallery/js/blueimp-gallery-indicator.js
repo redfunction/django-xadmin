@@ -23,7 +23,9 @@
 })(function ($, Gallery) {
   'use strict'
 
-  $.extend(Gallery.prototype.options, {
+  var galleryPrototype = Gallery.prototype
+
+  $.extend(galleryPrototype.options, {
     // The tag name, Id, element or querySelector of the indicator container:
     indicatorContainer: 'ol',
     // The class for the active indicator:
@@ -35,14 +37,14 @@
     thumbnailIndicators: true
   })
 
-  var initSlides = Gallery.prototype.initSlides
-  var addSlide = Gallery.prototype.addSlide
-  var resetSlides = Gallery.prototype.resetSlides
-  var handleClick = Gallery.prototype.handleClick
-  var handleSlide = Gallery.prototype.handleSlide
-  var handleClose = Gallery.prototype.handleClose
+  var initSlides = galleryPrototype.initSlides
+  var addSlide = galleryPrototype.addSlide
+  var resetSlides = galleryPrototype.resetSlides
+  var handleClick = galleryPrototype.handleClick
+  var handleSlide = galleryPrototype.handleSlide
+  var handleClose = galleryPrototype.handleClose
 
-  $.extend(Gallery.prototype, {
+  $.extend(galleryPrototype, {
     createIndicator: function (obj) {
       var indicator = this.indicatorPrototype.cloneNode(false)
       var title = this.getItemProperty(obj, this.options.titleProperty)
@@ -66,6 +68,7 @@
       if (title) {
         indicator.title = title
       }
+      indicator.setAttribute('role', 'link')
       return indicator
     },
 
@@ -128,9 +131,9 @@
       }
     },
 
-    handleSlide: function (index) {
-      handleSlide.call(this, index)
-      this.setActiveIndicator(index)
+    handleSlide: function (oldIndex, newIndex) {
+      handleSlide.call(this, oldIndex, newIndex)
+      this.setActiveIndicator(newIndex)
     },
 
     handleClose: function () {

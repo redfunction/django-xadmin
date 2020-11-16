@@ -80,8 +80,18 @@
       rightEdgeClass: 'blueimp-gallery-right',
       // The class to add when the automatic slideshow is active:
       playingClass: 'blueimp-gallery-playing',
+      // The class to add when the browser supports SVG as img (or background):
+      svgasimgClass: 'blueimp-gallery-svgasimg',
+      // The class to add when the browser supports SMIL (animated SVGs):
+      smilClass: 'blueimp-gallery-smil',
       // The class for all slides:
       slideClass: 'slide',
+      // The slide class for the active (current index) slide:
+      slideActiveClass: 'slide-active',
+      // The slide class for the previous (before current index) slide:
+      slidePrevClass: 'slide-prev',
+      // The slide class for the next (after current index) slide:
+      slideNextClass: 'slide-next',
       // The slide class for loading elements:
       slideLoadingClass: 'slide-loading',
       // The slide class for elements that failed to load:
@@ -106,34 +116,34 @@
       altTextProperty: 'alt',
       // The list object property (or data attribute) with the object URL:
       urlProperty: 'href',
-      // The list object property (or data attribute) with the object srcset URL(s):
-      srcsetProperty: 'urlset',
+      // The list object property (or data attribute) with the object srcset:
+      srcsetProperty: 'srcset',
+      // The list object property (or data attribute) with the object sizes:
+      sizesProperty: 'sizes',
+      // The list object property (or data attribute) with the object sources:
+      sourcesProperty: 'sources',
       // The gallery listens for transitionend events before triggering the
       // opened and closed events, unless the following option is set to false:
       displayTransition: true,
       // Defines if the gallery slides are cleared from the gallery modal,
       // or reused for the next gallery initialization:
       clearSlides: true,
-      // Defines if images should be stretched to fill the available space,
-      // while maintaining their aspect ratio (will only be enabled for browsers
-      // supporting background-size="contain", which excludes IE < 9).
-      // Set to "cover", to make images cover all available space (requires
-      // support for background-size="cover", which excludes IE < 9):
-      stretchImages: false,
-      // Toggle the controls on pressing the Return key:
-      toggleControlsOnReturn: true,
+      // Toggle the controls on pressing the Enter key:
+      toggleControlsOnEnter: true,
       // Toggle the controls on slide click:
       toggleControlsOnSlideClick: true,
       // Toggle the automatic slideshow interval on pressing the Space key:
       toggleSlideshowOnSpace: true,
-      // Navigate the gallery by pressing left and right on the keyboard:
+      // Navigate the gallery by pressing the ArrowLeft and ArrowRight keys:
       enableKeyboardNavigation: true,
-      // Close the gallery on pressing the Esc key:
+      // Close the gallery on pressing the Escape key:
       closeOnEscape: true,
       // Close the gallery when clicking on an empty slide area:
       closeOnSlideClick: true,
       // Close the gallery by swiping up or down:
       closeOnSwipeUpOrDown: true,
+      // Close the gallery when the URL hash changes:
+      closeOnHashChange: true,
       // Emulate touch events on mouse-pointer devices such as desktop browsers:
       emulateTouchEvents: true,
       // Stop touch events from bubbling up to ancestor elements of the Gallery:
@@ -161,11 +171,11 @@
       index: 0,
       // The number of elements to load around the current index:
       preloadRange: 2,
-      // The transition speed between slide changes in milliseconds:
-      transitionSpeed: 400,
-      // The transition speed for automatic slide changes, set to an integer
-      // greater 0 to override the default transition speed:
-      slideshowTransitionSpeed: undefined,
+      // The transition duration between slide changes in milliseconds:
+      transitionDuration: 300,
+      // The transition duration for automatic slide changes, set to an integer
+      // greater 0 to override the default transition duration:
+      slideshowTransitionDuration: 500,
       // The event object for which the default action will be canceled
       // on Gallery initialization (e.g. the click event to open the Gallery):
       event: undefined,
@@ -199,12 +209,13 @@
 
     carouselOptions: {
       hidePageScrollbars: false,
-      toggleControlsOnReturn: false,
+      toggleControlsOnEnter: false,
       toggleSlideshowOnSpace: false,
       enableKeyboardNavigation: false,
       closeOnEscape: false,
       closeOnSlideClick: false,
       closeOnSwipeUpOrDown: false,
+      closeOnHashChange: false,
       disableScroll: false,
       startSlideshow: true
     },
@@ -217,6 +228,19 @@
     // Detect touch, transition, transform and background-size support:
     support: (function (element) {
       var support = {
+        source: !!window.HTMLSourceElement,
+        picture: !!window.HTMLPictureElement,
+        svgasimg: document.implementation.hasFeature(
+          'http://www.w3.org/TR/SVG11/feature#Image',
+          '1.1'
+        ),
+        smil:
+          !!document.createElementNS &&
+          /SVGAnimate/.test(
+            document
+              .createElementNS('http://www.w3.org/2000/svg', 'animate')
+              .toString()
+          ),
         touch:
           window.ontouchstart !== undefined ||
           (window.DocumentTouch && document instanceof DocumentTouch)
@@ -273,19 +297,6 @@
             }
           }
         }
-        if (element.style.backgroundSize !== undefined) {
-          support.backgroundSize = {}
-          element.style.backgroundSize = 'contain'
-          support.backgroundSize.contain =
-            window
-              .getComputedStyle(element)
-              .getPropertyValue('background-size') === 'contain'
-          element.style.backgroundSize = 'cover'
-          support.backgroundSize.cover =
-            window
-              .getComputedStyle(element)
-              .getPropertyValue('background-size') === 'cover'
-        }
         document.body.removeChild(element)
       }
       if (document.body) {
@@ -325,7 +336,7 @@
       }
     },
 
-    slide: function (to, speed) {
+    slide: function (to, duration) {
       window.clearTimeout(this.timeout)
       var index = this.index
       var direction
@@ -334,8 +345,8 @@
       if (index === to || this.num === 1) {
         return
       }
-      if (!speed) {
-        speed = this.options.transitionSpeed
+      if (!duration) {
+        duration = this.options.transitionDuration
       }
       if (this.support.transform) {
         if (!this.options.continuous) {
@@ -364,8 +375,8 @@
           )
         }
         to = this.circle(to)
-        this.move(index, this.slideWidth * direction, speed)
-        this.move(to, 0, speed)
+        this.move(index, this.slideWidth * direction, duration)
+        this.move(to, 0, duration)
         if (this.options.continuous) {
           this.move(
             this.circle(to - direction),
@@ -375,7 +386,7 @@
         }
       } else {
         to = this.circle(to)
-        this.animate(index * -this.slideWidth, to * -this.slideWidth, speed)
+        this.animate(index * -this.slideWidth, to * -this.slideWidth, duration)
       }
       this.onslide(to)
     },
@@ -409,19 +420,23 @@
       if (this.elements[this.index] > 1) {
         this.timeout = this.setTimeout(
           (!this.requestAnimationFrame && this.slide) ||
-            function (to, speed) {
+            function (to, duration) {
               that.animationFrameId = that.requestAnimationFrame.call(
                 window,
                 function () {
-                  that.slide(to, speed)
+                  that.slide(to, duration)
                 }
               )
             },
-          [nextIndex, this.options.slideshowTransitionSpeed],
+          [nextIndex, this.options.slideshowTransitionDuration],
           this.interval
         )
       }
       this.container.addClass(this.options.playingClass)
+      this.slidesContainer[0].setAttribute('aria-live', 'off')
+      if (this.playPauseElement.length) {
+        this.playPauseElement[0].setAttribute('aria-pressed', 'true')
+      }
     },
 
     pause: function () {
@@ -432,6 +447,10 @@
         this.animationFrameId = null
       }
       this.container.removeClass(this.options.playingClass)
+      this.slidesContainer[0].setAttribute('aria-live', 'polite')
+      if (this.playPauseElement.length) {
+        this.playPauseElement[0].setAttribute('aria-pressed', 'false')
+      }
     },
 
     add: function (list) {
@@ -518,17 +537,17 @@
       return (this.num + (index % this.num)) % this.num
     },
 
-    move: function (index, dist, speed) {
-      this.translateX(index, dist, speed)
+    move: function (index, dist, duration) {
+      this.translateX(index, dist, duration)
       this.positions[index] = dist
     },
 
-    translate: function (index, x, y, speed) {
+    translate: function (index, x, y, duration) {
       if (!this.slides[index]) return
       var style = this.slides[index].style
       var transition = this.support.transition
       var transform = this.support.transform
-      style[transition.name + 'Duration'] = speed + 'ms'
+      style[transition.name + 'Duration'] = duration + 'ms'
       style[transform.name] =
         'translate(' +
         x +
@@ -538,16 +557,16 @@
         (transform.translateZ ? ' translateZ(0)' : '')
     },
 
-    translateX: function (index, x, speed) {
-      this.translate(index, x, 0, speed)
+    translateX: function (index, x, duration) {
+      this.translate(index, x, 0, duration)
     },
 
-    translateY: function (index, y, speed) {
-      this.translate(index, 0, y, speed)
+    translateY: function (index, y, duration) {
+      this.translate(index, 0, y, duration)
     },
 
-    animate: function (from, to, speed) {
-      if (!speed) {
+    animate: function (from, to, duration) {
+      if (!duration) {
         this.slidesContainer[0].style.left = to + 'px'
         return
       }
@@ -555,14 +574,14 @@
       var start = new Date().getTime()
       var timer = window.setInterval(function () {
         var timeElap = new Date().getTime() - start
-        if (timeElap > speed) {
+        if (timeElap > duration) {
           that.slidesContainer[0].style.left = to + 'px'
           that.ontransitionend()
           window.clearInterval(timer)
           return
         }
         that.slidesContainer[0].style.left =
-          (to - from) * (Math.floor((timeElap / speed) * 100) / 100) +
+          (to - from) * (Math.floor((timeElap / duration) * 100) / 100) +
           from +
           'px'
       }, 4)
@@ -586,6 +605,12 @@
 
     onresize: function () {
       this.initSlides(true)
+    },
+
+    onhashchange: function () {
+      if (this.options.closeOnHashChange) {
+        this.close()
+      }
     },
 
     onmousedown: function (event) {
@@ -645,11 +670,11 @@
       }
       // jQuery doesn't copy touch event properties by default,
       // so we have to access the originalEvent object:
-      var touches = (event.originalEvent || event).touches[0]
+      var touch = (event.originalEvent || event).touches[0]
       this.touchStart = {
         // Remember the initial touch coordinates:
-        x: touches.pageX,
-        y: touches.pageY,
+        x: touch.pageX,
+        y: touch.pageY,
         // Store the time to determine touch duration:
         time: Date.now()
       }
@@ -665,7 +690,8 @@
       }
       // jQuery doesn't copy touch event properties by default,
       // so we have to access the originalEvent object:
-      var touches = (event.originalEvent || event).touches[0]
+      var touches = (event.originalEvent || event).touches
+      var touch = touches[0]
       var scale = (event.originalEvent || event).scale
       var index = this.index
       var touchDeltaX
@@ -679,8 +705,8 @@
       }
       // Measure change in x and y coordinates:
       this.touchDelta = {
-        x: touches.pageX - this.touchStart.x,
-        y: touches.pageY - this.touchStart.y
+        x: touch.pageX - this.touchStart.x,
+        y: touch.pageY - this.touchStart.y
       }
       touchDeltaX = this.touchDelta.x
       // Detect if this is a vertical scroll movement (run only once per touch):
@@ -717,7 +743,7 @@
           index = indices.pop()
           this.translateX(index, touchDeltaX + this.positions[index], 0)
         }
-      } else {
+      } else if (!this.options.carousel) {
         this.translateY(index, this.touchDelta.y + this.positions[index], 0)
       }
     },
@@ -727,13 +753,14 @@
         this.stopPropagation(event)
       }
       var index = this.index
-      var speed = this.options.transitionSpeed
+      var absTouchDeltaX = Math.abs(this.touchDelta.x)
       var slideWidth = this.slideWidth
-      var isShortDuration = Number(Date.now() - this.touchStart.time) < 250
+      var duration = Math.ceil(
+        (this.options.transitionDuration * (1 - absTouchDeltaX / slideWidth)) /
+          2
+      )
       // Determine if slide attempt triggers next/prev slide:
-      var isValidSlide =
-        (isShortDuration && Math.abs(this.touchDelta.x) > 20) ||
-        Math.abs(this.touchDelta.x) > slideWidth / 2
+      var isValidSlide = absTouchDeltaX > 20
       // Determine if slide attempt is past start or end:
       var isPastBounds =
         (!index && this.touchDelta.x > 0) ||
@@ -741,8 +768,7 @@
       var isValidClose =
         !isValidSlide &&
         this.options.closeOnSwipeUpOrDown &&
-        ((isShortDuration && Math.abs(this.touchDelta.y) > 20) ||
-          Math.abs(this.touchDelta.y) > this.slideHeight / 2)
+        Math.abs(this.touchDelta.y) > 20
       var direction
       var indexForward
       var indexBackward
@@ -765,27 +791,27 @@
           } else if (indexForward >= 0 && indexForward < this.num) {
             this.move(indexForward, distanceForward, 0)
           }
-          this.move(index, this.positions[index] + distanceForward, speed)
+          this.move(index, this.positions[index] + distanceForward, duration)
           this.move(
             this.circle(indexBackward),
             this.positions[this.circle(indexBackward)] + distanceForward,
-            speed
+            duration
           )
           index = this.circle(indexBackward)
           this.onslide(index)
         } else {
           // Move back into position
           if (this.options.continuous) {
-            this.move(this.circle(index - 1), -slideWidth, speed)
-            this.move(index, 0, speed)
-            this.move(this.circle(index + 1), slideWidth, speed)
+            this.move(this.circle(index - 1), -slideWidth, duration)
+            this.move(index, 0, duration)
+            this.move(this.circle(index + 1), slideWidth, duration)
           } else {
             if (index) {
-              this.move(index - 1, -slideWidth, speed)
+              this.move(index - 1, -slideWidth, duration)
             }
-            this.move(index, 0, speed)
+            this.move(index, 0, duration)
             if (index < this.num - 1) {
-              this.move(index + 1, slideWidth, speed)
+              this.move(index + 1, slideWidth, duration)
             }
           }
         }
@@ -794,7 +820,7 @@
           this.close()
         } else {
           // Move back into position
-          this.translateY(index, 0, speed)
+          this.translateY(index, 0, duration)
         }
       }
     },
@@ -851,16 +877,16 @@
 
     onkeydown: function (event) {
       switch (event.which || event.keyCode) {
-        case 13: // Return
-          if (this.options.toggleControlsOnReturn) {
+        case 13: // Enter
+          if (this.options.toggleControlsOnEnter) {
             this.preventDefault(event)
             this.toggleControls()
           }
           break
-        case 27: // Esc
+        case 27: // Escape
           if (this.options.closeOnEscape) {
             this.close()
-            // prevent Esc from closing other things
+            // prevent Escape from closing other things
             event.stopImmediatePropagation()
           }
           break
@@ -870,13 +896,13 @@
             this.toggleSlideshow()
           }
           break
-        case 37: // Left
+        case 37: // ArrowLeft
           if (this.options.enableKeyboardNavigation) {
             this.preventDefault(event)
             this.prev()
           }
           break
-        case 39: // Right
+        case 39: // ArrowRight
           if (this.options.enableKeyboardNavigation) {
             this.preventDefault(event)
             this.next()
@@ -964,20 +990,53 @@
       }
     },
 
-    handleSlide: function (index) {
+    updateActiveSlide: function (oldIndex, newIndex) {
+      var slides = this.slides
+      var options = this.options
+      var list = [
+        {
+          index: newIndex,
+          method: 'addClass',
+          hidden: false
+        },
+        {
+          index: oldIndex,
+          method: 'removeClass',
+          hidden: true
+        }
+      ]
+      var item, index
+      while (list.length) {
+        item = list.pop()
+        $(slides[item.index])[item.method](options.slideActiveClass)
+        index = this.circle(item.index - 1)
+        if (options.continuous || index < item.index) {
+          $(slides[index])[item.method](options.slidePrevClass)
+        }
+        index = this.circle(item.index + 1)
+        if (options.continuous || index > item.index) {
+          $(slides[index])[item.method](options.slideNextClass)
+        }
+      }
+      this.slides[oldIndex].setAttribute('aria-hidden', 'true')
+      this.slides[newIndex].removeAttribute('aria-hidden')
+    },
+
+    handleSlide: function (oldIndex, newIndex) {
       if (!this.options.continuous) {
-        this.updateEdgeClasses(index)
+        this.updateEdgeClasses(newIndex)
       }
-      this.loadElements(index)
+      this.updateActiveSlide(oldIndex, newIndex)
+      this.loadElements(newIndex)
       if (this.options.unloadElements) {
-        this.unloadElements(index)
+        this.unloadElements(oldIndex, newIndex)
       }
-      this.setTitle(index)
+      this.setTitle(newIndex)
     },
 
     onslide: function (index) {
+      this.handleSlide(this.index, index)
       this.index = index
-      this.handleSlide(index)
       this.setTimeout(this.options.onslide, [index, this.slides[index]])
     },
 
@@ -1004,14 +1063,18 @@
     },
 
     imageFactory: function (obj, callback) {
+      var options = this.options
       var that = this
-      var img = this.imagePrototype.cloneNode(false)
       var url = obj
-      var backgroundSize = this.options.stretchImages
+      var img = this.imagePrototype.cloneNode(false)
+      var picture
       var called
-      var element
+      var sources
+      var srcset
+      var sizes
       var title
       var altText
+      var i
       /**
        * Wraps the callback function for the load/error event
        *
@@ -1022,53 +1085,57 @@
         if (!called) {
           event = {
             type: event.type,
-            target: element
+            target: picture || img
           }
-          if (!element.parentNode) {
-            // Fix for IE7 firing the load event for
+          if (!event.target.parentNode) {
+            // Fix for browsers (e.g. IE7) firing the load event for
             // cached images before the element could
             // be added to the DOM:
             return that.setTimeout(callbackWrapper, [event])
           }
           called = true
           $(img).off('load error', callbackWrapper)
-          if (backgroundSize) {
-            if (event.type === 'load') {
-              element.style.background = 'url("' + url + '") center no-repeat'
-              element.style.backgroundSize = backgroundSize
-            }
-          }
           callback(event)
         }
       }
       if (typeof url !== 'string') {
-        url = this.getItemProperty(obj, this.options.urlProperty)
-        title = this.getItemProperty(obj, this.options.titleProperty)
-        altText =
-          this.getItemProperty(obj, this.options.altTextProperty) || title
+        url = this.getItemProperty(obj, options.urlProperty)
+        sources =
+          this.support.picture &&
+          this.support.source &&
+          this.getItemProperty(obj, options.sourcesProperty)
+        srcset = this.getItemProperty(obj, options.srcsetProperty)
+        sizes = this.getItemProperty(obj, options.sizesProperty)
+        title = this.getItemProperty(obj, options.titleProperty)
+        altText = this.getItemProperty(obj, options.altTextProperty) || title
       }
-      if (backgroundSize === true) {
-        backgroundSize = 'contain'
-      }
-      backgroundSize =
-        this.support.backgroundSize &&
-        this.support.backgroundSize[backgroundSize] &&
-        backgroundSize
-      if (backgroundSize) {
-        element = this.elementPrototype.cloneNode(false)
-      } else {
-        element = img
-        img.draggable = false
-      }
+      img.draggable = false
       if (title) {
-        element.title = title
+        img.title = title
       }
       if (altText) {
-        element.alt = altText
+        img.alt = altText
       }
       $(img).on('load error', callbackWrapper)
+      if (sources && sources.length) {
+        picture = this.picturePrototype.cloneNode(false)
+        for (i = 0; i < sources.length; i += 1) {
+          picture.appendChild(
+            $.extend(this.sourcePrototype.cloneNode(false), sources[i])
+          )
+        }
+        picture.appendChild(img)
+        $(picture).addClass(options.toggleClass)
+      }
+      if (srcset) {
+        if (sizes) {
+          img.sizes = sizes
+        }
+        img.srcset = srcset
+      }
       img.src = url
-      return element
+      if (picture) return picture
+      return img
     },
 
     createElement: function (obj, callback) {
@@ -1076,7 +1143,6 @@
       var factory =
         (type && this[type.split('/')[0] + 'Factory']) || this.imageFactory
       var element = obj && factory.call(this, obj, callback)
-      var srcset = this.getItemProperty(obj, this.options.srcsetProperty)
       if (!element) {
         element = this.elementPrototype.cloneNode(false)
         this.setTimeout(callback, [
@@ -1086,11 +1152,31 @@
           }
         ])
       }
-      if (srcset) {
-        element.setAttribute('srcset', srcset)
-      }
       $(element).addClass(this.options.slideContentClass)
       return element
+    },
+
+    iteratePreloadRange: function (index, func) {
+      var num = this.num
+      var options = this.options
+      var limit = Math.min(num, options.preloadRange * 2 + 1)
+      var j = index
+      var i
+      for (i = 0; i < limit; i += 1) {
+        // First iterate to the current index (0),
+        // then the next one (+1),
+        // then the previous one (-1),
+        // then the next after next (+2),
+        // then the one before the previous one (-2), etc.:
+        j += i * (i % 2 === 0 ? -1 : 1)
+        if (j < 0 || j >= num) {
+          if (!options.continuous) continue
+          // Connect the ends of the list to load slide elements for
+          // continuous iteration:
+          j = this.circle(j)
+        }
+        func.call(this, j)
+      }
     },
 
     loadElement: function (index) {
@@ -1112,41 +1198,24 @@
     },
 
     loadElements: function (index) {
-      var limit = Math.min(this.num, this.options.preloadRange * 2 + 1)
-      var j = index
-      var i
-      for (i = 0; i < limit; i += 1) {
-        // First load the current slide element (0),
-        // then the next one (+1),
-        // then the previous one (-2),
-        // then the next after next (+2), etc.:
-        j += i * (i % 2 === 0 ? -1 : 1)
-        // Connect the ends of the list to load slide elements for
-        // continuous navigation:
-        j = this.circle(j)
-        this.loadElement(j)
-      }
+      this.iteratePreloadRange(index, this.loadElement)
     },
 
-    unloadElements: function (index) {
-      var i, diff
-      for (i in this.elements) {
-        if (Object.prototype.hasOwnProperty.call(this.elements, i)) {
-          diff = Math.abs(index - i)
-          if (
-            diff > this.options.preloadRange &&
-            diff + this.options.preloadRange < this.num
-          ) {
-            this.unloadSlide(i)
-            delete this.elements[i]
-          }
+    unloadElements: function (oldIndex, newIndex) {
+      var preloadRange = this.options.preloadRange
+      this.iteratePreloadRange(oldIndex, function (i) {
+        var diff = Math.abs(i - newIndex)
+        if (diff > preloadRange && diff + preloadRange < this.num) {
+          this.unloadSlide(i)
+          delete this.elements[i]
         }
-      }
+      })
     },
 
     addSlide: function (index) {
       var slide = this.slidePrototype.cloneNode(false)
       slide.setAttribute('data-index', index)
+      slide.setAttribute('aria-hidden', 'true')
       this.slidesContainer[0].appendChild(slide)
       this.slides.push(slide)
     },
@@ -1174,9 +1243,13 @@
         this.positions = []
         this.positions.length = this.num
         this.elements = {}
+        this.picturePrototype =
+          this.support.picture && document.createElement('picture')
+        this.sourcePrototype =
+          this.support.source && document.createElement('source')
         this.imagePrototype = document.createElement('img')
         this.elementPrototype = document.createElement('div')
-        this.slidePrototype = document.createElement('div')
+        this.slidePrototype = this.elementPrototype.cloneNode(false)
         $(this.slidePrototype).addClass(this.options.slideClass)
         this.slides = this.slidesContainer[0].children
         clearSlides =
@@ -1338,6 +1411,7 @@
         that['on' + type](event)
       }
       $(window).on('resize', proxyListener)
+      $(window).on('hashchange', proxyListener)
       $(document.body).on('keydown', proxyListener)
       this.container.on('click', proxyListener)
       if (this.support.touch) {
@@ -1417,8 +1491,17 @@
         return false
       }
       this.titleElement = this.container.find(this.options.titleElement).first()
+      this.playPauseElement = this.container
+        .find('.' + this.options.playPauseClass)
+        .first()
       if (this.num === 1) {
         this.container.addClass(this.options.singleClass)
+      }
+      if (this.support.svgasimg) {
+        this.container.addClass(this.options.svgasimgClass)
+      }
+      if (this.support.smil) {
+        this.container.addClass(this.options.smilClass)
       }
       if (this.options.onopen) {
         this.options.onopen.call(this)

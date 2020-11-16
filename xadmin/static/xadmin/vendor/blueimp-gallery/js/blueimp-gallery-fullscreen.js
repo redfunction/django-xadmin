@@ -23,15 +23,17 @@
 })(function ($, Gallery) {
   'use strict'
 
-  $.extend(Gallery.prototype.options, {
+  var galleryPrototype = Gallery.prototype
+
+  $.extend(galleryPrototype.options, {
     // Defines if the gallery should open in fullscreen mode:
-    fullScreen: false
+    fullscreen: false
   })
 
-  var initialize = Gallery.prototype.initialize
-  var close = Gallery.prototype.close
+  var initialize = galleryPrototype.initialize
+  var close = galleryPrototype.close
 
-  $.extend(Gallery.prototype, {
+  $.extend(galleryPrototype, {
     getFullScreenElement: function () {
       return (
         document.fullscreenElement ||
@@ -67,7 +69,7 @@
 
     initialize: function () {
       initialize.call(this)
-      if (this.options.fullScreen && !this.getFullScreenElement()) {
+      if (this.options.fullscreen && !this.getFullScreenElement()) {
         this.requestFullScreen(this.container[0])
       }
     },

@@ -94,7 +94,7 @@ var sortable = (function () {
               // add config to map
               this._config = new Map(Object.entries(mergedConfig));
           },
-          enumerable: true,
+          enumerable: false,
           configurable: true
       });
       /**
@@ -144,7 +144,7 @@ var sortable = (function () {
               }
               this._placeholder = placeholder;
           },
-          enumerable: true,
+          enumerable: false,
           configurable: true
       });
       /**
@@ -442,6 +442,10 @@ var sortable = (function () {
       }
       // get calculated style of element
       var style = window.getComputedStyle(element);
+      // get only height if element has box-sizing: border-box specified
+      if (style.getPropertyValue('box-sizing') === 'border-box') {
+          return parseInt(style.getPropertyValue('height'), 10);
+      }
       // pick applicable properties, convert to int and reduce by adding
       return ['height', 'padding-top', 'padding-bottom']
           .map(function (key) {
@@ -603,6 +607,7 @@ var sortable = (function () {
       placeholderClass: 'sortable-placeholder',
       draggingClass: 'sortable-dragging',
       hoverClass: false,
+      dropTargetContainerClass: false,
       debounce: 0,
       throttleTime: 100,
       maxItems: 0,
@@ -719,6 +724,15 @@ var sortable = (function () {
       removeEventListener(items, 'mouseenter');
       removeEventListener(items, 'mouseleave');
   };
+  // Remove container events
+  var _removeContainerEvents = function (originContainer, previousContainer) {
+      if (originContainer) {
+          removeEventListener(originContainer, 'dragleave');
+      }
+      if (previousContainer && (previousContainer !== originContainer)) {
+          removeEventListener(previousContainer, 'dragleave');
+      }
+  };
   /**
    * _getDragging returns the current element to drag or
    * a copy of the element.
@@ -804,6 +818,7 @@ var sortable = (function () {
       removeEventListener(handles, 'mousedown');
       _removeItemEvents(items);
       _removeItemData(items);
+      _removeContainerEvents(originContainer, previousContainer);
       // clear sortable flag
       sortableElement.isSortable = false;
   };
@@ -865,6 +880,7 @@ var sortable = (function () {
       addData(sortableElement, '_disabled', 'false');
       // remove event handlers from items
       _removeItemEvents(items);
+      _removeContainerEvents(originContainer, previousContainer);
       removeEventListener(handles, 'mousedown');
       // remove event handlers from sortable
       removeEventListener(sortableElement, 'dragover');
@@ -995,6 +1011,9 @@ var sortable = (function () {
               if (sortableContainer && sortableContainer !== previousContainer) {
                   destinationItemsBeforeUpdate = _filter(sortableContainer.children, addData(sortableContainer, 'items'))
                       .filter(function (item) { return item !== store(sortableElement).placeholder; });
+                  if (options.dropTargetContainerClass) {
+                      sortableContainer.classList.add(options.dropTargetContainerClass);
+                  }
                   sortableContainer.dispatchEvent(new CustomEvent('sortenter', {
                       detail: {
                           origin: {
@@ -1010,6 +1029,27 @@ var sortable = (function () {
                           originalTarget: target
                       }
                   }));
+                  addEventListener(sortableContainer, 'dragleave', function (e) {
+                      // TODO: rename outTarget to be more self-explanatory
+                      // e.fromElement for very old browsers, similar to relatedTarget
+                      var outTarget = e.relatedTarget || e.fromElement;
+                      if (!e.currentTarget.contains(outTarget)) {
+                          if (options.dropTargetContainerClass) {
+                              sortableContainer.classList.remove(options.dropTargetContainerClass);
+                          }
+                          sortableContainer.dispatchEvent(new CustomEvent('sortleave', {
+                              detail: {
+                                  origin: {
+                                      elementIndex: originElementIndex,
+                                      index: originIndex,
+                                      container: sortableContainer
+                                  },
+                                  item: dragging,
+                                  originalTarget: target
+                              }
+                          }));
+                      }
+                  });
               }
               previousContainer = sortableContainer;
           });
@@ -1096,6 +1136,9 @@ var sortable = (function () {
               var destinationElementIndex = _index(dragging, Array.from(dragging.parentElement.children)
                   .filter(function (item) { return item !== placeholder; }));
               var destinationIndex = _index(dragging, destinationItems);
+              if (options.dropTargetContainerClass) {
+                  destinationContainer.classList.remove(options.dropTargetContainerClass);
+              }
               /*
                * When a list item changed container lists or index within a list
                * Fires Custom Event - 'sortupdate'
@@ -1243,7 +1286,8 @@ var sortable = (function () {
       _data: addData,
       _removeItemEvents: _removeItemEvents,
       _removeItemData: _removeItemData,
-      _removeSortableData: _removeSortableData
+      _removeSortableData: _removeSortableData,
+      _removeContainerEvents: _removeContainerEvents
   };
 
   return sortable;
