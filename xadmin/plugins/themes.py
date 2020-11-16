@@ -3,7 +3,8 @@ import cgi
 import urllib.parse
 
 import httplib2
-from django.core.cache import cache
+from django.core.cache import cache, DEFAULT_CACHE_ALIAS, caches
+from django.core.cache.backends.dummy import DummyCache
 from django.template import loader
 from django.utils.translation import ugettext as _
 
@@ -40,6 +41,14 @@ class ThemePlugin(BaseAdminPlugin):
         context['site_theme'] = self._get_theme()
         return context
 
+    def cache(self, key):
+        """get cache themes"""
+        cache = caches[DEFAULT_CACHE_ALIAS]
+        if isinstance(cache, DummyCache):
+            return getattr(self.admin_site, 'ext_themes', None)
+        ext_themes = cache.get(THEME_CACHE_KEY)
+        return ext_themes and json.loads(ext_themes)
+
     # Media
     def get_media(self, media):
         return media + self.vendor('jquery-ui-effect.js', 'xadmin.plugin.themes.js')
@@ -57,11 +66,11 @@ class ThemePlugin(BaseAdminPlugin):
             themes.extend(self.user_themes)
 
         if self.use_bootswatch:
-            ex_themes = cache.get(THEME_CACHE_KEY)
-            if ex_themes:
-                themes.extend(json.loads(ex_themes))
+            ext_themes = self.cache(THEME_CACHE_KEY)
+            if ext_themes:
+                themes.extend(ext_themes)
             else:
-                ex_themes = []
+                ext_themes = []
                 try:
                     h = httplib2.Http()
                     resp, content = h.request("https://bootswatch.com/api/4.json", 'GET', '',
@@ -70,15 +79,16 @@ class ThemePlugin(BaseAdminPlugin):
                     mimetype, spec = cgi.parse_header(resp.get('content-type', ''))
                     content = content.decode(spec.get('charset', 'UTF-8'))
                     watch_themes = json.loads(content)['themes']
-                    ex_themes.extend([
+                    ext_themes.extend([
                         {'name': t['name'], 'description': t['description'],
                          'css': t['cssMin'], 'thumbnail': t['thumbnail']}
                         for t in watch_themes])
                 except Exception as e:
                     print(e)
 
-                cache.set(THEME_CACHE_KEY, json.dumps(ex_themes), 24 * 3600)
-                themes.extend(ex_themes)
+                cache.set(THEME_CACHE_KEY, json.dumps(ext_themes), 24 * 3600)
+                self.admin_site.ext_themes = ext_themes  # temporary cache
+                themes.extend(ext_themes)
 
         nodes.append(loader.render_to_string('xadmin/blocks/comm.top.theme.html', {
             'themes': themes, 'select_css': select_css
