@@ -6,7 +6,7 @@
 {% if not widget.one_chart %}
   <ul class="nav nav-tabs chart-tab">
     {% for c in charts %}
-    <li{% if forloop.first%} class="active"{% endif %}><a href="#chart-{{c.name}}" data-toggle="tab">{{c.title}}</a></li>
+    <li class="nav-item"><a class="nav-link{% if forloop.first%} active{% endif %}" href="#chart-{{c.name}}" data-toggle="tab">{{c.title}}</a></li>
     {% endfor %}
   </ul>
 {% endif %}
