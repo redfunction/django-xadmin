@@ -12,8 +12,8 @@
 {% endif %}
   <div class="tab-content">
     {% for c in charts %}
-    <div class="chart tab-pane{% if forloop.first%} active{% endif %}{% if widget.one_chart%} init{% endif %}" id="chart-{{c.name}}" data-chart-url="{{c.url}}" 
-      style="height: 300px; margin:0px; overflow: hidden;"></div>
+    <div class="chart tab-pane overflow-hidden m-0{% if forloop.first%} active{% endif %}{% if widget.one_chart%} init{% endif %}" id="chart-{{c.name}}" data-chart-url="{{c.url}}" 
+      style="height: 300px;"></div>
     {% endfor %}
   </div>
 {% endblock content %}
