@@ -12,15 +12,15 @@
 {% endblock %}
 
 {% block nav_brand %}
-{{block.super}}
-<button class="navbar-toggler" data-toggle="collapse" data-target=".content-navbar .navbar-collapse">
-  <span class="fa fa-filter"></span>
-</button>
-{% if has_add_permission %}
-  <a href="{{add_url}}" class="navbar-toggler">
-      <span class="fa fa-plus"></span>
-  </a>
-{% endif %}
+  {{block.super}}
+  <button class="navbar-toggler" data-toggle="collapse" data-target=".content-navbar .navbar-collapse">
+    <span class="fa fa-filter"></span>
+  </button>
+  {% if has_add_permission %}
+    <a href="{{add_url}}" class="navbar-toggler">
+        <span class="fa fa-plus"></span>
+    </a>
+  {% endif %}
 {% endblock %}
 
 {% block nav_btns %}
@@ -32,148 +32,148 @@
 {% endblock nav_btns %}
 
 {% block content %}
-<div class="row flex-row-reverse no-gutters">
-  <div class="col-sm">
-  <div class="content-toolbar btn-toolbar">
-    {% view_block 'top_toolbar' %}
-    {% block toolbar_column %}
-    <div class="btn-group">
-      <div class="dropdown">
-          <a class="btn btn-sm dropdown-toggle " data-offset="-40"
-             href="#" role="button" id="dropdown-menu-modelfields"
-             data-toggle="dropdown" aria-haspopup="true"
-             aria-expanded="false">
+  <div class="row flex-row-reverse no-gutters">
+    <div class="col-sm">
+      <div class="content-toolbar btn-toolbar">
+        {% view_block 'top_toolbar' %}
+        {% block toolbar_column %}
+        <div class="btn-group">
+          <div class="dropdown">
+            <a class="btn btn-sm dropdown-toggle" data-offset="-40"
+               href="#" role="button" id="dropdown-menu-modelfields"
+               data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
               <i class="fa fa-list-alt"></i>
               {% trans "Columns" %}
-          </a>
-        <div class="dropdown-menu " aria-labelledby="dropdown-menu-modelfields">
-            <a class="dropdown-item" href="{{ clean_select_field_url }}">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown-menu-modelfields">
+              <a class="dropdown-item" href="{{ clean_select_field_url }}">
                 <i class="fa fa-refresh"></i>
                 {% trans "Restore Selected" %}
-            </a>
-            <div class="dropdown-divider"></div>
-            {% for f, selected, flink in model_fields %}
+              </a>
+              <div class="dropdown-divider"></div>
+              {% for f, selected, flink in model_fields %}
                 <a class="dropdown-item" href="{{ flink }}">
-                    {% if selected %} <i class="fa fa-check"></i>{% else %}<i class="fa fa-blank"></i>{% endif %}
-                    {{ f.verbose_name }}
+                  {% if selected %} <i class="fa fa-check"></i>{% else %}<i class="fa fa-blank"></i>{% endif %}
+                  {{ f.verbose_name }}
                 </a>
-            {% endfor %}
+              {% endfor %}
+            </div>
+          </div>
         </div>
+        {% endblock toolbar_column %}
+        {% block toolbar_layouts %}
+        <div class="btn-group btn-group-toggle layout-btns bg-light" data-toggle="buttons">
+          <label class="btn btn-sm layout-normal active">
+            <input type="radio" autocomplete="off">
+            <i class="fa fa-th-large"></i>
+          </label>
+          <label class="btn btn-sm layout-condensed">
+            <input type="radio" autocomplete="off">
+            <i class="fa fa-th"></i>
+          </label>
+          {% view_block 'top_layout_btns' %}
+        </div>
+        {% endblock toolbar_layouts %}
+        {% block toolbar_fullscreen %}
+        <div class="btn-group layout-btns bg-light" data-toggle="buttons-checkbox">
+          <button type="button" class="btn btn-sm layout-full">
+            <i class="fa fa-expand"></i>
+          </button>
+          {% view_block 'top_check_btns' %}
+        </div>
+        {% endblock toolbar_fullscreen %}
+        {% view_block 'top_btns' %}
       </div>
     </div>
-    {% endblock toolbar_column %}
-    {% block toolbar_layouts %}
-    <div class="btn-group btn-group-toggle layout-btns bg-light" data-toggle="buttons">
-      <label class="btn btn-sm layout-normal active">
-        <input type="radio" autocomplete="off">
-          <i class="fa fa-th-large"></i>
-      </label>
-      <label class="btn btn-sm layout-condensed">
-        <input type="radio" autocomplete="off">
-          <i class="fa fa-th"></i>
-      </label>
-      {% view_block 'top_layout_btns' %}
+    <div class="col-sm">
+      <nav aria-label="changelist pagination small">
+        <ul class="pagination pagination-sm pagination-left pagination-inline">
+          {% view_block 'pagination' 'small' %}
+        </ul>
+      </nav>
     </div>
-    {% endblock toolbar_layouts %}
-    {% block toolbar_fullscreen %}
-    <div class="btn-group layout-btns bg-light" data-toggle="buttons-checkbox">
-      <button type="button" class="btn btn-sm layout-full">
-          <i class="fa fa-expand"></i>
-      </button>
-      {% view_block 'top_check_btns' %}
-    </div>
-    {% endblock toolbar_fullscreen %}
-    {% view_block 'top_btns' %}
   </div>
-  </div>
-  <div class="col-sm">
-  <nav aria-label="changelist pagination small">
-   <ul class="pagination pagination-sm pagination-left pagination-inline">
-     {% view_block 'pagination' 'small' %}
-   </ul>
-  </nav>
-  </div>
-</div>
 
   <form id="changelist-form" action="" method="post"{% view_block 'result_list_form' %}{% view_block 'form_tag_attrs' %}>{% csrf_token %}
-  {% view_block 'results_top' %}
-  <div class="results table-responsive">
-  {% if results %}
-  {% block results_grid %}
-  <table class="table table-bordered table-striped table-hover">
-    {% block results_grid_head %}
-    <thead>
-      <tr>{% for o in result_headers.cells %}
-        <th {{o.tagattrs}}>
-          {% if o.btns %}
-            <div class="float-right">
-              {% for b in o.btns %}
-                {{b|safe}}
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if o.menus %}
-            <div class="dropdown float-left">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+    {% view_block 'results_top' %}
+    <div class="results table-responsive">
+      {% if results %}
+      {% block results_grid %}
+      <table class="table table-bordered table-striped table-hover">
+        {% block results_grid_head %}
+        <thead>
+          <tr>{% for o in result_headers.cells %}
+            <th {{o.tagattrs}}>
+              {% if o.btns %}
+                <div class="float-right">
+                  {% for b in o.btns %}
+                    {{b|safe}}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if o.menus %}
+                <div class="dropdown float-left">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ o.label }}
+                  </a>
+                  <div class="dropdown-menu">
+                    {% for m in o.menus %}
+                      {{m|safe}}
+                    {% endfor %}
+                  </div>
+                </div>
+              {% else %}
                 {{ o.label }}
-              </a>
-              <div class="dropdown-menu">
-                {% for m in o.menus %}
-                  {{m|safe}}
-                {% endfor %}
-              </div>
-            </div>
-          {% else %}
-            {{ o.label }}
-          {% endif %}
-        </th>{% endfor %}
-      </tr>
-      {% view_block 'result_head' %}
-    </thead>
-    {% endblock results_grid_head %}
-    {% block results_grid_body %}
-    <tbody>
-    {% for row in results %}
-      <tr class="grid-item{% if row.css_class %} {{row.css_class}}{%endif%}" {{ row.tagattrs }}>{% for o in row.cells %}
-        <td {{o.tagattrs}}>
-          {% if o.btns %}
-            <div class="btn-group float-right">
-              {% for b in o.btns %}
-                {{b|safe}}
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if o.menus %}
-            <div class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              {% endif %}
+            </th>{% endfor %}
+          </tr>
+          {% view_block 'result_head' %}
+        </thead>
+        {% endblock results_grid_head %}
+        {% block results_grid_body %}
+        <tbody>
+        {% for row in results %}
+          <tr class="grid-item{% if row.css_class %} {{row.css_class}}{%endif%}" {{ row.tagattrs }}>{% for o in row.cells %}
+            <td {{o.tagattrs}}>
+              {% if o.btns %}
+                <div class="btn-group float-right">
+                  {% for b in o.btns %}
+                    {{b|safe}}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              {% if o.menus %}
+                <div class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ o.label }}
+                  </a>
+                  <ul class="dropdown-menu">
+                    {% for m in o.menus %}
+                      {{m|safe}}
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% else %}
                 {{ o.label }}
-              </a>
-              <ul class="dropdown-menu">
-                {% for m in o.menus %}
-                  {{m|safe}}
-                {% endfor %}
-              </ul>
-            </div>
-          {% else %}
-            {{ o.label }}
-          {% endif %}
-        </td>
-      {% endfor %}</tr>
-      {% view_block 'result_row' row %}
-    {% endfor %}
-    </tbody>
-    {% endblock results_grid_body %}
-  </table>
-  {% endblock results_grid %}
-  {% else %}
-    <div class="card">
-     <div class="card-body text-muted">
-      {% trans "Empty list" %}
-      </div>
+              {% endif %}
+            </td>
+          {% endfor %}</tr>
+          {% view_block 'result_row' row %}
+        {% endfor %}
+        </tbody>
+        {% endblock results_grid_body %}
+      </table>
+      {% endblock results_grid %}
+      {% else %}
+        <div class="card">
+          <div class="card-body text-muted">
+            {% trans "Empty list" %}
+          </div>
+        </div>
+      {% endif %}
     </div>
-  {% endif %}
-  </div>
-  {% view_block 'results_bottom' %}
+    {% view_block 'results_bottom' %}
   </form>
 
   <nav aria-label="changelist pagination">
