@@ -3,11 +3,6 @@
 
 {% load xadmin_tags %}
 
-{% block extrastyle %}
-<style type="text/css">
-  #content-block.full-content{margin-left: 0;}
-</style>
-{% endblock %}
 {% block bodyclass %}change-list{% endblock %}
 
 {% block nav_title %}{% if brand_icon %}<i class="{{brand_icon}}"></i> {% endif %}{{brand_name}}{% endblock %}
