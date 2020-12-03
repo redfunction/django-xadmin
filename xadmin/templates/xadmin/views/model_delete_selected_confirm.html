@@ -8,7 +8,7 @@
  <ol class="breadcrumb">
   <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
   <li class="breadcrumb-item"><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
-  <li class="breadcrumb-item active">{% trans 'Delete multiple objects' %}</li>
+  <li class="breadcrumb-item active" aria-current="page">{% trans 'Delete multiple objects' %}</li>
  </ol>
 </nav>
 {% endblock %}
