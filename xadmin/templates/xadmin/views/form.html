@@ -27,10 +27,10 @@
   {% view_block 'after_fieldsets' %}
 
   <div class="form-actions clearfix">
-  <button type="submit" class="btn btn-primary show-xs col-xs-12" name="_save" data-loading-text="{% trans "Saving.." %}">
+  <button type="submit" class="btn btn-primary d-block d-md-none col-12" name="_save" data-loading-text="{% trans "Saving.." %}">
       <i class="fa fa-save"></i> {% trans 'Save' %}
   </button>
-  <button type="submit" class="btn btn-primary hide-xs" name="_save" data-loading-text="{% trans "Saving.." %}">
+  <button type="submit" class="btn btn-primary d-none d-md-block" name="_save" data-loading-text="{% trans "Saving.." %}">
       <i class="fa fa-save"></i> {% trans 'Save' %}
   </button>
   </div>
