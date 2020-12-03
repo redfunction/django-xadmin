@@ -10,7 +10,7 @@
             <a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a>
         </li>
         {% for app in app_list %}
-            <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+            <li class="breadcrumb-item{% if forloop.last %} active" aria-current="page{% endif %}">
                 <span>{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</span>
             </li>
         {% endfor %}
