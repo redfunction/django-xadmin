@@ -1,7 +1,7 @@
 {% load i18n xadmin_tags %}
 
 {% block navbar_md %}
-  <ul class="nav nav-pills nav-sitemenu hide-sm card">
+  <ul class="nav nav-pills nav-sitemenu d-flex d-md-none d-lg-flex card">
     <li class="nav-item">
       <a href="{% url 'xadmin:index' %}"><i class="fa-fw fa fa-home"></i> {% trans 'Home' %}</a>
     </li>
@@ -30,7 +30,7 @@
 {% endblock navbar_md %}
 
 {% block navbar_sm %}
-  <ul class="nav flex-column show-sm card">
+  <ul class="nav flex-column d-none d-md-flex d-lg-none card">
     <li class="nav-item">
       <a class="nav-link" href="{% url 'xadmin:index' %}">
           <i class="icon fa-fw fa fa-home"></i>
