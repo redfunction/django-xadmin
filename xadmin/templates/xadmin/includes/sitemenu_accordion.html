@@ -5,10 +5,9 @@
 {% block navbar_md %}
 <div class="card-group d-block d-md-none d-lg-block nav-sitemenu col-md-2" id="nav-accordion">
   {% for item in nav_menu %}
-  <div class="card card-{% if item.selected %}info{%else%}default{% endif %}">
-    <div class="card-header">
+  <div class="card mb-2 card-{% if item.selected %}info{%else%}default{% endif %}">
+    <div class="card-header d-flex justify-content-between align-items-start border-0">
       <h6 class="card-title">
-        <span class="badge badge-info">{{ item.menus|length }}</span>
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#nav-accordion" href="#nav-panel-{{forloop.counter}}">
           {% if item.url %}<a href="{{ item.url }}" class="section">{% endif %}
           {% if item.icon %}<i class="fa-fw {{item.icon}}"></i>
@@ -18,6 +17,7 @@
           {% if item.url %}</a>{% endif %}
         </a>
       </h6>
+      <span class="badge badge-info">{{ item.menus|length }}</span>
     </div>
     <div id="nav-panel-{{forloop.counter}}" class="list-group card-collapse collapse{% if item.selected %} in{% endif %}">
       {% for sitem in item.menus %}
