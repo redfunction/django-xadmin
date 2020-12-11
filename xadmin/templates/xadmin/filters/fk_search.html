@@ -4,12 +4,12 @@
       <i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i>
       {{ title }}
   </a>
-  <div class="popover right p-2">
+  <div class="popover right">
     <div class="arrow"></div>
-    <h6 class="popover-title">
+    <h6 class="popover-header">
       {% trans "Search" %} {{title}}
     </h6>
-    <div class="popover-content">
+    <div class="popover-body">
       <form class="exform" method="get" action="">
         {{ form_params|safe }}
           <select name="{{exact_name}}" class="select-search {% if relfield_style == 'fk-select' %}select-preload{% endif %}" data-search-url="{{search_url}}" data-choices="{{ choices }}"
