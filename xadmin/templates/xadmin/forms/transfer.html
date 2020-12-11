@@ -3,8 +3,10 @@
     <div class="selector-available">
         <p class="title">{% trans "Available" %} {{verbose_name}}</p>
         <div class="input-group input-group-sm selector-filter">
-          <span class="input-group-addon"><i class="fa fa-search"></i></span>
-          <input class="form-control" type="text" id="{{field_id}}_input">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+            </div>
+            <input class="form-control" type="text" id="{{field_id}}_input">
         </div>
         <select multiple="multiple" id="{{field_id}}_form">
             {{available_options|safe}}
