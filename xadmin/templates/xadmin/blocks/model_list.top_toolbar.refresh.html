@@ -7,7 +7,7 @@
   <div class="dropdown-menu" aria-labelledby="dLabel">
     {% if has_refresh %}
       <a class="dropdown-item" href="{{clean_refresh_url}}"><i class="fa fa-blank"></i> {% trans "Clean Refresh" %}</a>
-    <li class="divider"></li>
+    <li class="dropdown-divider"></li>
     {% endif %}
     {% for r in refresh_times %}
       <a class="dropdown-item{% if r.selected %} active{% endif %}" href="{{r.url}}">
