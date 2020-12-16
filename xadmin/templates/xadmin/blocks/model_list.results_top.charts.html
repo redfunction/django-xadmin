@@ -11,8 +11,8 @@
 {% block box_content %}
   <ul class="nav nav-tabs chart-tab">
     {% for c in charts %}
-    <li class="nav-item {% if forloop.first%} active{% endif %}">
-        <a class="nav-link" href="#chart-{{c.name}}" data-toggle="tab">{{c.title}}</a>
+    <li class="nav-item">
+        <a class="nav-link{% if forloop.first%} active{% endif %}" href="#chart-{{c.name}}" data-toggle="tab">{{c.title}}</a>
     </li>
     {% endfor %}
   </ul>
