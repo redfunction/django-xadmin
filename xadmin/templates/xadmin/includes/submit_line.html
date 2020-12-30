@@ -2,7 +2,7 @@
 {% load xadmin_tags %}
 <div class="form-actions d-flex justify-content-start align-items-center bg-light p-2 mt-5">
 {% if show_delete_link %}
-  <a href="{{ delete_url }}" class="btn btn-danger deletelink col-xs-2 show-xs"><i class="fa fa-trash-alt"></i></a>
+  <a href="{{ delete_url }}" class="btn btn-danger deletelink col-2 d-block d-md-none"><i class="fa fa-trash-alt"></i></a>
 {% endif %}
 
 {% if show_save %}
@@ -27,7 +27,7 @@
 </div>
 
 {% if show_delete_link %}
-  <a href="{{ delete_url }}" class="btn btn-danger deletelink float-right hide-xs"><i class="fa fa-trash-alt"></i> {% trans "Delete" %}</a>
+  <a href="{{ delete_url }}" class="btn btn-danger deletelink float-right d-none d-md-block"><i class="fa fa-trash-alt"></i> {% trans "Delete" %}</a>
 {% endif %}
 
 {% view_block 'submit_line' %}

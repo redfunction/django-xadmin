@@ -37,7 +37,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
 
-            <form method="post" class="box-form form-horizontal short_label widget-form exform"{% view_block 'form_tag_attrs' %}>
+            <form method="post" class="box-form short_label widget-form exform"{% view_block 'form_tag_attrs' %}>
                 <div class="modal-body m-2">
                     {% csrf_token %}
                     {% block form %}

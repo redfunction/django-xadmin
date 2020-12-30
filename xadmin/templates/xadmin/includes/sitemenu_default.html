@@ -1,13 +1,13 @@
 {% load i18n xadmin_tags %}
 
 {% block navbar_md %}
-  <ul class="nav nav-pills nav-sitemenu hide-sm card">
+  <ul class="nav nav-pills nav-sitemenu d-flex d-md-none d-lg-flex card">
     <li class="nav-item">
       <a href="{% url 'xadmin:index' %}"><i class="fa-fw fa fa-home"></i> {% trans 'Home' %}</a>
     </li>
     {% for item in nav_menu %}
-      <li class="nav-item {% if item.menus %}nav-header{% endif %} {% if item.selected %} active{% endif %}">
-        {% if item.url %}<a href="{{ item.url }}" class="section">{% endif %}
+      <li class="nav-item {% if item.menus %}nav-header{% endif %}{% if item.selected %} active{% endif %}">
+        {% if item.url %}<a href="{{ item.url }}" class="nav-link section">{% endif %}
         {% if item.icon %}<i class="fa-fw {{item.icon}}"></i>{% endif %}{{ item.title }}
         {% if item.url %}</a>{% endif %}
       </li>
@@ -30,7 +30,7 @@
 {% endblock navbar_md %}
 
 {% block navbar_sm %}
-  <ul class="nav flex-column show-sm card">
+  <ul class="nav flex-column d-none d-md-flex d-lg-none card">
     <li class="nav-item">
       <a class="nav-link" href="{% url 'xadmin:index' %}">
           <i class="icon fa-fw fa fa-home"></i>

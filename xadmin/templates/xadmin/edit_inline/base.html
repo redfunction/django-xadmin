@@ -35,7 +35,7 @@
 
 {% block box_extra %}
 {% if not formset.formset.detail_page %}
-<span style="display: none" id="{{ prefix }}-empty">
+<span class="d-none" id="{{ prefix }}-empty">
 {% blockcapture inline_html %}{% block formset_empty %}{% endblock formset_empty %}{% endblockcapture %}
 {{inline_html}} {# html escaped #}
 </span>

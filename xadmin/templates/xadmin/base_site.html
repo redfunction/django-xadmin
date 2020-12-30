@@ -19,7 +19,7 @@
         {% view_block 'top_navmenu' %}
         {% if user.is_active and user.is_staff %}
           <li class="nav-item dropdown">
-            <a class=" nav-link dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+            <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" href="#">
              <strong>{% trans 'Welcome,' %} {% firstof user.first_name user.username %}</strong>
             </a>
             <div id="g-account-menu" class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -40,7 +40,7 @@
   {% endblock %}
   <div id="body-content" class="clearfix row">
     <div id="left-side" class="col-sm-5 col-md-2">
-        {% block navbar %}
+      {% block navbar %}
         {% if nav_menu %}
           {% include menu_template %}
         {% else %}
@@ -55,14 +55,14 @@
       <nav aria-label="breadcrumb">
        <ol class="breadcrumb">
        {% for bc in breadcrumbs %}
-        <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+        <li class="breadcrumb-item{% if forloop.last %} active" aria-current="page{% endif %}">
           {% if forloop.last or not bc.url %}{{bc.title}}
           {% else %}<a href="{{bc.url}}">{{bc.title}}</a>
           {% endif %}
         </li>
        {% empty %}
         <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-        {% if title %}<li class="breadcrumb-item active">{{ title }}</li>{% endif %}
+        {% if title %}<li class="breadcrumb-item active" aria-current="page">{{ title }}</li>{% endif %}
        {% endfor %}
        </ol>
       </nav>
@@ -102,7 +102,7 @@
       {% if messages %}
         {% for message in messages %}
         <div class="alert alert-dismissable{% if message.tags %} {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}{% endif %}">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Close' %}">&times;</button>
           {{ message|safe }}
         </div>
         {% endfor %}

@@ -3,11 +3,10 @@
   <a id="drop-filter" class="dropdown-toggle btn" role="button" data-toggle="dropdown" href="#"
         aria-haspopup="true" aria-expanded="false">
       <i class="fa fa-filter" title="{% trans "Filters" %}"></i>
-      <span class="hide-sm-screen">{% trans "Filters" %}</span>
+      <span class="d-md-none d-lg-inline-block">{% trans "Filters" %}</span>
       {% if cl.used_filter_num > 0 %}
         <span class="badge badge-success">{{cl.used_filter_num}}</span>
       {% endif %}
-      <span class="caret"></span>
   </a>
   <div id="filter-menu" class="dropdown-menu" aria-labelledby="drop-filter">
     {% if cl.has_query_param %}

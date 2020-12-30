@@ -3,11 +3,11 @@
 <li class="nav-item dropdown g-setlang">
  <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" href="#">
    <i class="fa fa-globe"></i>
-   <span class="hide-sm">
+   <span class="d-md-none d-lg-inline">
     {% get_language_info for LANGUAGE_CODE as lang  %}{{ lang.name_local }}
    </span>
   </a>
-  <form id="setlang-form" action="{% url 'xadmin:set_language' %}" method="post" style="display:none;" {% view_block 'form_tag_attrs' %}>
+  <form id="setlang-form" class="d-none" action="{% url 'xadmin:set_language' %}" method="post" {% view_block 'form_tag_attrs' %}>
     {% csrf_token %}
     <input name="next" type="hidden" value="{{ redirect_to }}" />
     <input id="setlang-id_language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}" />

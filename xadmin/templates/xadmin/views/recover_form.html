@@ -21,7 +21,7 @@
                 {% blocktrans with opts.verbose_name_plural as name %}Recover deleted {{ name }}{% endblocktrans %}
             </a>
         </li>
-        <li class="breadcrumb-item active">{{ title }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
     </ol>
 </nav>
 {% endblock %}

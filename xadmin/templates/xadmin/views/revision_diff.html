@@ -18,7 +18,7 @@
         <li class="breadcrumb-item">
             <a href="{% url opts|admin_urlname:'revisionlist' object.pk %}">{% trans 'History' %}</a>
         </li>
-        <li class="breadcrumb-item active">
+        <li class="breadcrumb-item active" aria-current="page">
             {% blocktrans with opts.verbose_name as verbose_name %}Diff {{ verbose_name }}{% endblocktrans %}
         </li>
     </ol>
@@ -41,7 +41,7 @@
     </thead>
     <tbody>
       {% for label, value_a, value_b, diff in diffs %}
-        <tr{%if diff%} class="diff-row warning"{% endif %}>
+        <tr{%if diff%} class="diff-row table-warning"{% endif %}>
           <th scope="row">{{ label }}</th>
           <td class="version-a{%if not diff%} text-muted{% endif %}">{{value_a}}</td>
           <td class="version-b{%if not diff%} text-muted{% endif %}">{{value_b}}</td>

@@ -8,7 +8,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
         <li class="breadcrumb-item"><a href="{{ changelist_url }}">{{ opts.verbose_name_plural|capfirst }}</a></li>
-        <li class="breadcrumb-item active">{% blocktrans with opts.verbose_name_plural|escape as name %}Recover deleted
+        <li class="breadcrumb-item active" aria-current="page">{% blocktrans with opts.verbose_name_plural|escape as name %}Recover deleted
             {{ name }}{% endblocktrans %}
         </li>
     </ol>

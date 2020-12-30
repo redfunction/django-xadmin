@@ -4,7 +4,7 @@
       <a class="dropdown-toggle btn btn-sm"
          href="#" id="dropdown-modal-export"
          data-toggle="dropdown">
-        <i class="fa fa-share"></i> {% trans "Export" %} <span class="caret"></span>
+        <i class="fa fa-share"></i> {% trans "Export" %}
       </a>
       <div class="dropdown-menu" aria-labelledby="dropdown-modal-export">
         {% for et in export_types %}
@@ -27,43 +27,45 @@
           </div>
           <div class="modal-body">
             {% block modal_body  %}
-            {{ form_params|safe }}
-            <input type="hidden" name="export_type" value="{{et.type}}">
-                <div class="checkbox">
-                <label>
+              {{ form_params|safe }}
+              <input type="hidden" name="export_type" value="{{et.type}}">
+              <div class="form-check">
                 {% if et.type == "xlsx" %}
-                <input type="checkbox" name="export_xlsx_header" checked="checked" value="on"> {% trans "Export with table header." %}
+                <input type="checkbox" class="form-check-input" id="export_xlsx_header" name="export_xlsx_header" checked="checked" value="on">
+                <label class="form-check-label" for="export_xlsx_header">{% trans "Export with table header." %}</label>
                 {% endif %}
                 {% if et.type == "xls" %}
-                <input type="checkbox" name="export_xls_header" checked="checked" value="on"> {% trans "Export with table header." %}
+                <input type="checkbox" class="form-check-input" id="export_xls_header" name="export_xls_header" checked="checked" value="on">
+                <label class="form-check-label" for="export_xls_header">{% trans "Export with table header." %}</label>
                 {% endif %}
                 {% if et.type == "csv" %}
-                <input type="checkbox" name="export_csv_header" checked="checked" value="on"> {% trans "Export with table header." %}
+                <input type="checkbox" class="form-check-input" id="export_csv_header" name="export_csv_header" checked="checked" value="on">
+                <label class="form-check-label" for="export_csv_header">{% trans "Export with table header." %}</label> 
                 {% endif %}
                 {% if et.type == "xml" %}
-                <input type="checkbox" name="export_xml_format" checked="checked" value="on"> {% trans "Export with format." %}
+                <input type="checkbox" class="form-check-input" id="export_xml_format" name="export_xml_format" checked="checked" value="on">
+                <label class="form-check-label" for="export_xml_format">{% trans "Export with format." %}</label>
                 {% endif %}
                 {% if et.type == "json" %}
-                <input type="checkbox" name="export_json_format" checked="checked" value="on"> {% trans "Export with format." %}
+                <input type="checkbox" class="form-check-input" id="export_json_format" name="export_json_format" checked="checked" value="on">
+                <label class="form-check-label" for="export_json_format"> {% trans "Export with format." %}</label>
                 {% endif %}
-                </label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="all" value="on"> {% trans "Export all data." %}</label>
-                </div>
-                {% if export_to_email %}
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" name="export_to_email" value="on">
-                    {% trans "Send result file via email." %}
-                  </label>
-                </div>
-                {% endif %}
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="export_all" name="all" value="on">
+                <label class="form-check-label" for="export_all">{% trans "Export all data." %}</label>
+              </div>
+              {% if export_to_email %}
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="export_to_email"  name="export_to_email" value="on">
+                <label class="form-check-label" for="export_to_email">{% trans "Send result file via email." %}</label>
+              </div>
+              {% endif %}
             {% endblock %}
           </div>
           <div class="modal-footer">
           {% block model_footer %}
-            <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
             <button class="btn btn-success" type="submit"><i class="fa fa-share"></i> {% trans "Export" %}</button>
           {% endblock %}
           </div>

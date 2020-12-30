@@ -1,11 +1,11 @@
 {% load i18n xadmin_tags %}
 {% autoescape off %}
 {% if search_models %}
-<form method="get" class="top-search-form navbar-form navbar-left" id="g-search">
+<form method="get" class="top-search-form form-inline" id="g-search">
     <div class="btn-group">
         <label for="g-search-text"></label>
-        <input id="g-search-text" class="form-control" name="{{ search_name }}" type="text">
-        <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+        <input id="g-search-text" class="form-control mr-1" name="{{ search_name }}" type="text">
+        <button class="btn btn-info btn-sm dropdown-toggle rounded" type="button" data-toggle="dropdown"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fa fa-search"></i>
             {% trans "Search" %}

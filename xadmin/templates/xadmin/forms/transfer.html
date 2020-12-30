@@ -2,21 +2,23 @@
 <div class="selector select-transfer">
     <div class="selector-available">
         <p class="title">{% trans "Available" %} {{verbose_name}}</p>
-        <div class="input-group input-group-sm selector-filter">
-          <span class="input-group-addon"><i class="fa fa-search"></i></span>
-          <input class="form-control" type="text" id="{{field_id}}_input">
+        <div class="input-group input-group-sm selector-filter px-1 pb-1"> 
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+            </div>
+            <input class="form-control" type="text" id="{{field_id}}_input">
         </div>
         <select multiple="multiple" id="{{field_id}}_form">
             {{available_options|safe}}
         </select>
-        <a class="btn btn-default selector-chooseall" title="{% trans "Click to choose all at once." %}">{% trans "Choose all" %}</a>
+        <a class="btn btn-secondary selector-chooseall" title="{% trans "Click to choose all at once." %}">{% trans "Choose all" %}</a>
     </div>
     <ul class="selector-chooser">
         <li>
-            <a class="btn btn-default btn-sm selector-add" title="{% trans "Choose" %}"><i class="fa fa-plus"></i></a>
+            <a class="btn btn-secondary btn-sm selector-add" title="{% trans "Choose" %}"><i class="fa fa-plus"></i></a>
         </li>
         <li>
-            <a class="btn btn-default btn-sm selector-remove" title="{% trans "Remove" %}"><i class="fa fa-minus"></i></a>
+            <a class="btn btn-secondary btn-sm selector-remove" title="{% trans "Remove" %}"><i class="fa fa-minus"></i></a>
         </li>
     </ul>
     <div class="selector-chosen">
@@ -24,7 +26,7 @@
         <select multiple="multiple" {{flatatts|safe}}>
             {{chosen_options|safe}}
         </select>
-        <a class="btn btn-default selector-clearall" title="{% trans "Click to remove all chosen at once." %}">{% trans "Remove all" %}</a>
+        <a class="btn btn-secondary selector-clearall" title="{% trans "Click to remove all chosen at once." %}">{% trans "Remove all" %}</a>
     </div>
 </div>
 <div class="clearfix"></div>
