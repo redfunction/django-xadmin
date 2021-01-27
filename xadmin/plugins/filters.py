@@ -1,4 +1,9 @@
+import urllib.parse
+
 import operator
+
+from django.template.loader import render_to_string
+
 from xadmin import widgets
 from xadmin.plugins.utils import get_context_dict
 
@@ -17,7 +22,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ListAdminView
-from xadmin.util import is_related_field
+from xadmin.util import is_related_field, get_model_from_relation
 from functools import reduce
 
 
@@ -75,6 +80,21 @@ class FilterPlugin(BaseAdminPlugin):
         clean_lookup = LOOKUP_SEP.join(parts)
         return clean_lookup in self.list_filter
 
+    @staticmethod
+    def get_related_title(field, default):
+        """Attempts to extract the verbose name from a related field"""
+        if isinstance(field, models.ForeignKey):  # ForeignKey / verbose_name
+            verbose_name = getattr(field, "verbose_name", default) or default
+        elif isinstance(field, (models.OneToOneRel, models.OneToOneField)):
+            if field.auto_created and field.related_model:
+                opts = get_model_from_relation(field)._meta
+            else:
+                opts = field
+            verbose_name = getattr(opts, "verbose_name", default) or default
+        else:
+            verbose_name = default
+        return verbose_name
+
     def get_list_queryset(self, queryset):
         lookup_params = dict([(smart_str(k)[len(FILTER_PREFIX):], v) for k, v in self.admin_view.params.items()
                               if smart_str(k).startswith(FILTER_PREFIX) and v != ''])
@@ -115,8 +135,7 @@ class FilterPlugin(BaseAdminPlugin):
                         field, field_list_filter_class = list_filter, filter_manager.create
                     if not isinstance(field, models.Field):
                         field_path = field
-                        field_parts = get_fields_from_path(
-                            self.model, field_path)
+                        field_parts = get_fields_from_path(self.model, field_path)
                         field = field_parts[-1]
                     spec = field_list_filter_class(
                         field, self.request, lookup_params,
@@ -126,10 +145,11 @@ class FilterPlugin(BaseAdminPlugin):
                         # Add related model name to title
                         field_part = field_parts[-2]
                         field_part_name = field_part.name
-                        if isinstance(field_part, models.ForeignKey):  # ForeignKey / verbose_name
-                            field_part_name = getattr(field_part, "verbose_name", field_part_name) or \
-                                              field_part_name
-                        spec.title = "%s %s" % (field_part_name, spec.title)
+                        field_part_name = self.get_related_title(field_part, field_part_name)
+                        spec.title = render_to_string("xadmin/filters/arrow.html", context={
+                            'name': field_part_name,
+                            'title': spec.title
+                        })
 
                     # Check if we need to use distinct()
                     use_distinct = (use_distinct or
@@ -178,7 +198,7 @@ class FilterPlugin(BaseAdminPlugin):
             if not isinstance(queryset, models.query.QuerySet):
                 pass
 
-        query = self.request.GET.get(SEARCH_VAR, '')
+        query = urllib.parse.unquote_plus(self.request.GET.get(SEARCH_VAR, ''))
 
         # Apply keyword searches.
         def construct_search(field_name):
