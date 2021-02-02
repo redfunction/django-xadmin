@@ -1,7 +1,3 @@
-/*jquery sortable compatible plugin */
-jQuery.fn.sortable = function (options) {
-    return $(sortable(this, options));
-};
 
 jQuery(function() {
     $(".column").sortable({
