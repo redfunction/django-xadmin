@@ -45,7 +45,6 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from django.utils import six
-from import_export.tmp_storages import TempFolderStorage
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
@@ -56,6 +55,7 @@ from import_export.admin import DEFAULT_FORMATS
 try:
     from import_export.admin import SKIP_ADMIN_LOG, TMP_STORAGE_CLASS
 except ImportError:
+    from import_export.tmp_storages import TempFolderStorage
     TMP_STORAGE_CLASS = getattr(settings, 'IMPORT_EXPORT_TMP_STORAGE_CLASS', TempFolderStorage)
     SKIP_ADMIN_LOG = getattr(settings, 'IMPORT_EXPORT_SKIP_ADMIN_LOG', False)
 from import_export.resources import modelresource_factory
