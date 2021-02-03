@@ -12,7 +12,7 @@
 {% block body %}
   <!-- Header -->
   {% block top-nav %}
-  <nav id="top-nav" class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+  <nav id="top-nav" class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
     <a class="navbar-brand d-none d-md-block" href="#">{% block branding %}{{ site_title }}{% endblock %}</a>
       <div class="navbar-collapse collapse" >
       <ul class="navbar-nav mr-auto">
@@ -38,7 +38,7 @@
     </div>
   </nav>
   {% endblock %}
-  <div id="body-content" class="clearfix row">
+  <div id="body-content" class="clearfix row pt-3">
     <div id="left-side" class="col-sm-5 col-md-2">
       {% block navbar %}
         {% if nav_menu %}
