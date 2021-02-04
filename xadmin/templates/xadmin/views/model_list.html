@@ -114,7 +114,7 @@
               {% endif %}
               {% if o.menus %}
                 <div class="dropdown float-left">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <a class="text-nowrap" data-toggle="dropdown" href="#">
                     {{ o.label }}
                   </a>
                   <div class="dropdown-menu">
@@ -136,27 +136,31 @@
         {% for row in results %}
           <tr class="grid-item{% if row.css_class %} {{row.css_class}}{%endif%}" {{ row.tagattrs }}>{% for o in row.cells %}
             <td {{o.tagattrs}}>
-              {% if o.btns %}
-                <div class="btn-group float-right">
-                  {% for b in o.btns %}
-                    {{b|safe}}
-                  {% endfor %}
-                </div>
-              {% endif %}
-              {% if o.menus %}
-                <div class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <div class="d-flex justify-content-between">
+                {% if o.menus %}
+                  <div class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                      {{ o.label }}
+                    </a>
+                    <ul class="dropdown-menu">
+                      {% for m in o.menus %}
+                        {{m|safe}}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <div class="pr-2">
                     {{ o.label }}
-                  </a>
-                  <ul class="dropdown-menu">
-                    {% for m in o.menus %}
-                      {{m|safe}}
+                  </div>
+                {% endif %}
+                {% if o.btns %}
+                  <div class="btn-group">
+                    {% for b in o.btns %}
+                      {{b|safe}}
                     {% endfor %}
-                  </ul>
-                </div>
-              {% else %}
-                {{ o.label }}
-              {% endif %}
+                  </div>
+                {% endif %}
+              </div>
             </td>
           {% endfor %}</tr>
           {% view_block 'result_row' row %}
