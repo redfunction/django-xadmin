@@ -69,6 +69,7 @@ class BatchChangeAction(BaseActionView):
     model_perm = 'change'
 
     batch_fields = []
+    batch_fields_exclude = []
     # It allows you to use a different form stated in the view model
     batch_form = None
 
@@ -114,9 +115,9 @@ class BatchChangeAction(BaseActionView):
             "form": batch_form or edit_view.form,
             "fields": fields,
             "formfield_callback": formfield_for_dbfield,
+            "exclude": getattr(edit_view, "batch_fields_exclude", ())
         }
-        form = modelform_factory(self.model, **defaults)
-        return form
+        return modelform_factory(self.model, **defaults)
 
     @staticmethod
     def formfield_for_declared(form, fields):
@@ -137,7 +138,7 @@ class BatchChangeAction(BaseActionView):
     def formfield_declared_in_post(form, fields):
         """Keep only declared fields sent in the post"""
         for field_name in form.declared_fields:
-            if field_name not in fields:
+            if field_name not in fields and field_name in form.fields:
                 del form.fields[field_name]
         return form
 
