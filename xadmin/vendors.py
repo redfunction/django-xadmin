@@ -132,7 +132,7 @@ vendors = {
         "css": {
             'dev': ['xadmin/vendor/select2/css/select2.css',
                     'xadmin/vendor/selectize/css/selectize.css',
-                    'xadmin/vendor/selectize/css/selectize.bootstrap3.css'],
+                    'xadmin/vendor/selectize/css/selectize.bootstrap4.css'],
         },
         "js": {
             'dev': [
