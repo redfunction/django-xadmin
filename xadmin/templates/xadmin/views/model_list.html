@@ -34,12 +34,12 @@
 {% block content %}
   <div class="row flex-row-reverse no-gutters">
     <div class="col-sm">
-      <div class="content-toolbar btn-toolbar">
+      <div class="content-toolbar btn-toolbar float-md-right mb-3">
         {% view_block 'top_toolbar' %}
         {% block toolbar_column %}
-        <div class="btn-group">
+        <div class="btn-group ml-2">
           <div class="dropdown">
-            <a class="btn btn-sm dropdown-toggle" data-offset="-40"
+            <a class="btn btn-sm btn-light border dropdown-toggle" data-offset="-40"
                href="#" role="button" id="dropdown-menu-modelfields"
                data-toggle="dropdown" aria-haspopup="true"
                aria-expanded="false">
@@ -63,12 +63,12 @@
         </div>
         {% endblock toolbar_column %}
         {% block toolbar_layouts %}
-        <div class="btn-group btn-group-toggle layout-btns bg-light" data-toggle="buttons">
-          <label class="btn btn-sm layout-normal active">
+        <div class="btn-group btn-group-toggle layout-btns ml-2" data-toggle="buttons">
+          <label class="btn btn-sm btn-light border border-right-0 layout-normal active">
             <input type="radio" autocomplete="off">
             <i class="fa fa-th-large"></i>
           </label>
-          <label class="btn btn-sm layout-condensed">
+          <label class="btn btn-sm btn-light border border-left-0 layout-condensed">
             <input type="radio" autocomplete="off">
             <i class="fa fa-th"></i>
           </label>
@@ -76,8 +76,8 @@
         </div>
         {% endblock toolbar_layouts %}
         {% block toolbar_fullscreen %}
-        <div class="btn-group layout-btns bg-light" data-toggle="buttons-checkbox">
-          <button type="button" class="btn btn-sm layout-full">
+        <div class="btn-group layout-btns ml-2" data-toggle="buttons-checkbox">
+          <button type="button" class="btn btn-sm btn-light border layout-full">
             <i class="fa fa-expand"></i>
           </button>
           {% view_block 'top_check_btns' %}
@@ -114,7 +114,7 @@
               {% endif %}
               {% if o.menus %}
                 <div class="dropdown float-left">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <a class="text-nowrap" data-toggle="dropdown" href="#">
                     {{ o.label }}
                   </a>
                   <div class="dropdown-menu">
@@ -136,27 +136,31 @@
         {% for row in results %}
           <tr class="grid-item{% if row.css_class %} {{row.css_class}}{%endif%}" {{ row.tagattrs }}>{% for o in row.cells %}
             <td {{o.tagattrs}}>
-              {% if o.btns %}
-                <div class="btn-group float-right">
-                  {% for b in o.btns %}
-                    {{b|safe}}
-                  {% endfor %}
-                </div>
-              {% endif %}
-              {% if o.menus %}
-                <div class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <div class="d-flex justify-content-between">
+                {% if o.menus %}
+                  <div class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                      {{ o.label }}
+                    </a>
+                    <ul class="dropdown-menu">
+                      {% for m in o.menus %}
+                        {{m|safe}}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <div class="pr-2">
                     {{ o.label }}
-                  </a>
-                  <ul class="dropdown-menu">
-                    {% for m in o.menus %}
-                      {{m|safe}}
+                  </div>
+                {% endif %}
+                {% if o.btns %}
+                  <div class="btn-group">
+                    {% for b in o.btns %}
+                      {{b|safe}}
                     {% endfor %}
-                  </ul>
-                </div>
-              {% else %}
-                {{ o.label }}
-              {% endif %}
+                  </div>
+                {% endif %}
+              </div>
             </td>
           {% endfor %}</tr>
           {% view_block 'result_row' row %}
@@ -166,8 +170,8 @@
       </table>
       {% endblock results_grid %}
       {% else %}
-        <div class="card">
-          <div class="card-body text-muted">
+        <div class="card bg-light shadow-sm mb-3">
+          <div class="card-body">
             {% trans "Empty list" %}
           </div>
         </div>

@@ -12,10 +12,10 @@
 {% block body %}
   <!-- Header -->
   {% block top-nav %}
-  <nav id="top-nav" class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand d-none d-md-block" href="#">{% block branding %}{{ site_title }}{% endblock %}</a>
+  <nav id="top-nav" class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">{% block branding %}{{ site_title }}{% endblock %}</a>
       <div class="navbar-collapse collapse" >
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav ml-auto">
         {% view_block 'top_navmenu' %}
         {% if user.is_active and user.is_staff %}
           <li class="nav-item dropdown">
@@ -38,80 +38,82 @@
     </div>
   </nav>
   {% endblock %}
-  <div id="body-content" class="clearfix row">
-    <div id="left-side" class="col-sm-5 col-md-2">
-      {% block navbar %}
-        {% if nav_menu %}
-          {% include menu_template %}
-        {% else %}
-          <p>{% trans "You don't have permission to edit anything." %}</p>
-        {% endif %}
-      {% endblock %}
-      {% view_block 'left_navbar' %}
-    </div>
-
-    <div id="content-block" class="col-sm-12 col-md-10">
-      {% block breadcrumbs %}
-      <nav aria-label="breadcrumb">
-       <ol class="breadcrumb">
-       {% for bc in breadcrumbs %}
-        <li class="breadcrumb-item{% if forloop.last %} active" aria-current="page{% endif %}">
-          {% if forloop.last or not bc.url %}{{bc.title}}
-          {% else %}<a href="{{bc.url}}">{{bc.title}}</a>
+  <div class="container-fluid">
+    <div id="body-content" class="clearfix row pt-3">
+      <div id="left-side" class="col-sm-5 col-md-2">
+        {% block navbar %}
+          {% if nav_menu %}
+            {% include menu_template %}
+          {% else %}
+            <p>{% trans "You don't have permission to edit anything." %}</p>
           {% endif %}
-        </li>
-       {% empty %}
-        <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-        {% if title %}<li class="breadcrumb-item active" aria-current="page">{{ title }}</li>{% endif %}
-       {% endfor %}
-       </ol>
-      </nav>
-      {% endblock %}
-
-    {% block content-nav %}
-       <nav class="navbar content-navbar navbar-expand-md navbar-light bg-light" data-toggle="breakpoint"
-        data-class-xs="navbar content-navbar navbar-expand-xs navbar-dark bg-dark fixed-top"
-        data-class-sm="navbar content-navbar navbar-expand-sm navbar-light bg-light"
-        data-class-md="navbar content-navbar navbar-expand-md navbar-light bg-light">
-           {% block nav_toggles %}
-             {% include "xadmin/includes/toggle_back.html" %}
-           {% endblock %}
-           {% block nav_brand %}
-            <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
-             {% block nav_title %}{% endblock %}
-            </a>
-           {% endblock %}
-           {% view_block 'nav_toggles' %}
-            <div class="navbar-collapse collapse">
-                <ul class="navbar-nav mr-auto">
-                    {% view_block 'nav_menu' %}
-                </ul>
-                {% view_block 'nav_form' %}
-                {% block nav_form %}{% endblock %}
-
-                <div class="navbar-btn d-none d-md-block ml-1">
-                    {% view_block 'nav_btns' %}
-                    {% block nav_btns %}{% endblock %}
-                </div>
-            </div>
+        {% endblock %}
+        {% view_block 'left_navbar' %}
+      </div>
+  
+      <div id="content-block" class="col-sm-12 col-md-10">
+        {% block breadcrumbs %}
+        <nav aria-label="breadcrumb">
+         <ol class="breadcrumb">
+         {% for bc in breadcrumbs %}
+          <li class="breadcrumb-item{% if forloop.last %} active" aria-current="page{% endif %}">
+            {% if forloop.last or not bc.url %}{{bc.title}}
+            {% else %}<a href="{{bc.url}}">{{bc.title}}</a>
+            {% endif %}
+          </li>
+         {% empty %}
+          <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
+          {% if title %}<li class="breadcrumb-item active" aria-current="page">{{ title }}</li>{% endif %}
+         {% endfor %}
+         </ol>
         </nav>
-
-    {% endblock %}
-
-      {% block messages %}
-      {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-dismissable{% if message.tags %} {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}{% endif %}">
-          <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Close' %}">&times;</button>
-          {{ message|safe }}
-        </div>
-        {% endfor %}
-      {% endif %}
-      {% endblock messages %}
-
-      {% block content %}
-      {{ content }}
+        {% endblock %}
+  
+      {% block content-nav %}
+         <nav class="navbar content-navbar navbar-expand-md navbar-light bg-light border rounded mb-3" data-toggle="breakpoint"
+          data-class-xs="navbar content-navbar navbar-expand-xs navbar-dark bg-dark fixed-top"
+          data-class-sm="navbar content-navbar navbar-expand-sm navbar-light bg-light"
+          data-class-md="navbar content-navbar navbar-expand-md navbar-light bg-light">
+             {% block nav_toggles %}
+               {% include "xadmin/includes/toggle_back.html" %}
+             {% endblock %}
+             {% block nav_brand %}
+              <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#top-nav .navbar-collapse">
+               {% block nav_title %}{% endblock %}
+              </a>
+             {% endblock %}
+             {% view_block 'nav_toggles' %}
+              <div class="navbar-collapse collapse">
+                  <ul class="navbar-nav mr-auto">
+                      {% view_block 'nav_menu' %}
+                  </ul>
+                  {% view_block 'nav_form' %}
+                  {% block nav_form %}{% endblock %}
+  
+                  <div class="navbar-btn d-none d-md-block ml-1">
+                      {% view_block 'nav_btns' %}
+                      {% block nav_btns %}{% endblock %}
+                  </div>
+              </div>
+          </nav>
+  
       {% endblock %}
+  
+        {% block messages %}
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-dismissable{% if message.tags %} {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}{% endif %}">
+            <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Close' %}">&times;</button>
+            {{ message|safe }}
+          </div>
+          {% endfor %}
+        {% endif %}
+        {% endblock messages %}
+  
+        {% block content %}
+        {{ content }}
+        {% endblock %}
+      </div>
     </div>
   </div>
 
