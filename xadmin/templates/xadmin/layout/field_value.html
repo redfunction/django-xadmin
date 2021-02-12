@@ -1,8 +1,8 @@
-<div id="div_{{ field.auto_id }}" class="value row no-gutters bg-light border-bottom{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
-    <label class="col-sm-2 col-form-label text-right p-3 border-right">
+<div id="div_{{ field.auto_id }}" class="value row no-gutters border-bottom{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    <label class="col-sm-2 col-form-label bg-light text-right p-3 border-right">
       <strong>{{ result.label|safe }}</strong>
     </label>
-    <div class="col controls bg-white p-3">
+    <div class="col controls bg-transparent p-3">
         <div class="form-control-plaintext p-0 {{input_class}}">{{ result.val }}</div>
     </div>
 </div>
