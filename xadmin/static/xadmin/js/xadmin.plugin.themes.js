@@ -2,7 +2,6 @@
   $(function(){
     if($("#g-theme-menu")){
       $('#g-theme-menu a').click(function(){
-        var top_nav = $('#top-nav');
         var $el = $(this);
         var themeHref = $el.data('css-href');
         
@@ -12,7 +11,7 @@
         var modal = $("#nunjuks-modal-main").template_render$({
             header: {title: gettext('Loading theme')},
             modal: {id: 'load-theme-modal', size: 'modal-md',},
-            body: '<h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2>',
+            body: '<h2 class="text-center"><i class="fa-spinner fa-spin fa fa-large"></i></h2>',
             footer: '&nbsp'
           }).appendTo('body');
 
@@ -21,20 +20,15 @@
             $.setCookie('_theme', themeHref);
 
             var $iframe = $("<iframe>");
-            $iframe.css("display", 'none');
+            $iframe.addClass("d-none");
             $iframe.appendTo(document.body);
 
-            modal.on('hidden', function(e) {
+            modal.on('hidden', function() {
               modal.remove();
             });
 
             $iframe.on("load", function () {
               $('#site-theme').attr('href', themeHref);
-
-              setTimeout(function(){
-                var nav_height = top_nav.outerHeight();
-                $('#body-content').animate({'margin-top': (nav_height + 10)}, 500, 'easeOutBounce');
-              }, 500);
 
               modal.modal('hide');
               $iframe.remove();
