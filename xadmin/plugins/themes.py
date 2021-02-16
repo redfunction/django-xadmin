@@ -6,6 +6,7 @@ import httplib2
 from django.core.cache import cache, DEFAULT_CACHE_ALIAS, caches
 from django.core.cache.backends.dummy import DummyCache
 from django.template import loader
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 
 from xadmin.models import UserSettings
@@ -21,8 +22,13 @@ class ThemePlugin(BaseAdminPlugin):
     user_themes = None
     use_bootswatch = False
 
-    default_theme = static('xadmin/css/themes/bootstrap-xadmin.css')
-    bootstrap4_theme = static('xadmin/css/themes/bootstrap.litera.min.css')
+    @cached_property
+    def default_theme(self):
+        return static('xadmin/css/themes/bootstrap-xadmin.css')
+
+    @cached_property
+    def bootstrap4_theme(self):
+        return static('xadmin/css/themes/bootstrap.litera.min.css')
 
     def init_request(self, *args, **kwargs):
         return self.enable_themes
