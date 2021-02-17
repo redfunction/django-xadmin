@@ -8,7 +8,7 @@ vendors = {
             ],
             'production': [
                 'xadmin/vendor/popper/popper.min.js',
-                'xadmin/vendor/bootstrap/bootstrap.min.js',
+                'xadmin/vendor/bootstrap/js/bootstrap.min.js',
             ],
             'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
@@ -38,7 +38,7 @@ vendors = {
             'dev': ['xadmin/vendor/nunjucks/nunjucks.js',
                     'xadmin/js/nunjucks.engine.js'],
             'production': ['xadmin/vendor/nunjucks/nunjucks.min.js',
-                           'xadmin/js/nunjunks.engine.js'],
+                           'xadmin/js/nunjucks.engine.js'],
         }
     },
     'jquery-ui-effect': {
