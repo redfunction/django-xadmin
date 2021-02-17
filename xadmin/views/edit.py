@@ -222,7 +222,6 @@ class ModelFormAdminView(ModelAdminView):
         helper.form_class = 'form-horizontal'
         helper.label_class = 'col-sm-2 text-right font-weight-bold p-3'
         helper.field_class = 'col controls bg-white border-left p-3'
-        helper.wrapper_class = 'no-gutters bg-light border-bottom mb-0'
         helper.include_media = False
         helper.add_layout(self.get_form_layout())
 
