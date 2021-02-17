@@ -13,7 +13,7 @@ function genericTask() {
         "bower_components/**/img/**",
         "!bower_components/select2/**",
         "!bower_components/popper.js/**",
-        "!bower_components/nunjucks/**",
+        "!bower_components/font-awesome/**",
         "!bower_components/nunjucks/**",
         "!bower_components/html5sortable/**",
         "!bower_components/flot/**",
@@ -111,6 +111,7 @@ function fontAwesomeTask() {
         "bower_components/font-awesome/**/otfs/**",
         "bower_components/font-awesome/**/webfonts/**",
         "!bower_components/font-awesome/js-packages/**",
+        "!bower_components/font-awesome/**/README.md",
     ];
     return gulp.src(srcs)
         .pipe(gulp.dest('vendor/font-awesome'));
