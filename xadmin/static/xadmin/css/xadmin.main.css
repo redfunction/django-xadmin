@@ -1,11 +1,5 @@
 a { cursor: pointer;}
 
-#body-content {
-  margin-top: 70px;
-  margin-left: 0px;
-  margin-right: 0px;
-}
-
 /* editpop: plugin editable */
 .popover:not(.editpop) {
   min-width: 260px;
