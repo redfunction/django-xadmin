@@ -21,11 +21,6 @@ vendors = {
             ],
             'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
         },
-        'responsive': {
-            'css': {
-                'dev': 'xadmin/vendor/bootstrap/bootstrap-responsive.css',
-                'production': 'xadmin/vendor/bootstrap/bootstrap-responsive.css'
-            }}
     },
     'jquery': {
         "js": {
@@ -73,12 +68,12 @@ vendors = {
     },
     "timepicker": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-timepicker/css/bootstrap-timepicker.css',
-            'production': 'xadmin/vendor/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
+            'dev': 'xadmin/vendor/bootstrap-timepicker/css/timepicker.css',
+            'production': 'xadmin/vendor/bootstrap-timepicker/css/timepicker.css',
         },
         "js": {
             'dev': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.js',
-            'production': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.min.js',
+            'production': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.js',
         }
     },
     "clockpicker": {
@@ -118,14 +113,14 @@ vendors = {
     },
     "image-gallery": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-image-gallery/css/bootstrap-image-gallery.css',
-            'production': 'xadmin/vendor/bootstrap-image-gallery/css/bootstrap-image-gallery.css',
+            'dev': 'xadmin/vendor/blueimp-gallery/css/blueimp-gallery.css',
+            'production': 'xadmin/vendor/blueimp-gallery/css/blueimp-gallery.min.css',
         },
         "js": {
-            'dev': ['xadmin/vendor/load-image/load-image.js',
-                    'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js'],
-            'production': ['xadmin/vendor/load-image/load-image.min.js',
-                           'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js']
+            'dev': ['xadmin/vendor/blueimp-load-image/js/load-image.js',
+                    'xadmin/vendor/blueimp-gallery/js/blueimp-gallery.js'],
+            'production': ['xadmin/vendor/blueimp-load-image/js/load-image.all.min.js',
+                           'xadmin/vendor/blueimp-gallery/js/blueimp-gallery.min.js']
         }
     },
     "select": {
@@ -158,17 +153,11 @@ vendors = {
     "multiselect": {
         "css": {
             'dev': 'xadmin/vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
+            'production': 'xadmin/vendor/bootstrap-multiselect/css/bootstrap-multiselect.min.css',
         },
         "js": {
             'dev': 'xadmin/vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
+            'production': 'xadmin/vendor/bootstrap-multiselect/js/bootstrap-multiselect.min.js',
         }
-    },
-    "snapjs": {
-        "css": {
-            'dev': 'xadmin/vendor/snapjs/snap.css',
-        },
-        "js": {
-            'dev': 'xadmin/vendor/snapjs/snap.js',
-        }
-    },
+    }
 }
