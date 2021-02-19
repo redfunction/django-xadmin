@@ -133,20 +133,23 @@ vendors = {
             'dev': ['xadmin/vendor/select2/css/select2.css',
                     'xadmin/vendor/selectize/css/selectize.css',
                     'xadmin/vendor/selectize/css/selectize.bootstrap4.css'],
+            'production': ['xadmin/vendor/select2/css/select2.min.css',
+                    'xadmin/vendor/selectize/css/selectize.css',
+                    'xadmin/vendor/selectize/css/selectize.bootstrap4.css'],
         },
         "js": {
             'dev': [
                 # required by selectize
-                'xadmin/vendor/sifter/sifter.js',
-                'xadmin/vendor/microplugin/microplugin.js',
+                'xadmin/vendor/sifter/js/sifter.js',
+                'xadmin/vendor/microplugin/js/microplugin.js',
                 'xadmin/vendor/selectize/js/standalone/selectize.js',
                 'xadmin/vendor/select2/js/select2.js',
                 'xadmin/vendor/select2/js/i18n/%(lang)s.js'],
             'production': [
                 # required by selectize
-                'xadmin/vendor/sifter/sifter.min.js',
-                'xadmin/vendor/microplugin/microplugin.js',
-                'xadmin/vendor/selectize/standalone/selectize.min.js',
+                'xadmin/vendor/sifter/js/sifter.min.js',
+                'xadmin/vendor/microplugin/js/microplugin.js',
+                'xadmin/vendor/selectize/js/standalone/selectize.min.js',
                 'xadmin/vendor/select2/js/select2.min.js',
                 'xadmin/vendor/select2/js/i18n/%(lang)s.js'
             ]
