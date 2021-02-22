@@ -20,10 +20,7 @@ select.selectmultiple {
 .form-container .column{
   min-height: 60px;
 }
-.form-group {
-  margin-right: -15px;
-  margin-left: -15px;
-}
+
 .control-label {
   padding: 7px 10px;
   font-weight: bold;
@@ -55,10 +52,6 @@ select.selectmultiple {
 
 .form-row .row {
   margin: 0px !important;
-}
-
-.fieldset .card-body {
-  padding-bottom: 0px;
 }
 
 .form-inline label {
