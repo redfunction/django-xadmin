@@ -175,3 +175,14 @@ img.field_img {
 .selectize-input {
   vertical-align: bottom;
 }
+
+/** batch-field **/
+.batch-field-wrap input[type="checkbox"].form-control {
+    width: auto;
+    height: auto;
+}
+.batch-field-wrap input[type="checkbox"].form-control:focus {
+  color: inherit;
+  border-color: transparent;
+  box-shadow: none;
+}
