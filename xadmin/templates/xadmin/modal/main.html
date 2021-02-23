@@ -1,6 +1,6 @@
 {% verbatim %}
 <div class="modal" tabindex="-1" role="dialog" {% if modal.id %}id="{{ modal.id }}"{% endif %}>
-    <div class="modal-dialog {{ modal.size|default('modal-sm') }}" role="document">
+    <div class="modal-dialog {{ modal.size|default('') }}" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 {% block title %}
