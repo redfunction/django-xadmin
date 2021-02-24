@@ -6,7 +6,7 @@
   <a href="{{page_url}}"><span class="badge badge-info">{{ result_count }}</span></a>
 {% endblock title %}
 
-{% block box_content_class %}{% if results %}nopadding x-scroll{% endif %}{% endblock box_content_class %}
+{% block box_content_class %}{% if results %}nopadding overflow-x-auto{% endif %}{% endblock box_content_class %}
 
 {% block content %}
 {% if results %}

@@ -1,6 +1,6 @@
 {% load i18n %}
 {{ wizard.management_form }}
-<ul class="steps-nav nav nav-pills">
+<ul class="steps-nav nav nav-pills my-1">
   {% for step in wizard.steps.all %}
   <li class="nav-item">
       <a class="nav-link {% if step == wizard.steps.current %}active{% endif %}"

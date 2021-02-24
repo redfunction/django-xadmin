@@ -34,7 +34,7 @@
 {% block content %}
   <div class="row flex-row-reverse no-gutters">
     <div class="col-sm">
-      <div class="content-toolbar btn-toolbar float-md-right mb-3">
+      <div class="content-toolbar btn-toolbar float-md-right mb-3 mt-1">
         {% view_block 'top_toolbar' %}
         {% block toolbar_column %}
         <div class="btn-group ml-2">
@@ -88,7 +88,7 @@
     </div>
     <div class="col-sm">
       <nav aria-label="changelist pagination small">
-        <ul class="pagination pagination-sm pagination-left pagination-inline">
+        <ul class="pagination pagination-sm pagination-left my-1">
           {% view_block 'pagination' 'small' %}
         </ul>
       </nav>

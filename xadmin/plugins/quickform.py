@@ -114,7 +114,7 @@ class RelatedFieldWidgetWrapper(forms.Widget):
         output.extend(['<div class="flex-grow-1 mr-2" id="id_%s_wrap_container">' % name,
                        self.widget.render(name, value, *args, **kwargs), '</div>'])
         if self.add_url:
-            output.append(u'<a href="%s" title="%s" class="btn btn-primary btn-sm btn-ajax mr-2" data-for-id="id_%s" data-refresh-url="%s"><i class="fa fa-plus"></i></a>'
+            output.append(u'<a href="%s" title="%s" class="btn btn-primary btn-sm btn-ajax mx-2" data-for-id="id_%s" data-refresh-url="%s"><i class="fa fa-plus"></i></a>'
                           % (
                               self.add_url, (_('Create New %s') % self.rel.model._meta.verbose_name), name,
                               "%s?_field=%s&%s=" % (self.rel_add_url, name, name)))

@@ -18,7 +18,7 @@
 {% if perms_lacking or protected %}
     {% if perms_lacking %}
         <div class="alert alert-danger mt-2">{% blocktrans %}Deleting the selected {{ objects_name }} would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</div>
-        <ul class="model_ul">
+        <ul class="list-unstyled mx-3">
         {% for obj in perms_lacking %}
             <li>{{ obj }}</li>
         {% endfor %}
@@ -26,7 +26,7 @@
     {% endif %}
     {% if protected %}
         <div class="alert alert-danger mt-2">{% blocktrans %}Deleting the selected {{ objects_name }} would require deleting the following protected related objects:{% endblocktrans %}</div>
-        <ul class="model_ul">
+        <ul class="list-unstyled mx-3">
         {% for obj in protected %}
             <li>{{ obj }}</li>
         {% endfor %}
@@ -35,7 +35,7 @@
 {% else %}
     <div class="alert alert-warning mt-2">{% blocktrans %}Are you sure you want to delete the selected {{ objects_name }}? All of the following objects and their related items will be deleted:{% endblocktrans %}</div>
     {% for deletable_object in deletable_objects %}
-    <ul class="model_ul">
+    <ul class="list-unstyled mx-3">
         {{ deletable_object|unordered_list }}
     </ul>
     {% endfor %}

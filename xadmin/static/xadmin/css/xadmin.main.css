@@ -93,8 +93,6 @@ a { cursor: pointer;}
   padding: 0px;
 }
 
-.ui-sortable-placeholder { border: 1px dotted #CCC; visibility: visible !important; }
-.ui-sortable-placeholder * { visibility: hidden; }
 
 /* dropdowns */
 .dropdown-menu li.with_menu_btn > a:first-child {
@@ -140,51 +138,15 @@ a { cursor: pointer;}
   width: 100%;
 }
 
-/* export */
-.export .dropdown-submenu .popover{
-  width: 240px;
-  margin-left: -80px;
-}
-
-/* search form */
-.input-group.search-group{
-  width: 220px;
-}
-
-/* results table */
-.table th {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
+/* plugin language: dropdown top navbar */
 .g-setlang > .dropdown-menu {
     max-height: 600px;
     overflow-y: auto;
 }
+/* plugin theme: dropdown top navbar */
 .g-theme > .dropdown-menu {
     max-height: 600px;
     overflow-y: auto;
-}
-
-.table td .btn-group {
-  font-size: 13px;
-}
-
-.content-toolbar, .steps-nav {
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-
-/* details dl */
-.data-details dl.dl-horizontal dt{
-  width: 80px;
-}
-.data-details dl.dl-horizontal dd{
-  margin-left: 90px;
-}
-.data-details .btn{
-  float: right;
-  margin-bottom: 10px;
 }
 
 /* related menu */
@@ -203,42 +165,11 @@ a { cursor: pointer;}
 }
 
 /* list overflow */
-.x-scroll {
+.overflow-x-auto {
   overflow-x: auto;
 }
 
-/* nav sitemenu */
-ul.nav-sitemenu {
-  padding: 10px;
-}
-ul.nav-sitemenu li a {
-  padding: 6px 10px;
-}
-.car-group.nav-sitemenu .car .accordion-toggle{
-  text-decoration: none;
-}
-.car-group.nav-sitemenu .car:not(:first-child) {
-  border-radius: 0px;
-  border-top: 0px;
-  margin-top: 0px;
-}
-.car-group.nav-sitemenu .car:not(:first-child) .card-header {
-  border-radius: 0px;
-}
-.car-group.nav-sitemenu .card:first-child {
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-}
-.card-group.nav-sitemenu .card .list-group {
-  border-radius: 0px;
-}
-.card-group.nav-sitemenu .card .list-group .list-group-item:first-child {
-  border-top-width: 1px;
-}
-.card-group.nav-sitemenu .card .list-group .list-group-item:last-child {
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
+/* nav sitemenu style accordion*/
 
 @media (min-width: 768px) {
   .card-group.nav-sitemenu {
@@ -259,63 +190,7 @@ ul.nav-sitemenu li a {
   }
 }
 
-/* models list */
-ul.model_ul{
-  margin-bottom: 20px;
-}
-ul.model_ul, ul.model_ul ul{
-  padding-left: 20px;
-  list-style: none;
-}
-ul.model_ul li{
-  line-height: 20px;
-  margin: 8px 0px;
-}
-ul.model_ul li span {
-  padding: 3px 6px;
-  min-width: auto;
-  min-height: auto;
-}
-
-/* icon */
-*[class^="icon-"] sub,
-*[class^="icon-"] sup{
-  font-size: 0.5em;
-  margin-left: -6px;
-}
-
-/* ajax btn */
-.btn-ajax {
-  margin-left: 10px;
-}
-
-/* g-search */
-#g-search .btn-group{
-  margin: 0px;
-  padding: 0px;
-}
-
-/** Font Icons **/
-a[class^="icon-"]:before, a[class*=" icon-"]:before {
-  margin-right: 0.3em;
-}
-.btn[class^="icon-"]:before, .btn[class*=" icon-"]:before {
-  margin-right: 0.3em;
-}
-
-/** fix navbar input-append and input-prepend margin **/
-.navbar .navbar-brand {
-  max-width: 400px;
-}
-
-/** import for bp3.0 */
-.pagination.pagination-inline{margin-top: 5px; margin-bottom: 5px;}
-.modal { overflow-y: auto;}
-.dropdown {position: relative;}
-.input-group-btn:not(:first-child):not(:last-child) > .btn{
-  border-radius: 0px;
-}
-
+/* dropdown-submenu: is not a bootstrap class */
 .dropdown-submenu {
   position: relative;
 }
@@ -379,7 +254,6 @@ a[class^="icon-"]:before, a[class*=" icon-"]:before {
 }
 
 /** nav-header **/
-.navbar-collapse {max-height: none !important;}
 .nav-header {
   display: block;
   padding: 3px 15px;
