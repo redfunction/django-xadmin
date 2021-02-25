@@ -11,7 +11,7 @@
   <form action="" method="post" id="login-form" {% view_block 'form_tag_attrs' %}>
     <div class="row d-flex justify-content-center">
       <div class="col-12 col-sm-9 col-md-7 col-lg-5 col-xl-4">
-        <div class="card card-single" id="panel-login">
+        <div class="card shadow-lg mt-5" id="panel-login">
         {% csrf_token %}
         {% block login_form %}
           <div class="card-header">
