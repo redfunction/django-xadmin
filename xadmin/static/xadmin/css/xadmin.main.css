@@ -1,60 +1,10 @@
-a { cursor: pointer;}
-
 /* editpop: plugin editable */
 .popover:not(.editpop) {
   min-width: 260px;
   display: none
 }
 
-.dropdown-submenu .popover.right {
-  margin-top: -35px;
-  margin-left: -10px;
-}
-.dropdown-submenu .popover.left {
-  margin-top: -35px;
-}
-.dropdown-submenu .popover.right .arrow, .dropdown-submenu .popover.left .arrow{
-  top: 47px;
-}
-.dropdown-submenu .popover form{
-  margin: 6px 0;
-}
-.dropdown-submenu .popover form input {
-  min-width: 120px;
-  max-width: 150px;
-}
-.dropdown-submenu .popover form > .input-group {
-  width: 100%;
-}
-.dropdown-submenu .popover form > .btn {
-  margin-top: 10px;
-}
-.dropdown-submenu .popover form > .input-group + .input-group {
-  margin-top: 5px;
-}
-
-@media (min-width: 1175px) {
-  .top-search-form {
-    margin-top: 6px;
-    margin-bottom: 0px;
-  }
-  .top-search-form .input-group {
-    width: 240px;
-  }
-}
-
-.filter-fk-search .select-search{
-  min-width: 160px;
-}
-.filter-char form input.input-char{
-  min-width: 180px;
-}
-.filter-number form .input-group-btn > .btn {
-  width: 34px;
-  text-align: center;
-}
-
-/* cards "fieldset" Layout */
+/* cards "fieldset" layout */
 .card.no_title .card-header {
   display: none !important;
 }
@@ -63,10 +13,18 @@ a { cursor: pointer;}
   padding: 0px;
 }
 
+/** table in card **/
+.card .card-body > .table {
+  margin-bottom: 0px;
+}
+
 /* dropdowns */
+.dropdown a { cursor: pointer;}
+
 .dropdown-menu li.with_menu_btn > a:first-child {
   padding-right: 35px;
 }
+
 .dropdown-menu .dropdown-menu-btn {
   float: right;
   margin-top: -26px;
@@ -77,6 +35,7 @@ a { cursor: pointer;}
      -moz-border-radius: 4px;
           border-radius: 4px;
 }
+
 .dropdown-menu .dropdown-menu-btn:hover {
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
@@ -96,6 +55,7 @@ a { cursor: pointer;}
   height: 100%;
   padding-top: 24px;
 }
+
 .mask .progress{
   position: absolute;
   width: 80%;
@@ -103,6 +63,7 @@ a { cursor: pointer;}
   margin-top: -8px;
   left: 10%;
 }
+
 .mask .progress .bar{
   width: 100%;
 }
@@ -158,7 +119,30 @@ a { cursor: pointer;}
   }
 }
 
-/* dropdown-submenu: is not a bootstrap class */
+/** thumbnail **/
+.thumbnail-card.card .card-body { padding-bottom: 0px;}
+.thumbnail-card .thumbnail{margin-bottom: 15px;}
+.thumbnail-card .thumbnail:hover { background-color: #efefef; }
+.thumbnail > h1 { margin: 0px; }
+.thumbnail.warning {
+  background-color: #fcf8e3;
+  border-color: #fbeed5;
+}
+.thumbnail .action-select {position: absolute; top: 0px; left: 20px;}
+.thumbnail .dropdown.related_menu {position: absolute; top: 0px; right: 20px;}
+
+/*top nav search form */
+@media (min-width: 1175px) {
+  .top-search-form {
+    margin-top: 6px;
+    margin-bottom: 0px;
+  }
+  .top-search-form .input-group {
+    width: 240px;
+  }
+}
+
+/*Dropdown submenu plugin*/
 .dropdown-submenu {
   position: relative;
 }
@@ -206,33 +190,49 @@ a { cursor: pointer;}
   display: block;
 }
 
-/** table in card **/
-.card .card-body > .table {
-  margin-bottom: 0px;
+.dropdown-submenu .popover.right {
+  margin-top: -35px;
+  margin-left: -10px;
 }
 
-/** thumbnail **/
-.thumbnail-card.card .card-body { padding-bottom: 0px;}
-.thumbnail-card .thumbnail{margin-bottom: 15px;}
-.thumbnail-card .thumbnail:hover { background-color: #efefef; }
-.thumbnail > h1 { margin: 0px; }
-.thumbnail.warning {
-  background-color: #fcf8e3;
-  border-color: #fbeed5;
+.dropdown-submenu .popover.left {
+  margin-top: -35px;
 }
-.thumbnail .action-select {position: absolute; top: 0px; left: 20px;}
-.thumbnail .dropdown.related_menu {position: absolute; top: 0px; right: 20px;}
 
-/* Change list: filters
-   -- Styles for dropdown submenu plugin
-*/
+.dropdown-submenu .popover.right .arrow, .dropdown-submenu .popover.left .arrow{
+  top: 47px;
+}
+
+.dropdown-submenu .popover form{
+  margin: 6px 0;
+}
+
+.dropdown-submenu .popover form input {
+  min-width: 120px;
+  max-width: 150px;
+}
+
+.dropdown-submenu .popover form > .input-group {
+  width: 100%;
+}
+
+.dropdown-submenu .popover form > .btn {
+  margin-top: 10px;
+}
+
+.dropdown-submenu .popover form > .input-group + .input-group {
+  margin-top: 5px;
+}
+
+.dropdown-submenu .bs-popover-right .arrow,
+.dropdown-submenu .bs-popover-left .arrow{
+  top: 35px;
+}
+
+/*filters*/
 #filter-menu .popover {
   min-width: 260px;
   display: none;
-}
-
-#filter-menu .dropdown-submenu {
-  position: relative;
 }
 
 #filter-menu .dropdown-submenu a:hover {
@@ -258,11 +258,6 @@ a { cursor: pointer;}
 #filter-menu .dropdown-submenu .bs-popover-left {
   margin-top: -35px;
   margin-right: 0px;
-}
-
-.dropdown-submenu .bs-popover-right .arrow,
-.dropdown-submenu .bs-popover-left .arrow{
-  top: 35px;
 }
 
 #filter-menu .dropdown-submenu:hover > .dropdown-menu,
@@ -298,6 +293,7 @@ a { cursor: pointer;}
     left: 60px;
   }
 }
+
 @media (max-width: 767px) {
   #filter-menu .filter-date .menu-date-range .datepicker-inline{
     width: auto;
@@ -306,5 +302,21 @@ a { cursor: pointer;}
   #filter-menu .filter-date .menu-date-range .table-condensed{
     width: 100%;
   }
+}
+
+/*filter search*/
+.filter-fk-search .select-search{
+  min-width: 160px;
+}
+
+/*filter char*/
+.filter-char form input.input-char{
+  min-width: 180px;
+}
+
+/*filter number*/
+.filter-number form .input-group-btn > .btn {
+  width: 34px;
+  text-align: center;
 }
 /*End Dropdown submenu plugin*/
