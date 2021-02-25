@@ -5,7 +5,7 @@ select.selectmultiple {
   height: 120px;
 }
 .select2-container{
-  width: 100%;
+  max-width: 100%;
 }
 .select2-container.form-control{
   padding: 0px;
@@ -59,17 +59,6 @@ select.selectmultiple {
 }
 
 @media (min-width: 768px) {
-
-  .text-field,
-  .textinput,
-  .url-field,
-  select,
-  .input-group ~ .text-field,
-  .input-group ~ .textinput,
-  .input-group ~ .url-field {
-    max-width: 450px;
-  }
-
   .input-group.date {
     max-width: 300px;
   }
@@ -93,10 +82,6 @@ select.selectmultiple {
 
   select.selectmultiple {
     max-width: 350px;
-  }
-
-  .select2-container, .selectize-control {
-    max-width: 450px;
   }
 
   .form-actions.fixed {
