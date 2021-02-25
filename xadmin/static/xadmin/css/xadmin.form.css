@@ -21,29 +21,9 @@ select.selectmultiple {
   min-height: 60px;
 }
 
-.formset-inline-content {
-  padding-top: 1px;
-}
-
-.control-wrap {
-  display: block;
-  width: 100%;
-  padding-right: 45px;
-}
+/* Fix: Crispy form is not using ".text-danger" class*/
 .asteriskField, .asterisk-field {
   color: red;
-}
-.control-wrap > .radio:first-child,
-.control-wrap > .checkbox:first-child {
-  margin-top: -7px;
-}
-
-.help-block {
-  margin-bottom: 0px;
-}
-
-.form-row .row {
-  margin: 0px !important;
 }
 
 .form-inline label {
