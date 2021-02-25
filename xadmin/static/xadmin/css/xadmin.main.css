@@ -264,12 +264,6 @@ a { cursor: pointer;}
 .thumbnail .action-select {position: absolute; top: 0px; left: 20px;}
 .thumbnail .dropdown.related_menu {position: absolute; top: 0px; right: 20px;}
 
-/* change list */
-form#changelist-form + nav > ul.pagination {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 /* Change list: filters
    -- Styles for dropdown submenu plugin
 */
