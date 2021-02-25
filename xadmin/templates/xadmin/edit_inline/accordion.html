@@ -4,8 +4,8 @@
 {% block box_content_class %}{{ block.super }}{% endblock box_content_class %}
 
 {% block formset_form %}
-  <div class="card formset-row row fieldset">
-    <div class="card-header bg-white">
+  <div class="card formset-row">
+    <div class="card-header">
       {% if formset.formset.can_delete %}
         <a class="delete-row float-right"><i class="fa fa-times"></i></a>
       {% endif %}
