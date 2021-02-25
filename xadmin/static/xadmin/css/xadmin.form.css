@@ -21,14 +21,6 @@ select.selectmultiple {
   min-height: 60px;
 }
 
-.control-label {
-  padding: 7px 10px;
-  font-weight: bold;
-}
-.form-horizontal .control-label {
-  margin-bottom: 5px;
-}
-
 .formset-inline-content {
   padding-top: 1px;
 }
@@ -96,25 +88,6 @@ select.selectmultiple {
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   }
 
-  .form-actions.fixed .float-right {
-    float: none !important;
-    margin-left: 10px;
-  }
-
-  .form-horizontal .control-label {
-    width: 170px;
-    float: left;
-  }
-
-  .form-horizontal.short_label .control-label,
-  .form-horizontal .short_label .control-label {
-    width: 120px;
-  }
-
-  .form-horizontal .form-group {
-    margin-bottom: 24px;
-  }
-
   .form-horizontal .form-inline .form-group {
     margin: 0px;
     padding-left: 0px;
@@ -122,15 +95,6 @@ select.selectmultiple {
   }
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
-  .form-horizontal .control-label {
-    width: 150px;
-  }
-  .form-horizontal.short_label .control-label,
-  .form-horizontal .short_label .control-label {
-    width: 100px;
-  }
-}
 @media (max-width: 767px) {
   .btn-toolbar.top-toolbar {
     margin: 0 10px 10px;
@@ -144,16 +108,9 @@ img.field_img {
 }
 
 /** revision form **/
-.diff_field .control-label {
-  color: #FF8040;
-}
+
 .diff_field .controls{
   background-color: #FCF8E3;
-}
-
-/** tabs **/
-.nav.nav-tabs {
-  margin-bottom: 15px;
 }
 
 /** selectize **/
