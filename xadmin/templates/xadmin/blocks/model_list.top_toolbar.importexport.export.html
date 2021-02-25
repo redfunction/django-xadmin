@@ -18,7 +18,7 @@
                         {% for field in form %}
                             <div class="form-group">
                                 {{ field.errors }}
-                                <label for="{{ field.id_for_label }}" class="control-label ">{{ field.label }}</label>
+                                <label for="{{ field.id_for_label }}" class="col-form-label">{{ field.label }}</label>
                                 <div class="controls">{{ field }}</div>
                                 {% if field.field.help_text %}
                                     <p class="help">{{ field.field.help_text|safe }}</p>
