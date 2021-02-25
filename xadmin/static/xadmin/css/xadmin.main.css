@@ -170,7 +170,6 @@ a { cursor: pointer;}
 }
 
 /* nav sitemenu style accordion*/
-
 @media (min-width: 768px) {
   .card-group.nav-sitemenu {
     top: 65px;
@@ -239,11 +238,6 @@ a { cursor: pointer;}
   border-top-right-radius: 0;
 }
 
-.dropdown .dropdown-menu .nav-header {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-
 .dropdown-submenu:hover > .dropdown-menu,
 .dropdown-submenu:hover > .popover {
   display: none;
@@ -251,21 +245,6 @@ a { cursor: pointer;}
 .dropdown-submenu.open > .dropdown-menu,
 .dropdown-submenu.open > .popover {
   display: block;
-}
-
-/** nav-header **/
-.nav-header {
-  display: block;
-  padding: 3px 15px;
-  font-size: 11px;
-  font-weight: bold;
-  line-height: 1.428571429;
-  color: #999999;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-}
-.nav > li + .nav-header {
-  margin-top: 9px;
 }
 
 /** table in card **/

@@ -1,5 +1,5 @@
 {% load i18n %}
-<li class="nav-header">{{title}} <i class="icon-chevron-right float-right"></i></li>
+<li class="nav-header text-muted text-uppercase font-weight-bold">{{title}} <i class="icon-chevron-right float-right"></i></li>
 {% for choice in choices %}
     <li class="nav-item filter-multiselect">
     	<a class="nav-link small filter-item" {% if choice.selected %} href="{{ choice.remove_query_string|iriencode }}" {% else %} href="{{ choice.query_string|iriencode }}" {% endif %} data-toggle="tooltip" data-placement="right" title="{{ choice.display }}">
