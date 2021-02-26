@@ -193,9 +193,9 @@ class InlineModelAdmin(ModelFormAdminView):
         helper = FormHelper()
         helper.form_tag = False
         helper.include_media = False
-        helper.label_class = 'col-sm-3'
+        helper.label_class = 'col-12 font-weight-bold'
         helper.form_class = 'form-horizontal'
-        helper.field_class = 'col-sm-9 controls'
+        helper.field_class = 'col-12 controls'
         # override form method to prevent render csrf_token in
         # inline forms, see template 'bootstrap/whole_uni_form.html'
         helper.form_method = 'get'
