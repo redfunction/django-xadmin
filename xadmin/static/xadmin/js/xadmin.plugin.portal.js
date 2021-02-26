@@ -23,10 +23,15 @@ jQuery(function() {
             });
         });
     });
-    var callback = function() {
-        $( this ).find('.icon.chevron').toggleClass( "fa fa-chevron-up" ).toggleClass( "fa fa-chevron-down" );
-    };
-    // It guarantees that the event will not be registered twice and with that when the
-    // quick-form plugin is called make the main form get strange behavior.
-    $(".card-header .btn.btn-link" ).unbind("click").click(callback);
+    $(".card-header .btn.btn-link" ).each(function () {
+        var $el = $(this);
+        if (!$el.data("chevron-up-down-click")) {
+            $el.click(function() {
+                $(this).find(".icon.chevron")
+                    .toggleClass( "fa fa-chevron-up" )
+                    .toggleClass( "fa fa-chevron-down" );
+            });
+            $el.data("chevron-up-down-click", true);
+        }
+    })
 });
