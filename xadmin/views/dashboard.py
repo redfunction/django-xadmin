@@ -199,6 +199,7 @@ class BaseWidget(forms.Form):
     def setup(self):
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         self.helper = helper
 
@@ -468,6 +469,7 @@ class AddFormWidget(ModelBaseWidget, PartialBaseWidget):
     def context(self, context):
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
 
         context.update({

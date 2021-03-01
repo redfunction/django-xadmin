@@ -48,6 +48,7 @@ class LoginView(BaseAdminView):
         context = self.get_context()
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         context.update({
             'title': self.title,

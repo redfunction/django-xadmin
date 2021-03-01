@@ -222,6 +222,7 @@ class ModelFormAdminView(ModelAdminView):
         helper.label_class = 'font-weight-bold'
         helper.field_class = 'controls'
         helper.include_media = False
+        helper.use_custom_control = False
         helper.add_layout(self.get_form_layout())
 
         # deal with readonly fields

@@ -200,6 +200,7 @@ class ChangePasswordView(ModelAdminView):
         context = super(ChangePasswordView, self).get_context()
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         self.form.helper = helper
         context.update({

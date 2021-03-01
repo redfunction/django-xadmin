@@ -218,6 +218,7 @@ class DetailAdminView(ModelAdminView):
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         layout = self.get_form_layout()
         replace_field_to_value(layout, self.get_field_result)

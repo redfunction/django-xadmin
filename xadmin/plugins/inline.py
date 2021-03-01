@@ -193,6 +193,7 @@ class InlineModelAdmin(ModelFormAdminView):
         helper = FormHelper()
         helper.form_tag = False
         helper.include_media = False
+        helper.use_custom_control = False
         helper.label_class = 'col-12 font-weight-bold'
         helper.form_class = 'form-horizontal'
         helper.field_class = 'col-12 controls'

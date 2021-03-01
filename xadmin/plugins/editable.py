@@ -124,6 +124,7 @@ class EditPatchView(ModelFormAdminView, ListAdminView):
 
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         form.helper = helper
 
