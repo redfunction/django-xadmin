@@ -49,7 +49,7 @@ class AdminImageWidget(forms.FileInput):
             css_class += " w-auto d-inline"
             attrs["class"] = css_class
             label = self.attrs.get('label', name)
-            output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img img-thumbnail"/></a><br/>%s ' %
+            output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img img-thumbnail mb-2"/></a><br/><span>%s</span>' %
                          (value.url, label, value.url, _('Change:')))
 
         output.append(super(AdminImageWidget, self).render(name, value, attrs, renderer))
