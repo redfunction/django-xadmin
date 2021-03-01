@@ -45,9 +45,13 @@ class AdminImageWidget(forms.FileInput):
     def render(self, name, value, attrs=None, renderer=None):
         output = []
         if value and hasattr(value, "url"):
+            css_class = self.attrs.get("class", "")
+            css_class += " w-auto d-inline"
+            attrs["class"] = css_class
             label = self.attrs.get('label', name)
             output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img img-thumbnail"/></a><br/>%s ' %
                          (value.url, label, value.url, _('Change:')))
+
         output.append(super(AdminImageWidget, self).render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
 
