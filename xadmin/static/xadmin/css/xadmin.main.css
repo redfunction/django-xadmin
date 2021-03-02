@@ -212,7 +212,7 @@
 }
 
 .dropdown-submenu:hover > a:after {
-    border-left-color: #ffffff;
+    border-left-color: inherit;
 }
 
 .dropdown-submenu:hover > .dropdown-menu,
