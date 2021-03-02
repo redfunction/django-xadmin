@@ -171,6 +171,11 @@
     }
 }
 
+/*navbar search filter*/
+#searchbar {
+    max-width: 400px;
+}
+
 /*Dropdown submenu plugin*/
 .dropdown-submenu {
     position: relative;

@@ -1,7 +1,7 @@
 {% load i18n %}
 {% if cl.search_fields %}
-<form class="form-inline" action="" method="get">
-    <div class="input-group search-group">
+<form class="flex-grow-1" action="" method="get">
+    <div class="input-group search-group justify-content-lg-end">
     {% if cl.search_query %}
       <span class="input-group-prepend">
         <a class="input-group-text btn btn-light" href="{{remove_search_url}}">
