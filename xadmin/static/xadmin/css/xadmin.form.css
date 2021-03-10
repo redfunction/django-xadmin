@@ -56,6 +56,28 @@ select.selectmultiple {
     max-width: 350px;
   }
 
+  .sidebar .input-group.date,
+  .sidebar .input-group.time {
+    max-width: 100%;
+    min-width: 188px;
+  }
+
+  .sidebar .datetime {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .sidebar .datetime > .input-group {
+    float: none;
+    margin-bottom: 5px;
+    width: auto;
+    flex: 1 1;
+  }
+
+  .sidebar .datetime > .input-group:last-child {
+    margin-right: 5px;
+  }
+
   .form-actions.fixed {
     position: fixed;
     bottom: 25px;
