@@ -45,7 +45,7 @@ FORMFIELD_FOR_DBFIELD_DEFAULTS = {
 
 
 class ReadOnlyField(Field):
-    template = "xadmin/layout/field_value.html"
+    template = "xadmin/layout/field_value_form.html"
 
     def __init__(self, *args, **kwargs):
         self.detail = kwargs.pop('detail')

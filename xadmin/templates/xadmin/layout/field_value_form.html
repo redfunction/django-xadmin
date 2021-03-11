@@ -1,0 +1,8 @@
+<div id="div_{{ field.auto_id }}" class="value row no-gutters border border-left-0 mb-2 mb-sm-0 {% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    <label class="col-sm-2 col-form-label border-left p-3">
+      <strong>{{ result.label|safe }} dddd</strong>
+    </label>
+    <div class="col controls border-left px-3 pt-0 pt-sm-3 pb-3">
+        <div class="form-control-plaintext p-0 {{input_class}}">{{ result.val }}</div>
+    </div>
+</div>
