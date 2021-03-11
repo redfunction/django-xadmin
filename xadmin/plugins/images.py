@@ -47,10 +47,10 @@ class AdminImageWidget(forms.FileInput):
     def render(self, name, value, attrs=None, renderer=None):
         output = []
         label = self.attrs.get('label', name)
+        css_class = self.attrs.get("class", "")
+        css_class += " custom-file-input"
+        attrs["class"] = css_class
         if value and hasattr(value, "url"):
-            css_class = self.attrs.get("class", "")
-            css_class += " custom-file-input"
-            attrs["class"] = css_class
             output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery">'
                           '<img src="%s" class="field_img img-thumbnail mb-2"/></a>'
                           '<span class="text-muted d-block mb-1">%s</span>' %
