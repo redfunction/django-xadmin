@@ -1,0 +1,20 @@
+{% load i18n %}
+{% if widget.is_initial %}
+  {{ widget.initial_text }}:
+  <a href="{{ widget.value.url }}">{{ widget.value }}</a>
+  {% if not widget.required %}
+  <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" class="ml-2">
+  <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
+  {% endif %}
+{% endif %}
+  <div class="input-group mb-3">
+{% if widget.is_initial %}
+    <div class="input-group-prepend">
+      <span class="input-group-text">{{ widget.input_text }}</span>
+    </div>
+{% endif %}
+    <div class="custom-file">
+      <input type="{{ widget.type }}" name="{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+      <label class="custom-file-label" for="id_{{ widget.name }}" data-browse="{% trans 'Browse' %}">{% trans 'Choose file' %}</label>
+    </div>
+  </div>

@@ -161,10 +161,17 @@ class AdminSelectMultiple(forms.SelectMultiple):
 
 
 class AdminFileWidget(forms.ClearableFileInput):
+    template_name = 'xadmin/widgets/clearable_file_input.html'
     template_with_initial = (u'<p class="file-upload">%s</p>'
                              % forms.ClearableFileInput.initial_text)
     template_with_clear = (u'<span class="clearable-file-input">%s</span>'
                            % forms.ClearableFileInput.clear_checkbox_label)
+
+    def __init__(self, attrs=None):
+        final_attrs = {'class': 'custom-file-input'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super(AdminFileWidget, self).__init__(attrs=final_attrs)
 
 
 class AdminTextareaWidget(forms.Textarea):
