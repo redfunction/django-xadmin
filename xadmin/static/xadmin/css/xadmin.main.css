@@ -1,9 +1,3 @@
-/* editpop: plugin editable */
-.popover:not(.editpop) {
-    min-width: 260px;
-    display: none
-}
-
 /* cards "fieldset" layout */
 .card.no_title .card-header {
     display: none !important;
