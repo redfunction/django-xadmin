@@ -16,7 +16,7 @@ from django.template import loader
 from django.utils.translation import ugettext as _
 from django.forms.widgets import Media
 from xadmin import widgets
-from xadmin.layout import FormHelper, Layout, Fieldset, TabHolder, Container, Column, Col, Field
+from xadmin.layout import FormHelper, Layout, Fieldset, TabHolder, Container, Column, Col, Field, Tab
 from xadmin.util import unquote
 from xadmin.views.detail import DetailAdminUtil
 
@@ -207,7 +207,12 @@ class ModelFormAdminView(ModelAdminView):
             other_fieldset = Fieldset(_(u'Other Fields'), *[f for f in fields if f not in rendered_fields])
 
             if len(other_fieldset.fields):
-                if len(container) and isinstance(container[0], Column):
+                if len(container) and isinstance(container[0].fields[0], TabHolder):
+
+                    other_fieldset.css_class='unsort no_title'
+                    container[0].fields[0].append(Tab(_('Other Fields'), other_fieldset))
+
+                elif len(container) and isinstance(container[0], Column):
                     container[0].fields.append(other_fieldset)
                 else:
                     container.append(other_fieldset)

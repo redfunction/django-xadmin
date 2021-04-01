@@ -71,8 +71,9 @@
   }
 
   Editpop.prototype.setContent = function () {
-    var $tip = $(this.getTipElement());
-    var title   = this.getTitle();
+    var self = this,
+        $tip = $(this.getTipElement()),
+        title = this.getTitle();
 
     $tip.find('.popover-header').html('<button class="close" data-dismiss="editpop">&times;</button>' + title);
     $tip.find('.popover-body').html(this.content);
@@ -89,7 +90,9 @@
     $tip.removeClass('fade top bottom left right in');
 
     //bind events
-    $tip.find('[data-dismiss=editpop]').on('click.' + this.type, $.proxy(this.hide, this));
+    $tip.find('[data-dismiss=editpop]').on('click.' + this.type, function (evt) {
+      self.hide();
+    });
 
     //var me = ((Math.random() * 10) + "").replace(/\D/g, '');
     //var click_event_ns = "click." + me + " touchstart." + me;
