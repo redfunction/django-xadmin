@@ -49,11 +49,11 @@ class Col(layout.Column):
 
 
 class Main(layout.Column):
-    css_class = "column form-column main col col-sm-9 form-horizontal"
+    css_class = "column form-column main col-12 col-xl-9 form-horizontal"
 
 
 class Side(layout.Column):
-    css_class = "column form-column sidebar col col-sm-3"
+    css_class = "column form-column sidebar col-12 col-xl-3"
 
 
 class Container(layout.Div):
