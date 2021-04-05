@@ -1,4 +1,4 @@
-<div id="div_{{ field.auto_id }}" class="{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+<div id="div_{{ field.auto_id }}" class="form-group {% if field.wrapper_class %} {{ field.wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
     <label class="font-weight-bold">{{ result.label|safe }}</label>
     <div class="{{input_class}}">{{ result.val }}</div>
 </div>
