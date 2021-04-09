@@ -50,6 +50,7 @@
 .formset .card-body.tabs {
     padding-left: 0px;
     padding-right: 0px;
+    padding-top:0px;
 }
 
 .formset .box-content.tabs {
@@ -63,6 +64,7 @@
 .formset .tabs .delete-row {
     float: right;
     margin: 8px 8px;
+    cursor: pointer;
 }
 
 .formset .table,
