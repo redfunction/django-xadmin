@@ -13,7 +13,7 @@
             Y: 'yyyy',
             '%' : '%'
         };
-        var result = '', i = 0;
+        var f, result = '', i = 0;
         while (i < format.length) {
             if (format.charAt(i) === '%') {
                 if(f = fields[format.charAt(i + 1)]){

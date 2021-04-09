@@ -124,10 +124,27 @@ class ResultField:
 
 
 def replace_field_to_value(layout, cb):
+    """
+    Returns all field names registered in the layout.
+    :param layout: admin view layout
+    :param cb: callback
+    :return: bool
+    """
+    def is_nested(fields):
+        """Row(Column(Div(Col)))"""
+        for field_name in fields:
+            if not isinstance(field_name, str):
+                return True
+        return False
+
     for i, lo in enumerate(layout.fields):
         if isinstance(lo, Field) or issubclass(lo.__class__, Field):
-            layout.fields[i] = ShowField(
-                cb, *lo.fields, attrs=lo.attrs, wrapper_class=lo.wrapper_class)
+            if is_nested(lo.fields):
+                # bug fix: Row(Column(Div))
+                replace_field_to_value(lo, cb)
+            else:
+                layout.fields[i] = ShowField(cb, *lo.fields, attrs=lo.attrs,
+                                             wrapper_class=lo.wrapper_class)
         elif isinstance(lo, str):
             layout.fields[i] = ShowField(cb, lo)
         elif hasattr(lo, 'get_field_names'):
