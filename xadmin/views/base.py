@@ -243,6 +243,11 @@ class BaseAdminPlugin(BaseAdminObject):
             self.opts = admin_view.model._meta
 
     def init_request(self, *args, **kwargs):
+        """Initializes the activation of the plugin (Returning False makes the plugin disabled)"""
+        pass
+
+    def setup(self, *args, **kwargs):
+        """Configure the plugin after activation"""
         pass
 
 
@@ -302,6 +307,8 @@ class BaseAdminView(BaseAdminObject, View):
             p.kwargs = self.kwargs
             result = p.init_request(*args, **kwargs)
             if result is not False:
+                # configures after activation.
+                p.setup(*args, **kwargs)
                 plugins.append(p)
         self.plugins = plugins
 
