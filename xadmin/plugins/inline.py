@@ -10,6 +10,7 @@ from django.contrib.auth import get_permission_codename
 from django.utils import six
 from django.utils.encoding import smart_text
 from crispy_forms.utils import TEMPLATE_PACK
+from django.utils.safestring import mark_safe
 
 from xadmin.layout import FormHelper, Layout, flatatt, Container, Column, Field, Fieldset
 from xadmin.plugins.utils import get_context_dict
@@ -19,22 +20,38 @@ from collections import OrderedDict
 
 
 class ShowField(Field):
-    template = "xadmin/layout/field_value.html"
 
     def __init__(self, admin_view, *args, **kwargs):
         super(ShowField, self).__init__(*args, **kwargs)
         self.admin_view = admin_view
-        if admin_view.style == 'table':
-            self.template = "xadmin/layout/field_value_td.html"
+
+    @property
+    def field_template(self):
+        template = "xadmin/layout/field_value.html"
+        if self.admin_view.style == 'table':
+            template = "xadmin/layout/field_value_td.html"
+        return template
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         html = ''
+        if not hasattr(form, 'detail'):
+            return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
         detail = form.detail
+        # When it allows inline add but can not change.
+        show_hidden_detail = getattr(form, "show_hidden_detail", False)
         for field in self.fields:
-            if not isinstance(form.fields[field].widget, forms.HiddenInput):
+            form_field = form.fields[field]
+            form_field_widget = form_field.widget
+            if not isinstance(form_field_widget, forms.HiddenInput):
                 result = detail.get_field_result(field)
-                html += loader.render_to_string(
-                    self.template, context={'field': form[field], 'result': result})
+                html += loader.render_to_string(self.field_template,
+                                                context={'field': form[field], 'result': result})
+                # When it allows inline add but can not change.
+                if show_hidden_detail:
+                    form_field.widget = forms.HiddenInput(attrs=form_field_widget.attrs)
+                    html += mark_safe(str(form[field]))
+            elif show_hidden_detail:
+                return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
         return html
 
 
@@ -274,7 +291,7 @@ class InlineModelAdmin(ModelFormAdminView):
         codename = get_permission_codename('add', self.opts)
         return self.user.has_perm("%s.%s" % (self.opts.app_label, codename))
 
-    def has_change_permission(self):
+    def has_change_permission(self, **kwargs):
         opts = self.opts
         if opts.auto_created:
             for field in opts.fields:
@@ -285,7 +302,7 @@ class InlineModelAdmin(ModelFormAdminView):
         codename = get_permission_codename('change', opts)
         return self.user.has_perm("%s.%s" % (opts.app_label, codename))
 
-    def has_delete_permission(self):
+    def has_delete_permission(self, **kwargs):
         if self.opts.auto_created:
             return self.has_change_permission()
 
@@ -468,17 +485,17 @@ class InlineFormsetPlugin(BaseAdminPlugin):
 
     def _get_detail_formset_instance(self, inline):
         formset = inline.instance_form(extra=0, max_num=0, can_delete=0)
-        formset.detail_page = True
-        if True:
+        formset.detail_page = not inline.has_add_permission()
+        if formset.helper.layout:
             replace_field_to_value(formset.helper.layout, inline)
             model = inline.model
             opts = model._meta
-            fake_admin_class = type(str('%s%sFakeAdmin' % (opts.app_label, opts.model_name)), (object, ), {'model': model})
+            option_class = type(str(f'{opts.app_label}{opts.model_name}FakeAdmin'), (object, ), {'model': model})
             for form in formset.forms:
                 instance = form.instance
                 if instance.pk:
-                    form.detail = self.get_view(
-                        DetailAdminUtil, fake_admin_class, instance)
+                    form.detail = self.get_view(DetailAdminUtil, option_class, instance)
+                    form.show_hidden_detail = not formset.detail_page
         return formset
 
 
