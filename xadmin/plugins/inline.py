@@ -199,7 +199,10 @@ class InlineModelAdmin(ModelFormAdminView):
         formset = self.get_formset(**kwargs)
         attrs = {
             'instance': self.model_instance,
-            'queryset': self.queryset()
+            'queryset': self.queryset(),
+            'can_add': self.has_add_permission(),
+            'can_change': self.has_change_permission(),
+            'can_delete': self.has_delete_permission()
         }
         if self.request_method == 'post':
             attrs.update({
@@ -486,9 +489,11 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         return media
 
     def _get_detail_formset_instance(self, inline):
-        formset = inline.instance_form(extra=0, max_num=0,
+        detail_page = not inline.has_add_permission()
+        formset = inline.instance_form(extra=0 if detail_page else inline.extra,
+                                       max_num=0 if detail_page else inline.max_num,
                                        can_delete=inline.has_delete_permission())
-        formset.detail_page = not inline.has_add_permission()
+        formset.detail_page = detail_page
         if formset.helper.layout:
             replace_field_to_value(formset.helper.layout, inline)
             model = inline.model
