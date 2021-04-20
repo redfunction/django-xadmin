@@ -33,10 +33,10 @@ class ShowField(Field):
         return template
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-        html = ''
         if not hasattr(form, 'detail'):
             return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
         detail = form.detail
+        html = ''
         # When it allows inline add but can not change.
         show_hidden_detail = getattr(form, "show_hidden_detail", False)
         for field_name in self.fields:
