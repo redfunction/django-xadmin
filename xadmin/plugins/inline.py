@@ -144,10 +144,31 @@ def replace_field_to_value(layout, av):
                 replace_field_to_value(lo, av)
 
 
+class InlineFormSet(BaseInlineFormSet):
+    """InlineFormSet with permission check"""
+    def __init__(self, *args, **kwargs):
+        self.can_add = kwargs.pop('can_add', False)
+        self.can_change = kwargs.pop('can_change', False)
+        self.can_delete = kwargs.pop('can_delete', False)
+        super(InlineFormSet, self).__init__(*args, **kwargs)
+
+    def save_new(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_add
+        return super(InlineFormSet, self).save_new(*args, **kwargs)
+
+    def save_existing(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_change
+        return super(InlineFormSet, self).save_existing(*args, **kwargs)
+
+    def delete_existing(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_delete
+        return super(InlineFormSet, self).delete_existing(*args, **kwargs)
+
+
 class InlineModelAdmin(ModelFormAdminView):
 
     fk_name = None
-    formset = BaseInlineFormSet
+    formset = InlineFormSet
     extra = 3
     max_num = None
     can_delete = True
