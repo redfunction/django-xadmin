@@ -39,17 +39,17 @@ class ShowField(Field):
         detail = form.detail
         # When it allows inline add but can not change.
         show_hidden_detail = getattr(form, "show_hidden_detail", False)
-        for field in self.fields:
-            form_field = form.fields[field]
+        for field_name in self.fields:
+            form_field = form.fields[field_name]
             form_field_widget = form_field.widget
             if not isinstance(form_field_widget, forms.HiddenInput):
-                result = detail.get_field_result(field)
+                result = detail.get_field_result(field_name)
                 html += loader.render_to_string(self.field_template,
-                                                context={'field': form[field], 'result': result})
+                                                context={'field': form[field_name], 'result': result})
                 # When it allows inline add but can not change.
                 if show_hidden_detail:
                     form_field.widget = forms.HiddenInput(attrs=form_field_widget.attrs)
-                    html += mark_safe(str(form[field]))
+                    html += mark_safe(str(form[field_name]))
             elif show_hidden_detail:
                 return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
         return html
@@ -484,7 +484,8 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         return media
 
     def _get_detail_formset_instance(self, inline):
-        formset = inline.instance_form(extra=0, max_num=0, can_delete=0)
+        formset = inline.instance_form(extra=0, max_num=0,
+                                       can_delete=1)
         formset.detail_page = not inline.has_add_permission()
         if formset.helper.layout:
             replace_field_to_value(formset.helper.layout, inline)
