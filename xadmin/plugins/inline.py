@@ -134,7 +134,9 @@ style_manager.register_style("table", TableInlineStyle)
 def replace_field_to_value(layout, av):
     if layout:
         for i, lo in enumerate(layout.fields):
-            if isinstance(lo, Field) or issubclass(lo.__class__, Field):
+            if isinstance(lo, DeleteField):
+                continue
+            elif isinstance(lo, Field) or issubclass(lo.__class__, Field):
                 layout.fields[i] = ShowField(av, *lo.fields, **lo.attrs)
             elif isinstance(lo, str):
                 layout.fields[i] = ShowField(av, lo)
@@ -485,7 +487,7 @@ class InlineFormsetPlugin(BaseAdminPlugin):
 
     def _get_detail_formset_instance(self, inline):
         formset = inline.instance_form(extra=0, max_num=0,
-                                       can_delete=1)
+                                       can_delete=inline.has_delete_permission())
         formset.detail_page = not inline.has_add_permission()
         if formset.helper.layout:
             replace_field_to_value(formset.helper.layout, inline)
