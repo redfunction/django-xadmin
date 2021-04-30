@@ -11,7 +11,7 @@ from xadmin.util import vendor
 
 
 class ForeignKeySearchWidget(forms.Widget):
-    template_name = None
+    template_name = "xadmin/plugins/widgets/foreignkey_search_select.html"
 
     def __init__(self, rel, admin_view, attrs=None, using=None):
         self.rel = rel
@@ -38,15 +38,11 @@ class ForeignKeySearchWidget(forms.Widget):
         base_attrs.update(kwargs)
         return super(ForeignKeySearchWidget, self).build_attrs(base_attrs, extra_attrs=extra_attrs)
 
-    def render(self, name, value, attrs=None, **kwargs):
-        if attrs is None:
-            attrs = {}
-        context = self.get_context(name, value, attrs)
-        output = [format_html('<select{0}>', flatatt(context['widget']['attrs']))]
+    def get_context(self, name, value, attrs):
+        context = super(ForeignKeySearchWidget, self).get_context(name, value, attrs)
         if value:
-            output.append(format_html('<option selected="selected" value="{0}">{1}</option>', value, self.label_for_value(value)))
-        output.append('</select>')
-        return mark_safe('\n'.join(output))
+            context['widget']['value_label'] = self.label_for_value(value)
+        return context
 
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
