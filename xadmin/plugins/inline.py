@@ -33,25 +33,24 @@ class ShowField(Field):
         return template
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
-        if not hasattr(form, 'detail'):
-            return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
-        detail = form.detail
         html = ''
-        # When it allows inline add but can not change.
-        show_hidden_detail = getattr(form, "show_hidden_detail", False)
-        for field_name in self.fields:
-            form_field = form.fields[field_name]
-            form_field_widget = form_field.widget
-            if not isinstance(form_field_widget, forms.HiddenInput):
-                result = detail.get_field_result(field_name)
-                html += loader.render_to_string(self.field_template,
-                                                context={'field': form[field_name], 'result': result})
-                # When it allows inline add but can not change.
-                if show_hidden_detail:
-                    form_field.widget = forms.HiddenInput(attrs=form_field_widget.attrs)
-                    html += mark_safe(str(form[field_name]))
-            elif show_hidden_detail:
-                return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
+        if hasattr(form, 'detail'):
+            detail = form.detail
+            # When it allows inline add but can not change.
+            show_hidden_detail = getattr(form, "show_hidden_detail", False)
+            for field_name in self.fields:
+                form_field = form.fields[field_name]
+                form_field_widget = form_field.widget
+                if not isinstance(form_field_widget, forms.HiddenInput):
+                    result = detail.get_field_result(field_name)
+                    html += loader.render_to_string(self.field_template,
+                                                    context={'field': form[field_name], 'result': result})
+                    # When it allows inline add but can not change.
+                    if show_hidden_detail:
+                        form_field.widget = forms.HiddenInput(attrs=form_field_widget.attrs)
+                        html += mark_safe(str(form[field_name]))
+                elif show_hidden_detail:
+                    return super().render(form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs)
         return html
 
 
@@ -133,11 +132,22 @@ style_manager.register_style("table", TableInlineStyle)
 
 def replace_field_to_value(layout, av):
     if layout:
+        def is_nested(fields):
+            """Row(Column(Div(Col)))"""
+            for field_name in fields:
+                if not isinstance(field_name, str):
+                    return True
+            return False
+
         for i, lo in enumerate(layout.fields):
             if isinstance(lo, DeleteField):
                 continue
             elif isinstance(lo, Field) or issubclass(lo.__class__, Field):
-                layout.fields[i] = ShowField(av, *lo.fields, **lo.attrs)
+                if is_nested(lo.fields):
+                    # bug fix: Row(Column(Div))
+                    replace_field_to_value(lo, av)
+                else:
+                    layout.fields[i] = ShowField(av, *lo.fields, **lo.attrs)
             elif isinstance(lo, str):
                 layout.fields[i] = ShowField(av, lo)
             elif hasattr(lo, 'get_field_names'):
@@ -285,7 +295,7 @@ class InlineModelAdmin(ModelFormAdminView):
                         label = None
                         if readonly_field in instance_fields:
                             label = instance_fields[readonly_field].verbose_name
-                            value = smart_text(getattr(form_instance, readonly_field))
+                            value = smart_text(getattr(form_instance, readonly_field, None))
                         elif inspect.ismethod(getattr(form_instance, readonly_field, None)):
                             value = getattr(form_instance, readonly_field)()
                             label = getattr(getattr(form_instance, readonly_field), 'short_description', readonly_field)
@@ -510,16 +520,16 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         return media
 
     def _get_detail_formset_instance(self, inline):
-        detail_page = not inline.has_add_permission()
+        detail_page = isinstance(self.admin_view, DetailAdminView)
         formset = inline.instance_form(extra=0 if detail_page else inline.extra,
                                        max_num=0 if detail_page else inline.max_num,
-                                       can_delete=inline.has_delete_permission())
+                                       can_delete=False if detail_page else inline.has_delete_permission())
         formset.detail_page = detail_page
         if formset.helper.layout:
             replace_field_to_value(formset.helper.layout, inline)
             model = inline.model
             opts = model._meta
-            option_class = type(str(f'{opts.app_label}{opts.model_name}FakeAdmin'),
+            option_class = type(str(f'{opts.app_label}{opts.model_name}AdminMixin'),
                                 (getattr(inline, "detail_options", object),),
                                 {'model': model})
             for form in formset.forms:
