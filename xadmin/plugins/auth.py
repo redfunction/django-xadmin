@@ -169,10 +169,10 @@ site.register_plugin(ModelPermissionPlugin, ModelAdminView)
 class AccountMenuPlugin(BaseAdminPlugin):
 
     def block_top_account_menu(self, context, nodes):
-        return render_to_string('xadmin/blocks/comm.top.account_menu.html', context={
-            'password_change_url': self.get_admin_url('account_password')
-        })
-
+        ctx = {'password_change_url': self.get_admin_url('account_password')}
+        if self.has_model_perm(User, "change", self.request.user):
+            ctx['account_change_url'] = self.get_model_url(User, "change", self.request.user.pk)
+        return render_to_string('xadmin/blocks/comm.top.account_menu.html', context=ctx)
 
 site.register_plugin(AccountMenuPlugin, CommAdminView)
 
