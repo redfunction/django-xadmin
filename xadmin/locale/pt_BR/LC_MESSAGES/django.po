@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xadmin-core\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-01 13:50-0300\n"
+"POT-Creation-Date: 2021-05-05 15:32-0300\n"
 "PO-Revision-Date: 2013-11-20 10:21+0000\n"
 "Last-Translator: gladson <gladson@immensa.com.br>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
@@ -414,7 +414,7 @@ msgid_plural "%(count)s comments were successfully %(action)s."
 msgstr[0] "1 comentários foi %(action)s com sucesso."
 msgstr[1] "%(count)s comentários foram %(action)s com sucesso"
 
-#: xadmin/plugins/details.py:53 xadmin/views/list.py:590
+#: xadmin/plugins/details.py:53 xadmin/views/list.py:595
 #, python-format
 msgid "Details of %s"
 msgstr "Detalhes de %s"
@@ -425,7 +425,7 @@ msgid "Enter %s"
 msgstr "Entrar %s"
 
 #: xadmin/plugins/editable.py:79 xadmin/views/dashboard.py:653
-#: xadmin/views/delete.py:37 xadmin/views/detail.py:153
+#: xadmin/views/delete.py:37 xadmin/views/detail.py:170
 #: xadmin/views/edit.py:467
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
@@ -535,12 +535,12 @@ msgstr "Esqueceu seu nome de usuário ou senha?"
 msgid "Create New %s"
 msgstr "Criar novo %s"
 
-#: xadmin/plugins/relfield.py:31 xadmin/plugins/topnav.py:38
+#: xadmin/plugins/relfield.py:32 xadmin/plugins/topnav.py:38
 #, python-format
 msgid "Search %s"
 msgstr "Pesquisar %s"
 
-#: xadmin/plugins/relfield.py:72
+#: xadmin/plugins/relfield.py:71
 #, python-format
 msgid "Select %s"
 msgstr "Selecionar %s"
@@ -664,7 +664,7 @@ msgstr "Pedimos desculpas, mas a página solicitada não foi encontrada."
 #: xadmin/templates/xadmin/views/recover_form.html:10
 #: xadmin/templates/xadmin/views/recover_list.html:9
 #: xadmin/templates/xadmin/views/revision_diff.html:10
-#: xadmin/templates/xadmin/views/revision_form.html:10 xadmin/views/base.py:499
+#: xadmin/templates/xadmin/views/revision_form.html:10 xadmin/views/base.py:506
 msgid "Home"
 msgstr "Início"
 
@@ -836,7 +836,11 @@ msgstr "Você não tem permissão para editar nada."
 msgid "Close"
 msgstr "Fechar"
 
-#: xadmin/templates/xadmin/blocks/comm.top.account_menu.html:4
+#: xadmin/templates/xadmin/blocks/comm.top.account_menu.html:5
+msgid "Change Account"
+msgstr "Alterar Conta"
+
+#: xadmin/templates/xadmin/blocks/comm.top.account_menu.html:10
 msgid "Change Password"
 msgstr "Alterar Senha"
 
@@ -872,7 +876,8 @@ msgstr "Próximo passo"
 
 #: xadmin/templates/xadmin/blocks/model_form.submit_line.wizard.html:15
 #: xadmin/templates/xadmin/blocks/model_form.submit_line.wizard.html:31
-#: xadmin/templates/xadmin/includes/submit_line.html:7
+#: xadmin/templates/xadmin/includes/submit_line.html:6
+#: xadmin/templates/xadmin/includes/submit_line.html:14
 #: xadmin/templates/xadmin/views/form.html:31
 #: xadmin/templates/xadmin/views/form.html:34
 msgid "Save"
@@ -1161,7 +1166,7 @@ msgid "Skipped"
 msgstr "Pular"
 
 #: xadmin/templates/xadmin/import_export/import.html:109
-#: xadmin/templates/xadmin/includes/submit_line.html:23
+#: xadmin/templates/xadmin/includes/submit_line.html:35
 #: xadmin/templates/xadmin/views/model_detail.html:28
 #: xadmin/views/delete.py:102
 msgid "Delete"
@@ -1171,21 +1176,22 @@ msgstr "Excluir"
 msgid "Show all"
 msgstr "Mostrar Tudo"
 
-#: xadmin/templates/xadmin/includes/submit_line.html:6
+#: xadmin/templates/xadmin/includes/submit_line.html:5
+#: xadmin/templates/xadmin/includes/submit_line.html:13
 #: xadmin/templates/xadmin/views/form.html:30
 #: xadmin/templates/xadmin/views/form.html:33
 msgid "Saving.."
 msgstr "Salvando..."
 
-#: xadmin/templates/xadmin/includes/submit_line.html:16
+#: xadmin/templates/xadmin/includes/submit_line.html:28
 msgid "Save as new"
 msgstr "Gravar como novo"
 
-#: xadmin/templates/xadmin/includes/submit_line.html:17
+#: xadmin/templates/xadmin/includes/submit_line.html:29
 msgid "Save and add another"
 msgstr "Gravar e adicionar outro"
 
-#: xadmin/templates/xadmin/includes/submit_line.html:18
+#: xadmin/templates/xadmin/includes/submit_line.html:30
 msgid "Save and continue editing"
 msgstr "Gravar e continuar editando"
 
@@ -1483,11 +1489,11 @@ msgstr "Escolher tudo"
 msgid "Now"
 msgstr "Agora"
 
-#: xadmin/views/base.py:326
+#: xadmin/views/base.py:333
 msgid "Django Xadmin"
 msgstr "Django Xadmin"
 
-#: xadmin/views/base.py:327
+#: xadmin/views/base.py:334
 msgid "my-company.inc"
 msgstr "my-company.inc"
 
@@ -1542,12 +1548,12 @@ msgstr "%s Painel"
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr "%(name)s \"%(obj)s\" excluído(a) com sucesso."
 
-#: xadmin/views/detail.py:181 xadmin/views/edit.py:207 xadmin/views/edit.py:213
+#: xadmin/views/detail.py:198 xadmin/views/edit.py:207 xadmin/views/edit.py:213
 #: xadmin/views/form.py:73
 msgid "Other Fields"
 msgstr "Outros Campos"
 
-#: xadmin/views/detail.py:243
+#: xadmin/views/detail.py:260
 #, python-format
 msgid "%s Detail"
 msgstr "%s Detalhes"
@@ -1602,20 +1608,20 @@ msgstr "%s foi alterado com sucesso."
 msgid "Database error"
 msgstr "Erro da base de dados"
 
-#: xadmin/views/list.py:369
+#: xadmin/views/list.py:374
 #, python-format
 msgid "%s List"
 msgstr "Lista %s"
 
-#: xadmin/views/list.py:511
+#: xadmin/views/list.py:516
 msgid "Sort ASC"
 msgstr "Classificação Ascendente"
 
-#: xadmin/views/list.py:512
+#: xadmin/views/list.py:517
 msgid "Sort DESC"
 msgstr "Classificação Descendente"
 
-#: xadmin/views/list.py:516
+#: xadmin/views/list.py:521
 msgid "Cancel Sort"
 msgstr "Cancelar Classificação"
 
