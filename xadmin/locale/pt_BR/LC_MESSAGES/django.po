@@ -838,11 +838,11 @@ msgstr "Fechar"
 
 #: xadmin/templates/xadmin/blocks/comm.top.account_menu.html:5
 msgid "Change Account"
-msgstr "Alterar Conta"
+msgstr "Alterar cadastro"
 
 #: xadmin/templates/xadmin/blocks/comm.top.account_menu.html:10
 msgid "Change Password"
-msgstr "Alterar Senha"
+msgstr "Alterar senha"
 
 #: xadmin/templates/xadmin/blocks/comm.top.theme.html:5
 msgid "Themes"
