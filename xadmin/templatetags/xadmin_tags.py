@@ -26,10 +26,14 @@ def view_block(context, block_name, *args, **kwargs):
     nodes = []
     method_name = 'block_%s' % block_name.replace('-', '_')
 
+    # Cancel the execution of the block in the view.
+    show_block_view = getattr(admin_view, "show_block_view", None)
     block_funcs = []
     for view in [admin_view] + admin_view.plugins:
         block_func = getattr(view, method_name, None)
         if block_func and callable(block_func):
+            if callable(show_block_view) and not show_block_view(view, block_name):
+                continue
             block_funcs.append((getattr(block_func, "priority", 10), block_func))
     for _, block_func in sorted(block_funcs, key=lambda x: x[0],
                                 reverse=True):
