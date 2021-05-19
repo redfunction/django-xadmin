@@ -46,9 +46,11 @@ vendors = {
         "js": {
             'dev': [
                 'xadmin/vendor/html5sortable/html5sortable.js',
+                'xadmin/js/xadmin.plugin.sortable.js',
             ],
             'production': [
-                'xadmin/vendor/html5sortable/html5sortable.min.js'
+                'xadmin/vendor/html5sortable/html5sortable.min.js',
+                'xadmin/js/xadmin.plugin.sortable.js',
             ]
         }
     },
