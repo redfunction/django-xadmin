@@ -128,6 +128,7 @@ function bootstrapTask() {
         .pipe(gulp.dest('vendor/bootstrap'));
 }
 
+exports.select2 = select2Task;
 exports.default = gulp.series(
     genericTask,
     jqueryTask,
