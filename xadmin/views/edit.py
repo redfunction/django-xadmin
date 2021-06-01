@@ -488,6 +488,13 @@ class UpdateAdminView(ModelFormAdminView):
         context.update(new_context)
         return context
 
+    def block_extrahead(self, context, nodes):
+        nodes.append(f"""
+        <script type="text/javascript">
+        window.__admin_object_id__ = "{context['object_id']}";
+        </script>
+         """)
+
     @filter_hook
     def get_breadcrumb(self):
         bcs = super(ModelFormAdminView, self).get_breadcrumb()
