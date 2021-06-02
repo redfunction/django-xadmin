@@ -175,6 +175,28 @@ class InlineFormSet(BaseInlineFormSet):
         return super(InlineFormSet, self).delete_existing(*args, **kwargs)
 
 
+class GenericInlineFormSet(BaseGenericInlineFormSet):
+    """GenericInlineFormSet with permission check"""
+
+    def __init__(self, *args, **kwargs):
+        self.can_add = kwargs.pop('can_add', False)
+        self.can_change = kwargs.pop('can_change', False)
+        self.can_delete = kwargs.pop('can_delete', False)
+        super(GenericInlineFormSet, self).__init__(*args, **kwargs)
+
+    def save_new(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_add
+        return super(GenericInlineFormSet, self).save_new(*args, **kwargs)
+
+    def save_existing(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_change
+        return super(GenericInlineFormSet, self).save_existing(*args, **kwargs)
+
+    def delete_existing(self, *args, **kwargs):
+        kwargs['commit'] &= self.can_delete
+        return super(GenericInlineFormSet, self).delete_existing(*args, **kwargs)
+
+
 class InlineModelAdmin(ModelFormAdminView):
 
     fk_name = None
@@ -350,7 +372,7 @@ class GenericInlineModelAdmin(InlineModelAdmin):
     ct_field = "content_type"
     ct_fk_field = "object_id"
 
-    formset = BaseGenericInlineFormSet
+    formset = GenericInlineFormSet
 
     def get_formset(self, **kwargs):
         if self.exclude is None:
@@ -449,8 +471,8 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         if not hasattr(self, '_inline_instances'):
             inline_instances = []
             for inline_class in self.inlines:
-                inline = self.admin_view.get_view(
-                    (getattr(inline_class, 'generic_inline', False) and GenericInlineModelAdmin or InlineModelAdmin),
+                inline = self.admin_view.get_view((getattr(inline_class, 'generic_inline', False) and
+                                                   GenericInlineModelAdmin or InlineModelAdmin),
                     inline_class).init(self.admin_view)
                 if not (inline.has_add_permission() or
                         inline.has_change_permission() or
