@@ -13,7 +13,8 @@
                   "for", "id", "name", "href",
                   // quick-form ...
                   "data-for-id",
-                  "data-refresh-url"
+                  "data-refresh-url",
+                  "data-target"
               ];
               var index, name;
               for (index = 0; index < attrs.length; index++) {
@@ -33,7 +34,7 @@
                     updateElementIndex(elem, options.prefix, i);
                 }));
                 updateElementIndex(row, options.prefix, i);
-                row.find('input,select,textarea,label,div,a').each(function() {
+                row.find('input,select,textarea,label,div,a,button,script').each(function() {
                     updateElementIndex($(this), options.prefix, i);
                 });
                 row.data('row-index', i);
