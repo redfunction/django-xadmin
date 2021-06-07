@@ -53,12 +53,6 @@ class QuickFormPlugin(BaseAdminPlugin):
             data[field_key] = ','.join(data[field_key])
         self.request.GET = data
 
-    def get_inlineformset_attrs(self, attrs):
-        """Changes the default prefix to not conflict with the default form"""
-        hs = hashlib.md5(force_bytes(datetime.datetime.now()))
-        attrs['prefix'] = f'inline-{hs.hexdigest()}'
-        return attrs
-
     def get_model_form(self, __, **kwargs):
         if '_field' in self.request.GET:
             defaults = {
@@ -77,6 +71,32 @@ class QuickFormPlugin(BaseAdminPlugin):
     def get_context(self, context):
         context['form_url'] = self.request.path
         return context
+
+
+class QuickFormFormSetPlugin(BaseAdminPlugin):
+    inlineformset_prefix = 'inlineformset_'
+
+    def init_request(self, *args, **kwargs):
+        return bool(self.request.is_ajax() or
+                    self.request.GET.get('_ajax'))
+
+    def get_inlineformset_attrs(self, attrs):
+        """Changes the default prefix to not conflict with the default form"""
+        if self.request.method == "GET":
+            hs = hashlib.md5(force_bytes(datetime.datetime.now()))
+            attrs['prefix'] = f'{self.inlineformset_prefix}{hs.hexdigest()}'
+        else:
+            regex = re.compile(rf"({self.inlineformset_prefix}[a-z0-9]+)")
+            data = attrs.get('data', self.request.POST)
+            for key in data:
+                match = regex.match(key)
+                if match:
+                    prefix = match.group(0)
+                    break
+            else:
+                prefix = None
+            attrs['prefix'] = prefix
+        return attrs
 
 
 class RelatedFieldWidgetWrapper(forms.Widget):
@@ -169,5 +189,7 @@ class QuickAddBtnPlugin(BaseAdminPlugin):
                     **self.request.GET)
         return formfield
 
+
 site.register_plugin(QuickFormPlugin, ModelFormAdminView)
+site.register_plugin(QuickFormFormSetPlugin, ModelFormAdminView)
 site.register_plugin(QuickAddBtnPlugin, ModelFormAdminView)
