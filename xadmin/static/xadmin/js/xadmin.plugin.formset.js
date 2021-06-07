@@ -92,18 +92,24 @@
             }
             options.formTemplate = template;
 
-            $('#' + options.prefix + '-add-row').click(function() {
-                var formCount = parseInt($('#id_' + options.prefix + '-TOTAL_FORMS').val()),
-                    row = options.formTemplate.clone(true).removeClass('empty-form');
-                updateRowIndex(row, formCount);
-                row.appendTo($$);
-                insertDeleteLink(row);
-                row.exform();
-                $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
-                // If a post-add callback was supplied, call it with the added form:
-                if (options.added) options.added(row, $$);
-                $(document).trigger("formset:added", [row]);
-                return false;
+            $('#' + options.prefix + '-add-row').each(function (){
+                var $addrow = $(this),
+                    event = "click." + options.prefix;
+                if ($addrow.data(event)) return;
+                $addrow.data(event, function() {
+                    var formCount = parseInt($('#id_' + options.prefix + '-TOTAL_FORMS').val()),
+                        row = options.formTemplate.clone(true).removeClass('empty-form');
+                    updateRowIndex(row, formCount);
+                    row.appendTo($$);
+                    insertDeleteLink(row);
+                    row.exform();
+                    $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
+                    // If a post-add callback was supplied, call it with the added form:
+                    if (options.added) options.added(row, $$);
+                    $(document).trigger("formset:added", [row]);
+                    return false;
+                });
+                $addrow.on(event, $addrow.data(event));
             });
         }
 
