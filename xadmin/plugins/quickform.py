@@ -20,12 +20,14 @@ class QuickFormPlugin(BaseAdminPlugin):
     inline_field_pattern = re.compile(r'\w+[-_]\d+-(?P<field>\w+)')
 
     def init_request(self, *args, **kwargs):
-        if self.request.method == 'GET' and self.request.is_ajax() or self.request.GET.get('_ajax'):
-            self.patch_request_get()
-            self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
-            self.admin_view.change_form_template = 'xadmin/views/quick_form.html'
-            return True
-        return False
+        return bool(self.request.method == 'GET' and
+                    self.request.is_ajax() or
+                    self.request.GET.get('_ajax'))
+
+    def setup(self, *args, **kwargs):
+        self.patch_request_get()
+        self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
+        self.admin_view.change_form_template = 'xadmin/views/quick_form.html'
 
     def resolve_field_if_inline(self, field):
         match = self.inline_field_pattern.match(field)
