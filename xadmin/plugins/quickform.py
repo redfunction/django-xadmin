@@ -4,6 +4,7 @@ import re
 from django import forms
 from django.db import models
 from django.forms.models import modelform_factory
+from django.utils.encoding import force_bytes
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
@@ -11,6 +12,8 @@ from xadmin.layout import Layout
 from xadmin.sites import site
 from xadmin.util import get_model_from_relation, vendor
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView
+import datetime
+import hashlib
 
 
 class QuickFormPlugin(BaseAdminPlugin):
@@ -47,6 +50,12 @@ class QuickFormPlugin(BaseAdminPlugin):
                 data['_field_inline_' + field_name] = field
             data[field_key] = ','.join(data[field_key])
         self.request.GET = data
+
+    def get_inlineformset_attrs(self, attrs):
+        """Changes the default prefix to not conflict with the default form"""
+        hs = hashlib.md5(force_bytes(datetime.datetime.now()))
+        attrs['prefix'] = f'inline-{hs.hexdigest()}'
+        return attrs
 
     def get_model_form(self, __, **kwargs):
         if '_field' in self.request.GET:
