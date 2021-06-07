@@ -154,53 +154,31 @@ def replace_field_to_value(layout, av):
                 replace_field_to_value(lo, av)
 
 
-class InlineFormSet(BaseInlineFormSet):
+class InlineFormSetMixin:
     """InlineFormSet with permission check"""
     def __init__(self, *args, **kwargs):
         self.can_add = kwargs.pop('can_add', False)
         self.can_change = kwargs.pop('can_change', False)
         self.can_delete = kwargs.pop('can_delete', False)
-        super(InlineFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def save_new(self, *args, **kwargs):
         kwargs['commit'] &= self.can_add
-        return super(InlineFormSet, self).save_new(*args, **kwargs)
+        return super().save_new(*args, **kwargs)
 
     def save_existing(self, *args, **kwargs):
         kwargs['commit'] &= self.can_change
-        return super(InlineFormSet, self).save_existing(*args, **kwargs)
+        return super().save_existing(*args, **kwargs)
 
     def delete_existing(self, *args, **kwargs):
         kwargs['commit'] &= self.can_delete
-        return super(InlineFormSet, self).delete_existing(*args, **kwargs)
-
-
-class GenericInlineFormSet(BaseGenericInlineFormSet):
-    """GenericInlineFormSet with permission check"""
-
-    def __init__(self, *args, **kwargs):
-        self.can_add = kwargs.pop('can_add', False)
-        self.can_change = kwargs.pop('can_change', False)
-        self.can_delete = kwargs.pop('can_delete', False)
-        super(GenericInlineFormSet, self).__init__(*args, **kwargs)
-
-    def save_new(self, *args, **kwargs):
-        kwargs['commit'] &= self.can_add
-        return super(GenericInlineFormSet, self).save_new(*args, **kwargs)
-
-    def save_existing(self, *args, **kwargs):
-        kwargs['commit'] &= self.can_change
-        return super(GenericInlineFormSet, self).save_existing(*args, **kwargs)
-
-    def delete_existing(self, *args, **kwargs):
-        kwargs['commit'] &= self.can_delete
-        return super(GenericInlineFormSet, self).delete_existing(*args, **kwargs)
+        return super().delete_existing(*args, **kwargs)
 
 
 class InlineModelAdmin(ModelFormAdminView):
 
     fk_name = None
-    formset = InlineFormSet
+    formset = BaseInlineFormSet
     extra = 3
     max_num = None
     can_delete = True
@@ -215,6 +193,9 @@ class InlineModelAdmin(ModelFormAdminView):
         self.model_instance = self.org_obj or admin_view.model()
 
         return self
+
+    def get_inlineformset_mixin(self):
+        return type(f"{self.formset.__name__}Mixin", (InlineFormSetMixin, self.formset), {})
 
     @filter_hook
     def get_formset(self, **kwargs):
@@ -232,9 +213,10 @@ class InlineModelAdmin(ModelFormAdminView):
         # default
         exclude = exclude or None
         can_delete = self.can_delete and self.has_delete_permission()
+        formset = self.get_inlineformset_mixin()
         defaults = {
             "form": self.form,
-            "formset": self.formset,
+            "formset": formset,
             "fk_name": self.fk_name,
             'fields': self.fields if self.fields else forms.ALL_FIELDS,
             "exclude": exclude,
@@ -378,8 +360,9 @@ class GenericInlineModelAdmin(InlineModelAdmin):
     ct_field = "content_type"
     ct_fk_field = "object_id"
 
-    formset = GenericInlineFormSet
+    formset = BaseGenericInlineFormSet
 
+    @filter_hook
     def get_formset(self, **kwargs):
         if self.exclude is None:
             exclude = []
@@ -392,12 +375,13 @@ class GenericInlineModelAdmin(InlineModelAdmin):
             exclude.extend(self.form._meta.exclude)
         exclude = exclude or None
         can_delete = self.can_delete and self.has_delete_permission()
+        formset = self.get_inlineformset_mixin()
         defaults = {
             "ct_field": self.ct_field,
             "fk_field": self.ct_fk_field,
             "form": self.form,
             "formfield_callback": self.formfield_for_dbfield,
-            "formset": self.formset,
+            "formset": formset,
             "extra": self.extra,
             "can_delete": can_delete,
             "can_order": False,
