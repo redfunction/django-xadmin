@@ -248,8 +248,8 @@ class InlineModelAdmin(ModelFormAdminView):
         return inlineformset_factory(self.parent_model, self.model, **defaults)
 
     @filter_hook
-    def instance_form(self, **kwargs):
-        formset = self.get_formset(**kwargs)
+    def get_inlineformset_attrs(self):
+        """Allows a plugin to change the options for creating a formset"""
         attrs = {
             'instance': self.model_instance,
             'queryset': self.queryset(),
@@ -262,7 +262,13 @@ class InlineModelAdmin(ModelFormAdminView):
                 'data': self.request.POST, 'files': self.request.FILES,
                 'save_as_new': "_saveasnew" in self.request.POST
             })
-        instance = formset(**attrs)
+        return attrs
+
+    @filter_hook
+    def instance_form(self, **kwargs):
+        formset = self.get_formset(**kwargs)
+        formset_attrs = self.get_inlineformset_attrs(**kwargs)
+        instance = formset(**formset_attrs)
         instance.view = self
 
         helper = FormHelper()
