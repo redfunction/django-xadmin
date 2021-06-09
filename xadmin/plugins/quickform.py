@@ -7,6 +7,7 @@ from django import forms
 from django.db import models
 from django.forms.models import modelform_factory
 from django.utils.encoding import force_bytes
+from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
@@ -25,7 +26,9 @@ class QuickFormPrefix:
         self.regex = re.compile(rf"({re.escape(name)}_[a-z0-9]+)")
         self.length = length if length else 5
 
-    def new(self):
+    @cached_property
+    def hash(self):
+        """hash prefix"""
         hs = hashlib.md5(force_bytes(time.time()))
         return f"{self.name}_{hs.hexdigest()[:self.length]}"
 
@@ -44,7 +47,7 @@ class QuickFormPrefix:
         return [f.replace(prefix, "").lstrip("-") for f in fields]
 
     def __str__(self):
-        return self.new()
+        return self.hash
 
 
 class QuickFormPlugin(BaseAdminPlugin):
