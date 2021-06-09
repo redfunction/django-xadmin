@@ -56,26 +56,27 @@ class QuickFormPlugin(BaseAdminPlugin):
     def setup(self, *args, **kwargs):
         self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
         self.admin_view.change_form_template = 'xadmin/views/quick_form.html'
+        self.prefix = QuickFormPrefix('quickform')
 
     def get_model_form(self, __, **kwargs):
-        prefix = QuickFormPrefix('quickform')
         if '_field' in self.request.GET:
             fields = self.request.GET['_field'].split(',')
             defaults = {
                 "form": self.admin_view.form,
-                "fields": prefix.clean(fields),
+                "fields": self.prefix.clean(fields),
                 "formfield_callback": self.admin_view.formfield_for_dbfield,
             }
             form = modelform_factory(self.model, **defaults)
-            form.prefix = prefix.resolve(self.request.GET)
+            form.prefix = self.prefix.resolve(self.request.GET)
         else:
             form = __()
-            form.prefix = str(prefix)
+            form.prefix = str(self.prefix)
         return form
 
     def get_form_layout(self, __):
         if '_field' in self.request.GET:
-            return Layout(*self.request.GET['_field'].split(','))
+            fields = self.request.GET['_field'].split(',')
+            return Layout(*self.prefix.clean(fields))
         return __()
 
     def get_context(self, context):
