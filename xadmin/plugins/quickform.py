@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
+from xadmin.filters import SEARCH_VAR
 from xadmin.layout import Layout
 from xadmin.sites import site
 from xadmin.util import get_model_from_relation, vendor
@@ -49,9 +50,11 @@ class QuickFormPrefix:
 class QuickFormPlugin(BaseAdminPlugin):
 
     def init_request(self, *args, **kwargs):
+        self.request_params = self.request.GET
         return bool(self.request.method == 'GET' and
+                    self.request_params.get(SEARCH_VAR) is None and
                     self.request.is_ajax() or
-                    self.request.GET.get('_ajax'))
+                    self.request_params.get('_ajax'))
 
     def setup(self, *args, **kwargs):
         self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
