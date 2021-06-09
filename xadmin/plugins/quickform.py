@@ -1,4 +1,6 @@
 import copy
+import time
+
 import re
 
 from django import forms
@@ -12,12 +14,39 @@ from xadmin.layout import Layout
 from xadmin.sites import site
 from xadmin.util import get_model_from_relation, vendor
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView
-import datetime
 import hashlib
 
 
+class QuickFormPrefix:
+    """Generates a prefix + md5 hash (based on time) that avoids conflict with main form ids"""
+    def __init__(self, name, length=None):
+        self.name = name
+        self.regex = re.compile(rf"({re.escape(name)}_[a-z0-9]+)")
+        self.length = length if length else 5
+
+    def new(self):
+        hs = hashlib.md5(force_bytes(time.time()))
+        return f"{self.name}_{hs.hexdigest()[:self.length]}"
+
+    def resolve(self, data):
+        """Finds the prefix of a form's data"""
+        for key in data:
+            match = self.regex.match(key)
+            if match:
+                return match[0]
+
+    def clean(self, fields):
+        """Remove prefixes from the form field"""
+        prefix = self.resolve(fields)
+        if prefix is None:
+            return fields
+        return [f.replace(prefix, "").lstrip("-") for f in fields]
+
+    def __str__(self):
+        return self.new()
+
+
 class QuickFormPlugin(BaseAdminPlugin):
-    inline_field_pattern = re.compile(r'\w+[-_]\d+-(?P<field>\w+)')
 
     def init_request(self, *args, **kwargs):
         return bool(self.request.method == 'GET' and
@@ -25,43 +54,24 @@ class QuickFormPlugin(BaseAdminPlugin):
                     self.request.GET.get('_ajax'))
 
     def setup(self, *args, **kwargs):
-        self.patch_request_get()
         self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
         self.admin_view.change_form_template = 'xadmin/views/quick_form.html'
 
-    def resolve_field_if_inline(self, field):
-        match = self.inline_field_pattern.match(field)
-        return match.groupdict()['field'] if match else field
-
-    def patch_request_get(self):
-        """Need to convert the inline field format to the value that a template field.
-        Ex: model-0-field -> field
-        """
-        data = self.request.GET.copy()
-        field_key = '_field'
-        if field_key in data:
-            _fields = data[field_key].split(',')
-            data[field_key] = []
-            for field in _fields:
-                field_name = self.resolve_field_if_inline(field)
-
-                data[field_key].append(field_name)
-                data[field_name] = data[field]
-
-                # Save the original field name to restore there in the widget
-                data['_field_inline_' + field_name] = field
-            data[field_key] = ','.join(data[field_key])
-        self.request.GET = data
-
     def get_model_form(self, __, **kwargs):
+        prefix = QuickFormPrefix('quickform')
         if '_field' in self.request.GET:
+            fields = self.request.GET['_field'].split(',')
             defaults = {
                 "form": self.admin_view.form,
-                "fields": self.request.GET['_field'].split(','),
+                "fields": prefix.clean(fields),
                 "formfield_callback": self.admin_view.formfield_for_dbfield,
             }
-            return modelform_factory(self.model, **defaults)
-        return __()
+            form = modelform_factory(self.model, **defaults)
+            form.prefix = prefix.resolve(self.request.GET)
+        else:
+            form = __()
+            form.prefix = str(prefix)
+        return form
 
     def get_form_layout(self, __):
         if '_field' in self.request.GET:
@@ -74,28 +84,27 @@ class QuickFormPlugin(BaseAdminPlugin):
 
 
 class QuickFormFormSetPlugin(BaseAdminPlugin):
-    inlineformset_prefix = 'inlineformset_'
+    inlineformset_prefix = 'quickinlineformset'
 
     def init_request(self, *args, **kwargs):
-        return bool(self.request.is_ajax() or
+        return bool(isinstance(self.admin_view, ModelFormAdminView) and
+                    self.request.is_ajax() or
                     self.request.GET.get('_ajax'))
+
+    def get_model_form(self, form, **kwargs):
+        prefix = QuickFormPrefix('quickform')
+        if self.request.method == "POST":
+            form.prefix = prefix.resolve(self.request.POST)
+        return form
 
     def get_inlineformset_attrs(self, attrs):
         """Changes the default prefix to not conflict with the default form"""
+        prefix = QuickFormPrefix(self.inlineformset_prefix)
         if self.request.method == "GET":
-            hs = hashlib.md5(force_bytes(datetime.datetime.now()))
-            attrs['prefix'] = f'{self.inlineformset_prefix}{hs.hexdigest()}'
+            attrs['prefix'] = str(prefix)
         else:
-            regex = re.compile(rf"({self.inlineformset_prefix}[a-z0-9]+)")
             data = attrs.get('data', self.request.POST)
-            for key in data:
-                match = regex.match(key)
-                if match:
-                    prefix = match.group(0)
-                    break
-            else:
-                prefix = None
-            attrs['prefix'] = prefix
+            attrs['prefix'] = prefix.resolve(data)
         return attrs
 
 
