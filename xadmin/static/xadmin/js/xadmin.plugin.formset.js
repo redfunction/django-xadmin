@@ -84,6 +84,7 @@
             }
             // text to html / insert dom
             el.html($.parseHTML(template));
+            el.wrap("<form></form>"); //  avoid sending the template
             template = el.children();  // html
             template.removeAttr('id');
             if(template.data("replace-id")){
