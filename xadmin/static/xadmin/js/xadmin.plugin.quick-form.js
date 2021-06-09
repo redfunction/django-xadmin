@@ -192,12 +192,26 @@
     , binit: function(element, options){
       this.$btn.click($.proxy(this.click, this))
     }
+    , load_form: function (modal){
+      var self = this;
+      modal.find('.modal-body').html('<h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2>')
+      modal.find('.modal-body').load(this.add_url, function(form_html, status, xhr){
+        var form = $(this).find('form');
+        form.addClass('quick-form');
+        form.on('post-success', $.proxy(self.post, self));
+        form.exform();
+
+        modal.find('.modal-footer').show();
+        modal.find('.btn-submit').click(function(){form.submit()});
+        modal.data("form", form);
+      });
+    }
     , click: function(e) {
       e.stopPropagation();
       e.preventDefault();
 
       if(!this.modal) {
-        var modal = $("#nunjuks-modal-main").template_render$({
+        this.modal = $("#nunjuks-modal-main").template_render$({
           header: {title: this.$btn.attr('title')},
           modal: {size: 'modal-xl'},
           confirm_button: {
@@ -207,30 +221,18 @@
             tag: 'a'
           },
         }).appendTo('body');
-        var self = this;
-        modal.find('.modal-body').html('<h2 style="text-align:center;"><i class="fa-spinner fa-spin fa fa-large"></i></h2>')
-        modal.find('.modal-body').load(this.add_url, function(form_html, status, xhr){
-          var form = $(this).find('form');
-          form.addClass('quick-form');
-          form.on('post-success', $.proxy(self.post, self));
-          form.exform();
-
-          modal.find('.modal-footer').show();
-          modal.find('.btn-submit').click(function(){form.submit()});
-
-          self.$form = form
-        });
-        this.modal = modal
       }
+      if (!this.modal.data("form"))
+         this.load_form(this.modal);
       this.modal.modal();
-
       return false
     }
     , post: function(e, data){
-      this.$form.data('ajaxform').clean();
-      var wrap = this.$for_wrap;
-      var input = this.$for_input;
-      var selected = [data['obj_id']];
+      var $form = this.modal.data("form"),
+          wrap = this.$for_wrap,
+          input = this.$for_input,
+          selected = [data['obj_id']];
+      $form.data('ajaxform').clean();
       if (input.attr('multiple')){
         if (input.hasClass("select2-multiple")) {
           selected.push($("#" + input.attr("id")).val());
@@ -248,9 +250,10 @@
         wrap.html($('<body>' + form_html + '</body>').find('#' + wrap.attr('id')).html());
         wrap.exform();
       });
+      // clean cache due inline validation
       this.modal.modal('hide');
+      this.modal.data("form", null);
     }
-
   }
 
   $.fn.ajax_addbtn = function ( option ) {
