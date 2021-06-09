@@ -222,6 +222,7 @@ class ModelFormAdminView(ModelAdminView):
     @filter_hook
     def get_form_helper(self):
         helper = FormHelper()
+        helper.disable_csrf = True
         helper.form_tag = False
         helper.html5_required = True
         helper.label_class = 'font-weight-bold'
