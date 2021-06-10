@@ -90,6 +90,14 @@ class DeleteSelectedAction(BaseActionView):
             }, 'success')
 
     @filter_hook
+    def get_deleted_objects(self, queryset):
+        # Populate deleted_objects, a data structure of all related objects that
+        # will also be deleted.
+        deleted_objects, model_count, perms_needed, protected = \
+            get_deleted_objects(queryset, self, self.admin_site)
+        return deleted_objects, model_count, perms_needed, protected
+
+    @filter_hook
     def do_action(self, queryset):
         # Check that the user has delete permission for the actual model
         if not self.has_delete_permission():
@@ -97,8 +105,7 @@ class DeleteSelectedAction(BaseActionView):
 
         # Populate deletable_objects, a data structure of all related objects that
         # will also be deleted.
-        deletable_objects, model_count, perms_needed, protected = get_deleted_objects(
-            queryset, self, self.admin_site)
+        deletable_objects, model_count, perms_needed, protected = self.get_deleted_objects(queryset)
 
         # The user has already confirmed the deletion.
         # Do the deletion and return a None to display the change list view again.
