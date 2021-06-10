@@ -24,7 +24,7 @@ class QuickFormPrefix:
     def __init__(self, name, length=None):
         self.name = name
         self.regex = re.compile(rf"({re.escape(name)}_[a-z0-9]+)")
-        self.length = length if length else 5
+        self.length = length if length else 10
 
     @cached_property
     def hash(self):
