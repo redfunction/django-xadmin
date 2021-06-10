@@ -249,7 +249,7 @@ class InlineModelAdmin(ModelFormAdminView):
     @filter_hook
     def instance_form(self, **kwargs):
         formset = self.get_formset(**kwargs)
-        formset_attrs = self.get_inlineformset_attrs(**kwargs)
+        formset_attrs = self.get_inlineformset_attrs()
         instance = formset(**formset_attrs)
         instance.view = self
 
