@@ -23,14 +23,14 @@ class QuickFormPrefix:
     """Generates a prefix + md5 hash (based on time) that avoids conflict with main form ids"""
     def __init__(self, name, length=None):
         self.name = name
-        self.regex = re.compile(rf"({re.escape(name)}_[a-z0-9]+)")
-        self.length = length if length else 10
+        self.regex = re.compile(rf"({re.escape(name)}-[a-z0-9]+)")
+        self.length = length if length else 5
 
     @cached_property
     def hash(self):
         """hash prefix"""
         hs = hashlib.md5(force_bytes(time.time()))
-        return f"{self.name}_{hs.hexdigest()[:self.length]}"
+        return f"{self.name}-{hs.hexdigest()[:self.length]}"
 
     def resolve(self, data):
         """Finds the prefix of a form's data"""
@@ -62,7 +62,7 @@ class QuickFormPlugin(BaseAdminPlugin):
     def setup(self, *args, **kwargs):
         self.admin_view.add_form_template = 'xadmin/views/quick_form.html'
         self.admin_view.change_form_template = 'xadmin/views/quick_form.html'
-        self.prefix = QuickFormPrefix('quickform')
+        self.prefix = QuickFormPrefix(f'quickform-{self.opts.app_label}-{self.opts.model_name}')
 
     def get_model_form(self, __, **kwargs):
         if '_field' in self.request.GET:
@@ -91,22 +91,26 @@ class QuickFormPlugin(BaseAdminPlugin):
 
 
 class QuickFormFormSetPlugin(BaseAdminPlugin):
-    inlineformset_prefix = 'quickinlineformset'
+    inlineformset_prefix = 'quickformset'
 
     def init_request(self, *args, **kwargs):
         return bool(isinstance(self.admin_view, ModelFormAdminView) and
                     self.request.is_ajax() or
                     self.request.GET.get('_ajax'))
 
+    def get_formset(self, formset, **kwargs):
+        self.fk_prefix = formset.get_default_prefix()
+        return formset
+
     def get_model_form(self, form, **kwargs):
-        prefix = QuickFormPrefix('quickform')
+        prefix = QuickFormPrefix(f'quickform-{self.opts.app_label}-{self.opts.model_name}')
         if self.request.method == "POST":
             form.prefix = prefix.resolve(self.request.POST)
         return form
 
     def get_inlineformset_attrs(self, attrs):
         """Changes the default prefix to not conflict with the default form"""
-        prefix = QuickFormPrefix(self.inlineformset_prefix)
+        prefix = QuickFormPrefix(self.inlineformset_prefix + "-" + self.fk_prefix)
         if self.request.method == "GET":
             attrs['prefix'] = str(prefix)
         else:
