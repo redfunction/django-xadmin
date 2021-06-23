@@ -19,7 +19,7 @@
         var modal = $('#' + modalId);
         var el = this.$element;
         if(!modal.length) {
-          modal = $("#nunjuks-modal-main").template_render$({
+          modal = $("#nunjucks-modal-main").template_render$({
             header: {title: el.attr('title')},
             modal: {id: modalId, size: 'modal-lg',},
             confirm_button: {

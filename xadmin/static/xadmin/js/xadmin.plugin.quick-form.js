@@ -211,7 +211,7 @@
       e.preventDefault();
 
       if(!this.modal) {
-        this.modal = $("#nunjuks-modal-main").template_render$({
+        this.modal = $("#nunjucks-modal-main").template_render$({
           header: {title: this.$btn.attr('title')},
           modal: {size: 'modal-xl'},
           confirm_button: {

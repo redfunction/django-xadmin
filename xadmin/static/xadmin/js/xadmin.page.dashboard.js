@@ -9,7 +9,7 @@ jQuery(function() {
       form_url = btn.data('form-url');
     }
     if(!btn.data('form-modal')){
-      var modal = $("#nunjuks-modal-main").template_render$({
+      var modal = $("#nunjucks-modal-main").template_render$({
           header: {title: btn.attr('title')},
           confirm_button: {
             text: gettext('Save changes'),

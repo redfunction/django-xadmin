@@ -8,7 +8,7 @@
         var topmenu = $('#top-nav .navbar-collapse');
         if(topmenu.data('bs.collapse')) topmenu.collapse('hide');
 
-        var modal = $("#nunjuks-modal-main").template_render$({
+        var modal = $("#nunjucks-modal-main").template_render$({
             header: {title: gettext('Loading theme')},
             modal: {id: 'load-theme-modal', size: 'modal-md',},
             body: '<h2 class="text-center"><i class="fa-spinner fa-spin fa fa-large"></i></h2>',
