@@ -383,6 +383,8 @@ class CreateAdminView(ModelFormAdminView):
             initial = dict(self.request.GET.items())
             for k in initial:
                 try:
+                    if self.model_form.prefix:
+                        k = k.replace(self.model_form.prefix + '-', '')
                     f = self.opts.get_field(k)
                 except models.FieldDoesNotExist:
                     continue
