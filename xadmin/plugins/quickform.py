@@ -24,6 +24,7 @@ class QuickFormPrefix:
     def __init__(self, name, length=None):
         self.name = name
         self.regex = re.compile(rf"({re.escape(name)}-[a-z0-9]+)")
+        self.regex_generic = re.compile(r'(\w+[-_]\d+)-\w+$')
         self.length = length if length else 5
 
     @cached_property
@@ -37,7 +38,12 @@ class QuickFormPrefix:
         for key in data:
             match = self.regex.match(key)
             if match:
-                return match[0]
+                return match.groups()[0]
+        else:
+            for key in data:
+                match = self.regex_generic.match(key)
+                if match:
+                    return match.groups()[0]
 
     def clean(self, fields):
         """Remove prefixes from the form field"""

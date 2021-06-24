@@ -1,5 +1,5 @@
 import copy
-
+import re
 from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib.contenttypes.models import ContentType
@@ -381,15 +381,20 @@ class CreateAdminView(ModelFormAdminView):
         # We have to special-case M2Ms as a list of comma-separated PKs.
         if self.request_method == 'get':
             initial = dict(self.request.GET.items())
-            for k in initial:
+            initial_extra = {}
+            for key in initial:
+                key_prefix = key
+                if self.model_form.prefix:
+                    key = re.sub('^' + re.escape(self.model_form.prefix + '-'), '', key)
                 try:
-                    if self.model_form.prefix:
-                        k = k.replace(self.model_form.prefix + '-', '')
-                    f = self.opts.get_field(k)
+                    field = self.opts.get_field(key)
                 except models.FieldDoesNotExist:
                     continue
-                if isinstance(f, models.ManyToManyField):
-                    initial[k] = initial[k].split(",")
+                # field value without a prefix
+                initial_extra[key] = initial[key_prefix]
+                if isinstance(field, models.ManyToManyField):
+                    initial[key] = initial[key].split(",")
+            initial.update(initial_extra)
             return {'initial': initial}
         else:
             return {'data': self.request.POST, 'files': self.request.FILES}
