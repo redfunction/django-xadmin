@@ -44,8 +44,7 @@ class WizardFormPlugin(BaseAdminPlugin):
         if not hasattr(self, '_form_list'):
             init_form_list = OrderedDict()
 
-            assert len(
-                self.wizard_form_list) > 0, 'at least one form is needed'
+            assert len(self.wizard_form_list) > 0, 'at least one form is needed'
 
             for i, form in enumerate(self.wizard_form_list):
                 init_form_list[smart_text(form[0])] = form[1]
