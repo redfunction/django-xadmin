@@ -117,17 +117,17 @@ class WizardFormPlugin(BaseAdminPlugin):
                                      fields=attrs,
                                      formfield_callback=self.admin_view.formfield_for_dbfield)
         elif type(attrs) is dict:
-            if attrs.get('fields', None):
-                return modelform_factory(self.model,
-                                         form=forms.ModelForm,
-                                         fields=attrs['fields'],
-                                         formfield_callback=self.admin_view.formfield_for_dbfield)
             if attrs.get('callback', None):
                 callback = attrs['callback']
                 if callable(callback):
                     return callback(self)
                 elif hasattr(self.admin_view, str(callback)):
                     return getattr(self.admin_view, str(callback))(self)
+            elif attrs.get('fields', None):
+                return modelform_factory(self.model,
+                                         form=forms.ModelForm,
+                                         fields=attrs['fields'],
+                                         formfield_callback=self.admin_view.formfield_for_dbfield)
         elif issubclass(attrs, forms.BaseForm):
             return attrs
         return None
