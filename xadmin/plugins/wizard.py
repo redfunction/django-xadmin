@@ -72,7 +72,6 @@ class WizardFormPlugin(BaseAdminPlugin):
         if self.request.method == 'GET':
             self.storage.reset()
             self.storage.current_step = self.steps.first
-
             self.admin_view.model_form = self.get_step_form()
         else:
             # Look for a wizard_goto_step element in the posted data which
@@ -90,12 +89,10 @@ class WizardFormPlugin(BaseAdminPlugin):
             management_form = ManagementForm(self.request.POST, prefix=self.prefix)
 
             if not management_form.is_valid():
-                raise ValidationError(
-                    'ManagementForm data is missing or has been tampered.')
+                raise ValidationError('ManagementForm data is missing or has been tampered.')
 
             form_current_step = management_form.cleaned_data['current_step']
-            if (form_current_step != self.steps.current and
-                    self.storage.current_step is not None):
+            if (form_current_step != self.steps.current and self.storage.current_step is not None):
                 # form refreshed, change current step
                 self.storage.current_step = form_current_step
 
@@ -115,12 +112,16 @@ class WizardFormPlugin(BaseAdminPlugin):
             step = self.steps.current
         attrs = self.get_form_list()[step]
         if type(attrs) in (list, tuple):
-            return modelform_factory(self.model, form=forms.ModelForm,
-                                     fields=attrs, formfield_callback=self.admin_view.formfield_for_dbfield)
+            return modelform_factory(self.model,
+                                     form=forms.ModelForm,
+                                     fields=attrs,
+                                     formfield_callback=self.admin_view.formfield_for_dbfield)
         elif type(attrs) is dict:
             if attrs.get('fields', None):
-                return modelform_factory(self.model, form=forms.ModelForm,
-                                         fields=attrs['fields'], formfield_callback=self.admin_view.formfield_for_dbfield)
+                return modelform_factory(self.model,
+                                         form=forms.ModelForm,
+                                         fields=attrs['fields'],
+                                         formfield_callback=self.admin_view.formfield_for_dbfield)
             if attrs.get('callback', None):
                 callback = attrs['callback']
                 if callable(callback):
