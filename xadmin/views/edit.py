@@ -390,10 +390,11 @@ class CreateAdminView(ModelFormAdminView):
                     field = self.opts.get_field(key)
                 except models.FieldDoesNotExist:
                     continue
-                # field value without a prefix
-                initial_extra[key] = initial[key_prefix]
                 if isinstance(field, models.ManyToManyField):
-                    initial[key] = initial[key].split(",")
+                    initial[key] = initial[key_prefix].split(",")
+                else:
+                    # field value without a prefix
+                    initial_extra[key] = initial[key_prefix]
             initial.update(initial_extra)
             return {'initial': initial}
         else:
