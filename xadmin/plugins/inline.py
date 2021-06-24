@@ -489,8 +489,11 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         return all_valid(self.formsets) and result
 
     def save_related(self):
+        new_obj = getattr(self.admin_view, "new_obj", None)
+        if new_obj is None:
+            return
         for formset in self.formsets:
-            formset.instance = self.admin_view.new_obj
+            formset.instance = new_obj
             formset.save()
 
     def get_context(self, context):
