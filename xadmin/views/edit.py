@@ -184,14 +184,17 @@ class ModelFormAdminView(ModelAdminView):
         return modelform_factory(self.model, **defaults)
 
     @filter_hook
+    def get_full_layout(self, fields, **options):
+        """Default layout for when one has not been defined"""
+        return Layout(Container(Col('full', Fieldset("", *fields, **options),
+                                horizontal=True, span=12)))
+
+    @filter_hook
     def get_form_layout(self):
         layout = copy.deepcopy(self.form_layout)
         fields = list(self.form_obj.fields.keys()) + list(self.get_readonly_fields())
-
         if layout is None:
-            layout = Layout(Container(Col('full',
-                                          Fieldset("", *fields, css_class="unsort no_title"), horizontal=True, span=12)
-                                      ))
+            layout = self.get_full_layout(fields, css_class="unsort no_title")
         elif type(layout) in (list, tuple) and len(layout) > 0:
             if isinstance(layout[0], Column):
                 fs = layout
