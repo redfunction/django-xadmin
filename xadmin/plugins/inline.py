@@ -230,7 +230,7 @@ class InlineModelAdmin(ModelFormAdminView):
         return inlineformset_factory(self.parent_model, self.model, **defaults)
 
     @filter_hook
-    def get_inlineformset_attrs(self):
+    def get_formset_attrs(self):
         """Allows a plugin to change the options for creating a formset"""
         attrs = {
             'instance': self.model_instance,
@@ -249,7 +249,7 @@ class InlineModelAdmin(ModelFormAdminView):
     @filter_hook
     def instance_form(self, **kwargs):
         formset = self.get_formset(**kwargs)
-        formset_attrs = self.get_inlineformset_attrs()
+        formset_attrs = self.get_formset_attrs()
         instance = formset(**formset_attrs)
         instance.view = self
 

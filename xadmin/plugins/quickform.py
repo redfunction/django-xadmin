@@ -114,7 +114,7 @@ class QuickFormFormSetPlugin(BaseAdminPlugin):
             form.prefix = prefix.resolve(self.request.POST)
         return form
 
-    def get_inlineformset_attrs(self, attrs):
+    def get_formset_attrs(self, attrs):
         """Changes the default prefix to not conflict with the default form"""
         prefix = QuickFormPrefix(self.inlineformset_prefix + "-" + self.fk_prefix)
         if self.request.method == "GET":
