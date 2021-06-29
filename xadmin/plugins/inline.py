@@ -544,9 +544,9 @@ class InlineFormsetPlugin(BaseAdminPlugin):
             replace_field_to_value(formset.helper.layout, inline)
             model = inline.model
             opts = model._meta
-            option_class = type(str(f'{opts.app_label}{opts.model_name}AdminMixin'),
+            option_class = type(f"{opts.app_label}{opts.model_name}AdminMixin",
                                 (getattr(inline, "detail_options", object),),
-                                {'model': model})
+                                {"model": model})
             for form in formset.forms:
                 instance = form.instance
                 if instance.pk:
