@@ -11,6 +11,7 @@ from django.utils import six
 from django.utils.encoding import smart_text
 from crispy_forms.utils import TEMPLATE_PACK
 from django.utils.safestring import mark_safe
+from django.utils.functional import cached_property
 
 from xadmin.layout import FormHelper, Layout, flatatt, Container, Column, Field, Fieldset
 from xadmin.plugins.utils import get_context_dict
@@ -456,25 +457,22 @@ def replace_inline_objects(layout, fs):
 class InlineFormsetPlugin(BaseAdminPlugin):
     inlines = []
 
-    @property
+    @cached_property
     def inline_instances(self):
-        if not hasattr(self, '_inline_instances'):
-            inline_instances = []
-            for inline_class in self.inlines:
-                inline = self.admin_view.get_view((getattr(inline_class, 'generic_inline', False) and
-                                                   GenericInlineModelAdmin or InlineModelAdmin),
-                    inline_class).init(self.admin_view)
-                if not (inline.has_add_permission() or
-                        inline.has_change_permission() or
-                        inline.has_delete_permission() or
-                        inline.has_view_permission()):
-                    continue
-                if not inline.has_add_permission():
-                    inline.max_num = 0
-                inline_instances.append(inline)
-            self._inline_instances = inline_instances
-
-        return self._inline_instances
+        inline_instances = []
+        for inline_class in self.inlines:
+            inline = self.admin_view.get_view((getattr(inline_class, 'generic_inline', False) and
+                                               GenericInlineModelAdmin or InlineModelAdmin),
+                  inline_class).init(self.admin_view)
+            if not (inline.has_add_permission() or
+                    inline.has_change_permission() or
+                    inline.has_delete_permission() or
+                    inline.has_view_permission()):
+                continue
+            if not inline.has_add_permission():
+                inline.max_num = 0
+            inline_instances.append(inline)
+        return inline_instances
 
     def instance_forms(self, ret):
         self.formsets = []
