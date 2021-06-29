@@ -194,8 +194,8 @@ class InlineModelAdmin(ModelFormAdminView):
 
         return self
 
-    def get_inlineformset_mixin(self):
-        return type(f"{self.formset.__name__}Mixin", (InlineFormSetMixin, self.formset), {})
+    def get_formset_mixin(self):
+        return type(f"{self.formset.__name__}PermsMixin", (InlineFormSetMixin, self.formset), {})
 
     @filter_hook
     def get_formset(self, **kwargs):
@@ -213,7 +213,7 @@ class InlineModelAdmin(ModelFormAdminView):
         # default
         exclude = exclude or None
         can_delete = self.can_delete and self.has_delete_permission()
-        formset = self.get_inlineformset_mixin()
+        formset = self.get_formset_mixin()
         defaults = {
             "form": self.form,
             "formset": formset,
@@ -375,7 +375,7 @@ class GenericInlineModelAdmin(InlineModelAdmin):
             exclude.extend(self.form._meta.exclude)
         exclude = exclude or None
         can_delete = self.can_delete and self.has_delete_permission()
-        formset = self.get_inlineformset_mixin()
+        formset = self.get_formset_mixin()
         defaults = {
             "ct_field": self.ct_field,
             "fk_field": self.ct_fk_field,
