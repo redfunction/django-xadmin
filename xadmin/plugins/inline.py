@@ -484,7 +484,10 @@ class InlineFormsetPlugin(BaseAdminPlugin):
         self.admin_view.formsets = self.formsets
 
     def valid_forms(self, result):
-        return all_valid(self.formsets) and result
+        bounded = (f.is_bound for f in self.formsets)
+        if any(bounded):
+            result &= all_valid(self.formsets)
+        return result
 
     def save_related(self):
         new_obj = getattr(self.admin_view, "new_obj", None)

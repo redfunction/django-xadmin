@@ -12,7 +12,7 @@
         {% if wizard.steps.last != wizard.steps.current %}
         <button name="_save" type="submit" class="btn btn-primary col-12">{% trans "Next step" %} &rarr;</button>
         {% else %}
-        <button name="_save" type="submit" class="btn btn-primary col-12">{% trans "Save" %}</button>
+        <button name="_save" value="wizard_save" type="submit" class="btn btn-primary col-12">{% trans "Save" %}</button>
         {% endif %}
     </div>
 </div>
@@ -28,6 +28,6 @@
     {% if wizard.steps.last != wizard.steps.current %}
     <button name="_save" type="submit" class="btn btn-primary">{% trans "Next step" %} &rarr;</button>
     {% else %}
-    <button name="_save" type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+    <button name="_save" value="wizard_save" type="submit" class="btn btn-primary">{% trans "Save" %}</button>
     {% endif %}
 </div>
