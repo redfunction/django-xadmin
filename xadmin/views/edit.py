@@ -384,7 +384,7 @@ class CreateAdminView(ModelFormAdminView):
         # We have to special-case M2Ms as a list of comma-separated PKs.
         if self.request_method == 'get':
             initial = dict(self.request.GET.items())
-            initial_extra = {}
+            initial_new = {}
             for key in initial:
                 key_prefix = key
                 if self.model_form.prefix:
@@ -394,11 +394,11 @@ class CreateAdminView(ModelFormAdminView):
                 except models.FieldDoesNotExist:
                     continue
                 if isinstance(field, models.ManyToManyField):
-                    initial[key] = initial[key_prefix].split(",")
+                    initial_new[key] = initial[key_prefix].split(",")
                 else:
                     # field value without a prefix
-                    initial_extra[key] = initial[key_prefix]
-            initial.update(initial_extra)
+                    initial_new[key] = initial[key_prefix]
+            initial.update(initial_new)
             return {'initial': initial}
         else:
             return {'data': self.request.POST, 'files': self.request.FILES}
