@@ -158,6 +158,7 @@ class ModelFormAdminView(ModelAdminView):
         Returns a Form class for use in the admin add view. This is used by
         add_view and change_view.
         """
+        fields = self.get_modelform_fields()
         if self.exclude is None:
             exclude = []
         else:
@@ -172,7 +173,7 @@ class ModelFormAdminView(ModelAdminView):
         exclude = exclude or None
         defaults = {
             "form": self.form,
-            "fields": self.fields and list(self.fields) or None,
+            "fields": fields and list(fields) or None,
             "exclude": exclude,
             "formfield_callback": self.formfield_for_dbfield,
         }
@@ -244,6 +245,10 @@ class ModelFormAdminView(ModelAdminView):
                 helper[field].wrap(ReadOnlyField, detail=detail)
 
         return helper
+
+    @filter_hook
+    def get_modelform_fields(self):
+        return self.fields
 
     @filter_hook
     def get_readonly_fields(self):
