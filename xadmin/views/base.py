@@ -232,7 +232,9 @@ class BaseAdminObject:
         log.save()
 
 
+@functools.total_ordering
 class BaseAdminPlugin(BaseAdminObject):
+    __order__ = 100   # load order
 
     def __init__(self, admin_view):
         self.admin_view = admin_view
@@ -242,6 +244,12 @@ class BaseAdminPlugin(BaseAdminObject):
             self.model = admin_view.model
             self.opts = admin_view.model._meta
 
+    def __lt__(self, plugin):
+        return self.__order__ < plugin.__order__
+
+    def __eq__(self, plugin):
+        return self.__order__ == plugin.__order__
+
     def init_request(self, *args, **kwargs):
         """Initializes the activation of the plugin (Returning False makes the plugin disabled)"""
         pass
@@ -249,6 +257,34 @@ class BaseAdminPlugin(BaseAdminObject):
     def setup(self, *args, **kwargs):
         """Configure the plugin after activation"""
         pass
+
+
+class PluginManager:
+    """Manages plugins initialization"""
+    def __init__(self, admin_view):
+        self.base_plugins = getattr(admin_view, "plugin_classes", ())
+        self.admin_view = admin_view
+
+    def init(self, *initargs, **initkwargs):
+        """Instance of plugins linking them to admin view"""
+        plugins = []
+        view = self.admin_view
+        request = view.request
+        kwargs = view.kwargs
+        args = view.args
+        user = view.user
+        for plugin_class in self.base_plugins:
+            plg = plugin_class(view)
+            plg.request = request
+            plg.user = user
+            plg.args = args
+            plg.kwargs = kwargs
+            active = plg.init_request(*initargs, **initkwargs)
+            if active is not False:
+                plg.setup(*args, **kwargs)
+                plugins.append(plg)
+        # active plugins ordered
+        return sorted(plugins)
 
 
 class BaseAdminView(BaseAdminObject, View):
@@ -262,11 +298,7 @@ class BaseAdminView(BaseAdminObject, View):
         self.request_method = request.method.lower()
         self.user = request.user
 
-        def plugin_order_key(plugin):
-            return getattr(plugin, 'order', 100)
-
-        self.base_plugins = sorted((p(self) for p in getattr(self, "plugin_classes", [])),
-                                   key=plugin_order_key)
+        self.plugin_manager = PluginManager(self)
 
         self.args = args
         self.kwargs = kwargs
@@ -299,18 +331,7 @@ class BaseAdminView(BaseAdminObject, View):
         pass
 
     def init_plugin(self, *args, **kwargs):
-        plugins = []
-        for p in self.base_plugins:
-            p.request = self.request
-            p.user = self.user
-            p.args = self.args
-            p.kwargs = self.kwargs
-            result = p.init_request(*args, **kwargs)
-            if result is not False:
-                # configures after activation.
-                p.setup(*args, **kwargs)
-                plugins.append(p)
-        self.plugins = plugins
+        self.plugins = self.plugin_manager.init(*args, **kwargs)
 
     @filter_hook
     def get_context(self):
