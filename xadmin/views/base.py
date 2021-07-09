@@ -239,6 +239,10 @@ class BaseAdminPlugin(BaseAdminObject):
     def __init__(self, admin_view):
         self.admin_view = admin_view
         self.admin_site = admin_view.admin_site
+        self.request = admin_view.request
+        self.user = admin_view.user
+        self.args = admin_view.args
+        self.kwargs = admin_view.kwargs
 
         if hasattr(admin_view, 'model'):
             self.model = admin_view.model
@@ -269,19 +273,11 @@ class PluginManager:
         """Instance of plugins linking them to admin view"""
         plugins = []
         view = self.admin_view
-        request = view.request
-        kwargs = view.kwargs
-        args = view.args
-        user = view.user
         for plugin_class in self.base_plugins:
             plg = plugin_class(view)
-            plg.request = request
-            plg.user = user
-            plg.args = args
-            plg.kwargs = kwargs
             active = plg.init_request(*initargs, **initkwargs)
             if active is not False:
-                plg.setup(*args, **kwargs)
+                plg.setup(*initargs, **initkwargs)
                 plugins.append(plg)
         # active plugins ordered
         return sorted(plugins)
@@ -297,11 +293,11 @@ class BaseAdminView(BaseAdminObject, View):
         self.request = request
         self.request_method = request.method.lower()
         self.user = request.user
+        self.args = args
+        self.kwargs = kwargs
 
         self.plugin_manager = PluginManager(self)
 
-        self.args = args
-        self.kwargs = kwargs
         self.init_plugin(*args, **kwargs)
         self.init_request(*args, **kwargs)
 
