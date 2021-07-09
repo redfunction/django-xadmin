@@ -104,6 +104,7 @@ class ListAdminView(ModelAdminView):
     """
     list_display = ('__str__',)
     list_display_links = ()
+    list_empty_result_value = EMPTY_CHANGELIST_VALUE
     list_display_links_details = False
     list_select_related = None
     list_per_page = 50
@@ -551,7 +552,7 @@ class ListAdminView(ModelAdminView):
         try:
             f, attr, value = lookup_field(field_name, obj, self)
         except (AttributeError, ObjectDoesNotExist, NoReverseMatch):
-            item.text = mark_safe("<span class='text-muted'>%s</span>" % EMPTY_CHANGELIST_VALUE)
+            item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
         else:
             if f is None:
                 item.allow_tags = getattr(attr, 'allow_tags', False)
@@ -565,7 +566,7 @@ class ListAdminView(ModelAdminView):
                 if isinstance(f.remote_field, models.ManyToOneRel):
                     field_val = getattr(obj, f.name)
                     if field_val is None:
-                        item.text = mark_safe("<span class='text-muted'>%s</span>" % EMPTY_CHANGELIST_VALUE)
+                        item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
                     else:
                         item.text = field_val
                 else:
