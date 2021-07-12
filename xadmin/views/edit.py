@@ -77,11 +77,11 @@ class ModelFormAdminView(ModelAdminView):
 
     form_layout = None
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         overrides = FORMFIELD_FOR_DBFIELD_DEFAULTS.copy()
         overrides.update(self.formfield_overrides)
         self.formfield_overrides = overrides
-        super(ModelFormAdminView, self).__init__(request, *args, **kwargs)
 
     @filter_hook
     def formfield_for_dbfield(self, db_field, **kwargs):

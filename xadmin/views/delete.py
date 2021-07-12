@@ -18,13 +18,12 @@ from xadmin.views.base import ModelAdminView, filter_hook, csrf_protect_m
 class DeleteAdminView(ModelAdminView):
     delete_confirmation_template = None
 
-    def __init__(self, request, *args, **kwargs):
-        if django_version > (2, 0):
-            admin_site_registry = self.admin_site._registry
-            for model in admin_site_registry:
-                if not hasattr(admin_site_registry[model], 'has_delete_permission'):
-                    setattr(admin_site_registry[model], 'has_delete_permission', self.has_delete_permission)
-        super(DeleteAdminView, self).__init__(request, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(DeleteAdminView, self).__init__(*args, **kwargs)
+        admin_site_registry = self.admin_site._registry
+        for model in admin_site_registry:
+            if not hasattr(admin_site_registry[model], 'has_delete_permission'):
+                setattr(admin_site_registry[model], 'has_delete_permission', self.has_delete_permission)
 
     def init_request(self, object_id, *args, **kwargs):
         """The 'delete' admin view for this model."""

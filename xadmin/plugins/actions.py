@@ -53,8 +53,8 @@ class BaseActionView(ModelAdminView):
     def do_action(self, queryset):
         pass
 
-    def __init__(self, request, *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         admin_site_registry = self.admin_site._registry
         for model in admin_site_registry:
             if not hasattr(admin_site_registry[model], 'has_delete_permission'):

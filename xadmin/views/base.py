@@ -133,7 +133,9 @@ class BaseAdminObject:
 
     def get_view(self, view_class, option_class=None, *args, **kwargs):
         opts = kwargs.pop('opts', {})
-        return self.admin_site.get_view_class(view_class, option_class, **opts)(self.request, *args, **kwargs)
+        view = self.admin_site.get_view_class(view_class, option_class, **opts)()
+        view.setup(self.request, *args, **kwargs)
+        return view
 
     def get_model_view(self, view_class, model, *args, **kwargs):
         return self.get_view(view_class, self.admin_site._registry.get(model), *args, **kwargs)
@@ -290,12 +292,16 @@ class BaseAdminView(BaseAdminObject, View):
     base_template = 'xadmin/base.html'
     need_site_permission = True
 
-    def __init__(self, request, *args, **kwargs):
-        self.request = request
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request_method = None
+        self.plugin_manager = None
+        self.user = None
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
         self.request_method = request.method.lower()
         self.user = request.user
-        self.args = args
-        self.kwargs = kwargs
 
         self.plugin_manager = PluginManager(self)
 
@@ -303,25 +309,9 @@ class BaseAdminView(BaseAdminObject, View):
         self.init_request(*args, **kwargs)
 
     @classonlymethod
-    def as_view(cls):
-        def view(request, *args, **kwargs):
-            self = cls(request, *args, **kwargs)
-
-            if hasattr(self, 'get') and not hasattr(self, 'head'):
-                self.head = self.get
-
-            if self.request_method in self.http_method_names:
-                handler = getattr(
-                    self, self.request_method, self.http_method_not_allowed)
-            else:
-                handler = self.http_method_not_allowed
-
-            return handler(request, *args, **kwargs)
-
-        # take name and docstring from class
-        update_wrapper(view, cls, updated=())
+    def as_view(cls, *initargs, **initkwargs):
+        view = super().as_view(*initargs, **initkwargs)
         view.need_site_permission = cls.need_site_permission
-
         return view
 
     def init_request(self, *args, **kwargs):
@@ -533,13 +523,13 @@ class ModelAdminView(CommAdminView):
     model = None
     remove_permissions = []
 
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # model options
         self.opts = self.model._meta
-        self.app_label = self.model._meta.app_label
-        self.model_name = self.model._meta.model_name
+        self.app_label = self.opts.app_label
+        self.model_name = self.opts.model_name
         self.model_info = (self.app_label, self.model_name)
-
-        super(ModelAdminView, self).__init__(request, *args, **kwargs)
 
     @filter_hook
     def get_context(self):
