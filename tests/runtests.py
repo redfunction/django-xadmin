@@ -56,7 +56,7 @@ def setup(verbosity, test_labels):
         'USE_I18N': settings.USE_I18N,
         'LOGIN_URL': settings.LOGIN_URL,
         'LANGUAGE_CODE': settings.LANGUAGE_CODE,
-        'MIDDLEWARE_CLASSES': settings.MIDDLEWARE_CLASSES,
+        'MIDDLEWARE': settings.MIDDLEWARE,
         'STATIC_URL': settings.STATIC_URL,
         'STATIC_ROOT': settings.STATIC_ROOT,
     }
@@ -72,7 +72,7 @@ def setup(verbosity, test_labels):
         ])
     settings.USE_I18N = True
     settings.LANGUAGE_CODE = 'en'
-    settings.MIDDLEWARE_CLASSES = (
+    settings.MIDDLEWARE = (
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
