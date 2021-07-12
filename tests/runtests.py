@@ -168,7 +168,7 @@ if __name__ == "__main__":
     if options.settings:
         os.environ['DJANGO_SETTINGS_MODULE'] = options.settings
     elif "DJANGO_SETTINGS_MODULE" not in os.environ:
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
     else:
         options.settings = os.environ['DJANGO_SETTINGS_MODULE']
 
