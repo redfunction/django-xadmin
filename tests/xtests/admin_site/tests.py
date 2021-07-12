@@ -75,9 +75,11 @@ class AdminSiteTest(BaseTest):
         site.register_plugin(TestPlugin, TestAdminView)
 
         c = site.get_view_class(TestAdminView)
+
         self.assertIn(TestPlugin, c.plugin_classes)
 
-        cv = c(self._mocked_request('test/'))
+        cv = c()
+        cv.setup(self._mocked_request('test/'))
 
         self.assertEqual(cv.get_title(), "TEST TITLE PLUGIN")
 
@@ -86,10 +88,9 @@ class AdminSiteTest(BaseTest):
 
         site.register(ModelA, ModelAAdmin)
         site.register_view(r"^test/$", TestAdminView, 'test')
-        site.register_modelview(
-            r'^(.+)/test/$', TestModelAdminView, name='%s_%s_test')
+        site.register_modelview(r'^(.+)/test/$', TestModelAdminView, name='%s_%s_test')
 
         urls, app_name, namespace = site.urls
 
-        self.assertEqual(app_name, 'test_app')
-        self.assertEqual(namespace, 'test')
+        self.assertEqual(app_name, 'test')
+        self.assertEqual(namespace, 'test_app')

@@ -25,9 +25,9 @@ class MergeAdminMetaclass(type):
 
 class AdminSite:
 
-    def __init__(self, name='xadmin'):
-        self.name = name
-        self.app_name = 'xadmin'
+    def __init__(self, name=None, app_name=None):
+        self.name = name or 'xadmin'
+        self.app_name = app_name or 'xadmin'
 
         self._registry = {}  # model_class class -> admin_class class
         self._registry_avs = {}  # admin_view_class class -> admin_class class
