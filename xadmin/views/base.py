@@ -266,7 +266,8 @@ class BaseAdminPlugin(BaseAdminObject):
 class PluginManager:
     """Manages plugins initialization"""
     def __init__(self, admin_view):
-        self.base_plugins = getattr(admin_view, "plugin_classes", ())
+        self.base_plugins = sorted(getattr(admin_view, "plugin_classes", ()),
+                                   key=lambda plugin: plugin.__order__)
         self.admin_view = admin_view
 
     def init(self, *initargs, **initkwargs):
