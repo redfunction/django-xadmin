@@ -1,5 +1,5 @@
 /* cards "fieldset" layout */
-.card.no_title .card-header {
+.card.no_title > .card-header {
     display: none !important;
 }
 
