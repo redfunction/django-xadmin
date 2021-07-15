@@ -453,11 +453,9 @@ def get_limit_choices_to_from_path(model, path):
     fields = get_fields_from_path(model, path)
     fields = remove_trailing_data_field(fields)
     try:
-        field = fields[-1]
-    except IndexError:
+        field = fields[-1].remote_field
+    except (IndexError, AttributeError):
         return models.Q()  # empty Q
-    if hasattr(field, 'remote_field'):
-        field = field.remote_field
     limit_choices_to = get_limit_choices_to(field)
     if not limit_choices_to:
         return models.Q()  # empty Q
