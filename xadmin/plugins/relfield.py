@@ -74,6 +74,7 @@ class ForeignKeySelectWidget(ForeignKeySearchWidget):
 
 
 class RelateFieldPlugin(BaseAdminPlugin):
+    related_limit_choices_distinct = ()
 
     def get_field_style(self, attrs, db_field, style, **kwargs):
         # search able fk field
@@ -84,6 +85,15 @@ class RelateFieldPlugin(BaseAdminPlugin):
                 widget = (style == 'fk-ajax' and ForeignKeySearchWidget or ForeignKeySelectWidget)
                 return dict(attrs or {}, widget=widget(db_field.remote_field, self.admin_view, using=db))
         return attrs
+
+    def formfield_for_dbfield(self, formfield, db_field, **kwargs):
+        if (isinstance(db_field, models.ForeignKey) and
+                getattr(db_field.remote_field, "limit_choices_to", None) and
+                (db_field.name in self.related_limit_choices_distinct or
+                 type(db_field) in self.related_limit_choices_distinct)):
+            # in form validation this avoids duplicates in the results
+            formfield.queryset = formfield.queryset.distinct()
+        return formfield
 
 
 site.register_plugin(RelateFieldPlugin, ModelFormAdminView)
