@@ -1,4 +1,5 @@
 import django
+from django.contrib.admin.widgets import url_params_from_lookup_dict
 from django.db import models
 from django.db.models.sql.query import LOOKUP_SEP
 from django.db.models.deletion import Collector
@@ -434,6 +435,14 @@ def remove_trailing_data_field(fields):
     return fields
 
 
+def get_limit_choices_to(field):
+    """Returns the value of limit_choices_to from field"""
+    limit_choices_to = getattr(field, 'limit_choices_to', None)
+    if callable(limit_choices_to):
+        limit_choices_to = limit_choices_to()
+    return limit_choices_to
+
+
 def get_limit_choices_to_from_path(model, path):
     """ Return Q object for limiting choices if applicable.
 
@@ -443,15 +452,27 @@ def get_limit_choices_to_from_path(model, path):
 
     fields = get_fields_from_path(model, path)
     fields = remove_trailing_data_field(fields)
-    limit_choices_to = (
-        fields and hasattr(fields[-1], 'remote_field') and
-        getattr(fields[-1].remote_field, 'limit_choices_to', None))
+    try:
+        field = fields[-1]
+    except IndexError:
+        return models.Q()  # empty Q
+    if hasattr(field, 'remote_field'):
+        field = field.remote_field
+    limit_choices_to = get_limit_choices_to(field)
     if not limit_choices_to:
         return models.Q()  # empty Q
     elif isinstance(limit_choices_to, models.Q):
         return limit_choices_to  # already a Q
     else:
         return models.Q(**limit_choices_to)  # convert dict to Q
+
+
+def get_limit_choices_to_url_params(field):
+    """limit choices to format with urls parameter"""
+    limit_choices_to = get_limit_choices_to(field)
+    if limit_choices_to:
+        limit_choices_to = url_params_from_lookup_dict(limit_choices_to)
+    return limit_choices_to
 
 
 def sortkeypicker(keynames):

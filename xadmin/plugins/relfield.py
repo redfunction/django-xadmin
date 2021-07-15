@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from django import forms
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView
-from xadmin.util import vendor
+from xadmin.util import vendor, get_limit_choices_to_url_params
 
 
 class ForeignKeySearchWidget(forms.Widget):
@@ -31,9 +31,10 @@ class ForeignKeySearchWidget(forms.Widget):
             '%s_%s_changelist' % (to_opts.app_label, to_opts.model_name))
         base_attrs['data-placeholder'] = _('Search %s') % to_opts.verbose_name
         base_attrs['data-choices'] = '?'
-        if self.rel.limit_choices_to:
-            for i in list(self.rel.limit_choices_to):
-                base_attrs['data-choices'] += "&_p_%s=%s" % (i, self.rel.limit_choices_to[i])
+        rel_limit_choices_to = get_limit_choices_to_url_params(self.rel)
+        if rel_limit_choices_to:
+            for key in rel_limit_choices_to:
+                base_attrs['data-choices'] += "&_p_%s=%s" % (key, rel_limit_choices_to[key])
             base_attrs['data-choices'] = format_html(base_attrs['data-choices'])
         base_attrs.update(kwargs)
         return super(ForeignKeySearchWidget, self).build_attrs(base_attrs, extra_attrs=extra_attrs)

@@ -12,7 +12,7 @@ from django.utils.text import Truncator
 from django.core.cache import cache, caches
 
 from xadmin.views.list import EMPTY_CHANGELIST_VALUE
-from xadmin.util import is_related_field, is_related_field2
+from xadmin.util import is_related_field, is_related_field2, get_limit_choices_to_url_params
 import datetime
 
 FILTER_PREFIX = '_p_'
@@ -366,13 +366,14 @@ class RelatedFieldSearchFilter(FieldFilter):
         else:
             self.lookup_title = other_model._meta.verbose_name
         self.title = self.lookup_title
-        self.search_url = model_admin.get_admin_url('%s_%s_changelist' % (
-            other_model._meta.app_label, other_model._meta.model_name))
+        self.search_url = model_admin.get_admin_url('%s_%s_changelist' % (other_model._meta.app_label,
+                                                                          other_model._meta.model_name))
         self.label = self.label_for_value(other_model, rel_name, self.lookup_exact_val) if self.lookup_exact_val else ""
         self.choices = '?'
-        if field.remote_field.limit_choices_to:
-            for i in list(field.remote_field.limit_choices_to):
-                self.choices += "&_p_%s=%s" % (i, field.remote_field.limit_choices_to[i])
+        rel_limit_choices_to = get_limit_choices_to_url_params(field.remote_field)
+        if rel_limit_choices_to:
+            for key in rel_limit_choices_to:
+                self.choices += "&_p_%s=%s" % (key, rel_limit_choices_to[key])
             self.choices = format_html(self.choices)
 
     def label_for_value(self, other_model, rel_name, value):
