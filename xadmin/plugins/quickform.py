@@ -206,7 +206,8 @@ class QuickAddBtnPlugin(BaseAdminPlugin):
            isinstance(db_field, self.quick_addbtn_db_fields_exclude):
             return formfield  # disabled to this types
         elif formfield and self.model in self.admin_site._registry and \
-                isinstance(db_field, (models.ForeignKey, models.ManyToManyField)):
+                isinstance(db_field, (models.ForeignKey, models.ManyToManyField)) and \
+                hasattr(formfield.widget, "choices"):
             rel_model = get_model_from_relation(db_field)
             if rel_model in self.admin_site._registry and self.has_model_perm(rel_model, 'add'):
                 add_url = self.get_model_url(rel_model, 'add')
