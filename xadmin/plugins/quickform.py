@@ -163,15 +163,15 @@ class RelatedFieldWidgetWrapper(forms.Widget):
         new_name = self.kwargs.get('_field_inline_' + name)
         return (new_name and new_name[0]) or name
 
-    def render(self, name, value, renderer=None, *args, **kwargs):
+    def render(self, name, value, attrs=None, **kwargs):
         name = self.resolve_field_name_if_inline(name)
         self.widget.choices = self.choices
         output = []
         output.extend(['<div class="d-flex align-items-start input-group">'])
         output.extend(['<div class="flex-grow-1 mr-2" id="id_%s_wrap_container">' % name,
-                       self.widget.render(name, value, *args, **kwargs), '</div>'])
+                       self.widget.render(name, value, attrs=attrs, **kwargs), '</div>'])
         if self.add_url:
-            output.append(u'<a href="%s" title="%s" class="btn btn-primary btn-sm btn-ajax mx-2 mt-1" data-for-id="id_%s" data-refresh-url="%s"><i class="fa fa-plus"></i></a>'
+            output.append('<a href="%s" title="%s" class="btn btn-primary btn-sm btn-ajax mx-2 mt-1" data-for-id="id_%s" data-refresh-url="%s"><i class="fa fa-plus"></i></a>'
                           % (
                               self.add_url, (_('Create New %s') % self.rel.model._meta.verbose_name), name,
                               "%s?_field=%s&%s=" % (self.rel_add_url, name, name)))

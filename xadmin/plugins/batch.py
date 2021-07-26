@@ -20,8 +20,8 @@ BATCH_CHECKBOX_NAME = '_batch_change_fields'
 class ChangeFieldWidgetWrapper(forms.Widget):
 
     def __init__(self, widget):
+        super(ChangeFieldWidgetWrapper, self).__init__(attrs=widget.attrs)
         self.needs_multipart_form = widget.needs_multipart_form
-        self.attrs = widget.attrs
         self.widget = widget
 
     def __deepcopy__(self, memo):
