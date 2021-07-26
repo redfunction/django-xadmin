@@ -58,14 +58,12 @@ class ChangeFieldWidgetWrapper(forms.Widget):
     def id_for_label(self, id_):
         return self.widget.id_for_label(id_)
 
+
 class BatchChangeAction(BaseActionView):
 
     action_name = "change_selected"
-    description = ugettext_lazy(
-        u'Batch Change selected %(verbose_name_plural)s')
-
+    description = ugettext_lazy('Batch Change selected %(verbose_name_plural)s')
     batch_change_form_template = None
-
     model_perm = 'change'
 
     batch_fields = []
