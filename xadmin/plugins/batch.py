@@ -22,6 +22,7 @@ class ChangeFieldWidgetWrapper(forms.Widget):
     def __init__(self, widget):
         super(ChangeFieldWidgetWrapper, self).__init__(attrs=widget.attrs)
         self.needs_multipart_form = widget.needs_multipart_form
+        self.choices = getattr(widget, 'choices', None)
         self.widget = widget
 
     def __deepcopy__(self, memo):
@@ -38,6 +39,7 @@ class ChangeFieldWidgetWrapper(forms.Widget):
 
     def render(self, name, value, attrs=None, **kwargs):
         output = []
+        self.widget.choices = self.choices
         is_required = self.widget.is_required
         output.append(u'<div class="btn-group-toggle"><label class="btn btn-secondary">'
             '<input type="checkbox" class="batch-field-checkbox" name="%s" value="%s"%s/> %s</label>' %
