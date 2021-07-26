@@ -73,6 +73,11 @@ class BatchChangeAction(BaseActionView):
     # It allows you to use a different form stated in the view model
     batch_form = None
 
+    def init_action(self, list_view):
+        super().init_action(list_view)
+        self.edit_view = self.get_model_view(ModelFormAdminView, self.model)
+        self.save_form_post = bool(self.request.POST.get('post'))
+
     def change_models(self, queryset, cleaned_data):
         n = queryset.count()
 
@@ -101,21 +106,20 @@ class BatchChangeAction(BaseActionView):
                 "count": n, "items": model_ngettext(self.opts, n)
             }, 'success')
 
-    def get_change_form(self, is_post, fields):
-        edit_view = self.get_model_view(ModelFormAdminView, self.model)
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = self.edit_view.formfield_for_dbfield(db_field,
+                                                         required=self.save_form_post,
+                                                         **kwargs)
+        formfield.widget = ChangeFieldWidgetWrapper(formfield.widget)
+        return formfield
 
-        def formfield_for_dbfield(db_field, **kwargs):
-            formfield = edit_view.formfield_for_dbfield(db_field, required=is_post, **kwargs)
-            formfield.widget = ChangeFieldWidgetWrapper(formfield.widget)
-            return formfield
-
-        batch_form = getattr(edit_view, "batch_form",
-                             edit_view.form)
+    def get_change_form(self, fields):
+        batch_form = getattr(self.edit_view, "batch_form", self.edit_view.form)
         defaults = {
-            "form": batch_form or edit_view.form,
+            "form": batch_form or self.edit_view.form,
             "fields": fields,
-            "formfield_callback": formfield_for_dbfield,
-            "exclude": getattr(edit_view, "batch_fields_exclude", ())
+            "formfield_callback": self.formfield_for_dbfield,
+            "exclude": getattr(self.edit_view, "batch_fields_exclude", ())
         }
         return modelform_factory(self.model, **defaults)
 
@@ -146,17 +150,18 @@ class BatchChangeAction(BaseActionView):
         if not self.has_change_permission():
             raise PermissionDenied
 
-        change_fields = [f for f in self.request.POST.getlist(BATCH_CHECKBOX_NAME) if f in self.batch_fields]
+        change_fields = [field for field in self.request.POST.getlist(BATCH_CHECKBOX_NAME)
+                         if field in self.batch_fields]
 
-        if change_fields and self.request.POST.get('post'):
-            form = self.get_change_form(True, change_fields)(data=self.request.POST,
-                                                             files=self.request.FILES)
+        if change_fields and self.save_form_post:
+            form = self.get_change_form(change_fields)(data=self.request.POST,
+                                                       files=self.request.FILES)
             self.form_obj = self.formfield_declared_in_post(form, change_fields)
             if self.form_obj.is_valid():
                 self.change_models(queryset, self.form_obj.cleaned_data)
                 return None
         else:
-            form = self.get_change_form(False, self.batch_fields)()
+            form = self.get_change_form(self.batch_fields)()
             # Support for declared fields but without affecting field inheritance.
             self.form_obj = self.formfield_for_declared(form, self.batch_fields)
 
