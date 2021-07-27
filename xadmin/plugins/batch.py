@@ -98,6 +98,10 @@ class BatchChangeAction(BaseActionView):
         if n:
             for obj in queryset:
                 for field, v in data.items():
+                    validate = getattr(self, f"dbfield_{field.name}_validate", None)
+                    if callable(validate) and not validate(obj, v):
+                        # if field_validate returns False the object is not changed.
+                        continue
                     field.save_form_data(obj, v)
                 obj.save()
             self.message_user(_("Successfully change %(count)d %(items)s.") % {
