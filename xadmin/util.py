@@ -1,12 +1,13 @@
 import django
 from django.contrib.admin.widgets import url_params_from_lookup_dict
-from django.db import models
+from django.db import models, router
 from django.db.models.sql.query import LOOKUP_SEP
 from django.db.models.deletion import Collector
 from django.db.models.fields.related import ForeignObjectRel
 from django.forms.forms import pretty_name
+from django.urls import NoReverseMatch
 from django.utils import formats, six
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.encoding import force_text, smart_text, smart_str
@@ -15,7 +16,7 @@ from django.urls.base import reverse
 from django.conf import settings
 from django.forms import Media
 from django.utils.translation import get_language
-from django.contrib.admin.utils import label_for_field, help_text_for_field
+from django.contrib.admin.utils import label_for_field, help_text_for_field, NestedObjects
 from django import VERSION as version
 import datetime
 import decimal
@@ -173,56 +174,57 @@ def flatten_fieldsets(fieldsets):
     return field_names
 
 
-class NestedObjects(Collector):
+def get_deleted_objects(objs, admin_view):
+    """
+    Find all objects related to ``objs`` that should also be deleted. ``objs``
+    must be a homogeneous iterable of objects (e.g. a QuerySet).
 
-    def __init__(self, *args, **kwargs):
-        super(NestedObjects, self).__init__(*args, **kwargs)
-        self.edges = {}  # {from_instance: [to_instances]}
-        self.protected = set()
+    Return a nested list of strings suitable for display in the
+    template with the ``unordered_list`` filter.
 
-    def add_edge(self, source, target):
-        self.edges.setdefault(source, []).append(target)
+    *** Warning
+    xadmin has generic inheritance, so it is necessary to use
+    the admin_view that already includes plugins and options.
+    """
+    try:
+        obj = objs[0]
+    except IndexError:
+        return [], {}, set(), []
+    else:
+        using = router.db_for_write(obj._meta.model)
+    collector = NestedObjects(using=using)
+    collector.collect(objs)
+    perms_needed = set()
 
-    def collect(self, objs, source_attr=None, **kwargs):
-        for obj in objs:
-            if source_attr and hasattr(obj, source_attr):
-                self.add_edge(getattr(obj, source_attr), obj)
-            else:
-                self.add_edge(None, obj)
+    def format_callback(obj):
+        opts = obj._meta
+
+        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), obj)
+
+        if not admin_view.has_delete_permission(obj):
+            perms_needed.add(opts.verbose_name)
         try:
-            return super(NestedObjects, self).collect(objs, source_attr=source_attr, **kwargs)
-        except models.ProtectedError as e:
-            self.protected.update(e.protected_objects)
+            admin_url = reverse('%s:%s_%s_change'
+                                % (admin_view.admin_site.name,
+                                   opts.app_label,
+                                   opts.model_name),
+                                None, (quote(obj.pk),))
+        except NoReverseMatch:
+            # Change url doesn't exist -- don't display link to edit
+            return no_edit_link
 
-    def related_objects(self, related, objs):
-        qs = super(NestedObjects, self).related_objects(related, objs)
-        return qs.select_related(related.field.name)
+        # Display a link to the admin page.
+        return format_html('{}: <a href="{}">{}</a>',
+                           capfirst(opts.verbose_name),
+                           admin_url,
+                           obj)
 
-    def _nested(self, obj, seen, format_callback):
-        if obj in seen:
-            return []
-        seen.add(obj)
-        children = []
-        for child in self.edges.get(obj, ()):
-            children.extend(self._nested(child, seen, format_callback))
-        if format_callback:
-            ret = [format_callback(obj)]
-        else:
-            ret = [obj]
-        if children:
-            ret.append(children)
-        return ret
+    to_delete = collector.nested(format_callback)
 
-    def nested(self, format_callback=None):
-        """
-        Return the graph as a nested list.
+    protected = [format_callback(obj) for obj in collector.protected]
+    model_count = {model._meta.verbose_name_plural: len(objs) for model, objs in collector.model_objs.items()}
 
-        """
-        seen = set()
-        roots = []
-        for root in self.edges.get(None, ()):
-            roots.extend(self._nested(root, seen, format_callback))
-        return roots
+    return to_delete, model_count, perms_needed, protected
 
 
 def model_format_dict(obj):

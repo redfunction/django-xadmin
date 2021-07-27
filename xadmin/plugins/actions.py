@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 from django import forms, VERSION as django_version
-from django.contrib.admin.utils import get_deleted_objects
 from django.core.exceptions import PermissionDenied
 from django.db import router
 from django.http import HttpResponse, HttpResponseRedirect
@@ -15,6 +14,7 @@ from django.utils.translation import ugettext as _, ungettext
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
+from xadmin.util import get_deleted_objects
 from xadmin.util import model_format_dict, model_ngettext
 from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.views.base import filter_hook, ModelAdminView
@@ -93,8 +93,7 @@ class DeleteSelectedAction(BaseActionView):
     def get_deleted_objects(self, queryset):
         # Populate deleted_objects, a data structure of all related objects that
         # will also be deleted.
-        deleted_objects, model_count, perms_needed, protected = \
-            get_deleted_objects(queryset, self, self.admin_site)
+        deleted_objects, model_count, perms_needed, protected = get_deleted_objects(queryset, self)
         return deleted_objects, model_count, perms_needed, protected
 
     @filter_hook
