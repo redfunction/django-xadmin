@@ -70,8 +70,6 @@ class BatchChangeAction(BaseActionView):
 
     batch_fields = []
     batch_fields_exclude = []
-    # It allows you to use a different form stated in the view model
-    batch_form = None
 
     def init_action(self, list_view):
         super().init_action(list_view)
@@ -100,6 +98,10 @@ class BatchChangeAction(BaseActionView):
         if n:
             for obj in queryset:
                 for field, v in data.items():
+                    validate = getattr(self, f"dbfield_{field.name}_validate", None)
+                    if callable(validate) and not validate(obj, v):
+                        # if field_validate returns False the object is not changed.
+                        continue
                     field.save_form_data(obj, v)
                 obj.save()
             self.message_user(_("Successfully change %(count)d %(items)s.") % {
@@ -116,7 +118,7 @@ class BatchChangeAction(BaseActionView):
     def get_change_form(self, fields):
         batch_form = getattr(self.edit_view, "batch_form", self.edit_view.form)
         defaults = {
-            "form": batch_form or self.edit_view.form,
+            "form": batch_form,
             "fields": fields,
             "formfield_callback": self.formfield_for_dbfield,
             "exclude": getattr(self.edit_view, "batch_fields_exclude", ())
