@@ -31,6 +31,12 @@ DOT = '.'
 EMPTY_CHANGELIST_VALUE = _('Null')
 
 
+def safe_html_for_empty_result_value(text=None):
+    if text is None:
+        text = EMPTY_CHANGELIST_VALUE
+    return mark_safe(f"<span class='text-muted'>{text}</span>")
+
+
 class FakeMethodField:
     """
     This class used when a column is an model function, wrap function as a fake field to display in select columns.
@@ -552,7 +558,7 @@ class ListAdminView(ModelAdminView):
         try:
             f, attr, value = lookup_field(field_name, obj, self)
         except (AttributeError, ObjectDoesNotExist, NoReverseMatch):
-            item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
+            item.text = safe_html_for_empty_result_value(self.list_empty_result_value)
         else:
             if f is None:
                 item.allow_tags = getattr(attr, 'allow_tags', False)
@@ -566,11 +572,11 @@ class ListAdminView(ModelAdminView):
                 if isinstance(f.remote_field, models.ManyToOneRel):
                     field_val = getattr(obj, f.name)
                     if field_val is None:
-                        item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
+                        item.text = safe_html_for_empty_result_value(self.list_empty_result_value)
                     else:
                         item.text = field_val
                 elif value is None:
-                    item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
+                    item.text = safe_html_for_empty_result_value(self.list_empty_result_value)
                 else:
                     item.text = display_for_field(value, f)
                 if isinstance(f, models.DateField)\
