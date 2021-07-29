@@ -569,6 +569,8 @@ class ListAdminView(ModelAdminView):
                         item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
                     else:
                         item.text = field_val
+                elif value is None:
+                    item.text = mark_safe("<span class='text-muted'>%s</span>" % self.list_empty_result_value)
                 else:
                     item.text = display_for_field(value, f)
                 if isinstance(f, models.DateField)\
