@@ -109,9 +109,8 @@ class BatchChangeAction(BaseActionView):
             }, 'success')
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = self.edit_view.formfield_for_dbfield(db_field,
-                                                         required=self.save_form_post,
-                                                         **kwargs)
+        kwargs.setdefault('required', self.save_form_post)
+        formfield = self.edit_view.formfield_for_dbfield(db_field, **kwargs)
         formfield.widget = ChangeFieldWidgetWrapper(formfield.widget)
         return formfield
 
