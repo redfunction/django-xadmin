@@ -39,8 +39,8 @@
   </nav>
   {% endblock %}
   <div class="container-fluid">
-    <div id="body-content" class="clearfix row pt-3">
-      <div id="left-side" class="col-sm-5 col-md-2">
+    <div id="body-content" class="{% block body_content_class %}clearfix row pt-3{% endblock %}">
+      <div id="left-side" class="{% block left_side_class %}col-sm-5 col-md-2{% endblock %}">
         {% block navbar %}
           {% if nav_menu %}
             {% include menu_template %}
@@ -51,7 +51,7 @@
         {% view_block 'left_navbar' %}
       </div>
   
-      <div id="content-block" class="col-sm-12 col-md-10">
+      <div id="content-block" class="{% block content_block_class %}col-sm-12 col-md-10{% endblock %}">
         {% block breadcrumbs %}
         <nav aria-label="breadcrumb">
          <ol class="breadcrumb">
