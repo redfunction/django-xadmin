@@ -7,6 +7,7 @@ of only for display.
 from django.template.loader import render_to_string
 from django.urls.base import reverse
 from django.db import transaction
+from django.utils.translation import ugettext as _
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.views import (
@@ -67,6 +68,8 @@ class SaveOrderView(ModelAdminView):
         order_objs = request.POST.getlist("order[]")
         for order_value, pk in enumerate(order_objs, start=1):
             self.save_order(pk, order_value)
+        msg = _("Alteração feita com sucesso")
+        self.message_user(msg, 'success')
         return self.render_response({})
 
     def save_order(self, pk, order_value):
