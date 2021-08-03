@@ -30,6 +30,9 @@
                 $("#save-order").on("click", function(evt) {
                     var self = $(this),
                         serialize = $rows.sortable('serialize'),
+                        $btn_icon = $('#save-order-icon', self),
+                        btn_icon_default = $btn_icon.attr('class'),
+                        btn_icon_icon_loading = self.data('loading-icon'),
                         data = {};
                     serialize.each(function (idx, container){
                         $.each(container.items, function (idx, item){
@@ -38,15 +41,18 @@
                         });
                     });
                     self.addClass('disabled');
+                    $btn_icon.removeClass(btn_icon_default).addClass(btn_icon_icon_loading);
                     $.ajax({
                         url: $(this).attr('post-url'),
                         method: 'POST',
                         data: data,
                     }).done(function () {
                         self.removeClass('disabled'); // for safety
+                        $btn_icon.removeClass(btn_icon_icon_loading).addClass(btn_icon_default);
                         location.reload(true);
                     }).fail(function () {
                         self.removeClass('disabled');
+                        $btn_icon.removeClass(btn_icon_icon_loading).addClass(btn_icon_default);
                     });
                 }).show();
             });
