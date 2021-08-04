@@ -192,8 +192,7 @@ class ListAdminView(ModelAdminView):
             self.result_list = self.list_queryset._clone()
         else:
             try:
-                self.result_list = self.paginator.page(
-                    self.page_num + 1).object_list
+                self.result_list = self.paginator.page(self.page_num + 1).object_list
             except InvalidPage:
                 if ERROR_FLAG in self.request.GET.keys():
                     return SimpleTemplateResponse('xadmin/views/invalid_setup.html', {
