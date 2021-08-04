@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.html import conditional_escape
-from xadmin.layout import FormHelper, Layout, Fieldset, Container, Column, Field, Col, TabHolder
+from xadmin.layout import FormHelper, Layout, Fieldset, Container, Column, Field, Col, TabHolder, Tab
 from xadmin.util import unquote, lookup_field, display_for_field, boolean_icon, label_for_field
 from xadmin.views.base import ModelAdminView, filter_hook, csrf_protect_m
 
@@ -199,7 +199,11 @@ class DetailAdminView(ModelAdminView):
                                           f for f in self.form_obj.fields.keys() if f not in rendered_fields])
 
                 if len(other_fieldset.fields):
-                    if len(container) and isinstance(container[0], Column):
+                    if len(container) and isinstance(container[0].fields[0], TabHolder):
+                        other_fieldset.css_class = 'unsort no_title'
+                        container[0].fields[0].append(Tab(_('Other Fields'), other_fieldset))
+
+                    elif len(container) and isinstance(container[0], Column):
                         container[0].fields.append(other_fieldset)
                     else:
                         container.append(other_fieldset)
