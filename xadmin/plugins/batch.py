@@ -41,12 +41,16 @@ class ChangeFieldWidgetWrapper(forms.Widget):
         output = []
         self.widget.choices = self.choices
         is_required = self.widget.is_required
-        output.append(u'<div class="btn-group-toggle"><label class="btn btn-secondary">'
-            '<input type="checkbox" class="batch-field-checkbox" name="%s" value="%s"%s/> %s</label>' %
-            (BATCH_CHECKBOX_NAME, name, (is_required and ' checked="checked"' or ''), _('Change this field')))
+        output.append(u'<div class="custom-control custom-switch">'
+                      '<input type="checkbox" name="%s" id="id_%s_batch_field" '
+                      'class="custom-control-input batch-field-checkbox" value="%s"%s/>'
+                      '<label for="id_%s_batch_field" class="custom-control-label font-weight-normal">%s</label>'
+                      '</div>' %
+                      (BATCH_CHECKBOX_NAME, name, name, (is_required and ' checked="checked"' or ''), name,
+                       _('Change this field')))
         output.extend([('<div class="control-wrap batch-field-wrap mt-2" style="%s" id="id_%s_wrap_container">' %
-            ((not is_required and 'display: none;' or ''), name)),
-            self.widget.render(name, value, attrs), '</div></div>'])
+                        ((not is_required and 'display: none;' or ''), name)),
+                       self.widget.render(name, value, attrs), '</div>'])
         return mark_safe(u''.join(output))
 
     def build_attrs(self, extra_attrs=None, **kwargs):
