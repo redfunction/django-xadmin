@@ -133,8 +133,6 @@ class ListAdminView(ModelAdminView):
 
         self.pk_attname = self.opts.pk.attname
         self.lookup_opts = self.opts
-        self.list_display = self.get_list_display()
-        self.list_display_links = self.get_list_display_links()
 
         # Get page number parameters from the query string.
         try:
@@ -151,6 +149,9 @@ class ListAdminView(ModelAdminView):
             del self.params[PAGE_VAR]
         if ERROR_FLAG in self.params:
             del self.params[ERROR_FLAG]
+
+        self.list_display = self.get_list_display()
+        self.list_display_links = self.get_list_display_links()
 
     @filter_hook
     def get_list_display(self):
