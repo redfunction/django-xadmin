@@ -223,7 +223,7 @@ class FilterPlugin(BaseAdminPlugin):
                     if lookup_needs_distinct(self.opts, search_spec):
                         use_distinct = True
                         break
-            self.admin_view.search_query = query
+        self.admin_view.search_query = query
 
         if use_distinct:
             return queryset.distinct()
