@@ -21,6 +21,8 @@
                 $(options.allToggle).prop('checked', false);
             }
         }
+        // receiver action update
+        actionCheckboxes.on("actions.updateCounter", updateCounter);
         showQuestion = function() {
             $(options.acrossClears).hide();
             $(options.acrossQuestions).show();
