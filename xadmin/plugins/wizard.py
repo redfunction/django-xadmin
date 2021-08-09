@@ -13,6 +13,7 @@ from django.utils.encoding import smart_text
 from django.forms import ValidationError
 from django.forms.models import modelform_factory
 
+from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView
 
@@ -309,7 +310,8 @@ class WizardFormPlugin(BaseAdminPlugin):
         return obj.index(step)
 
     def block_before_fieldsets(self, context, nodes):
-        context = context.update(dict(self.storage.extra_data))
+        context = get_context_dict(context)
+        context.update(dict(self.storage.extra_data))
         context['wizard'] = {
             'steps': self.steps,
             'management_form': ManagementForm(prefix=self.prefix, initial={
@@ -319,7 +321,8 @@ class WizardFormPlugin(BaseAdminPlugin):
         nodes.append(loader.render_to_string('xadmin/blocks/model_form.before_fieldsets.wizard.html', context))
 
     def block_submit_line(self, context, nodes):
-        context = context.update(dict(self.storage.extra_data))
+        context = get_context_dict(context)
+        context.update(dict(self.storage.extra_data))
         context['wizard'] = {
             'steps': self.steps
         }
