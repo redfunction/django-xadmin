@@ -31,3 +31,8 @@
     <button name="_save" value="wizard_save" type="submit" class="btn btn-primary mr-1">{% trans "Save" %}</button>
     {% endif %}
 </div>
+<script type="application/javascript">
+    $("#{{ opts.model_name }}_form").submit(function (){
+        $(this).find("button[name='_save']").prop('disabled', true);
+    });
+</script>
