@@ -457,6 +457,9 @@ def replace_inline_objects(layout, fs):
 class InlineFormsetPlugin(BaseAdminPlugin):
     inlines = []
 
+    def init_request(self, *args, **kwargs):
+        return not isinstance(self.admin_view, InlineModelAdmin)
+
     @cached_property
     def inline_instances(self):
         inline_instances = []
@@ -529,10 +532,11 @@ class InlineFormsetPlugin(BaseAdminPlugin):
 
     def get_media(self, media):
         for fs in self.formsets:
-            media = media + fs.media
+            media += fs.view.get_media()
+            media += fs.media
         if self.formsets:
-            media = media + self.vendor(
-                'xadmin.plugin.formset.js', 'xadmin.plugin.formset.css')
+            media += self.vendor('xadmin.plugin.formset.js',
+                                 'xadmin.plugin.formset.css')
         return media
 
     def _get_detail_formset_instance(self, inline):
