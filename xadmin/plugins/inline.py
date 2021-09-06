@@ -13,7 +13,7 @@ from crispy_forms.utils import TEMPLATE_PACK
 from django.utils.safestring import mark_safe
 from django.utils.functional import cached_property
 
-from xadmin.layout import FormHelper, Layout, flatatt, Container, Column, Field, Fieldset
+from xadmin.layout import FormHelper, Layout, flatatt, Container, Column, Field, Fieldset, LayoutObject
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView, DetailAdminView, filter_hook
@@ -272,14 +272,19 @@ class InlineModelAdmin(ModelFormAdminView):
         if len(instance):
             layout = copy.deepcopy(self.form_layout)
 
+            def layout_hidden_fields(layout):
+                rendered_fields = [i[1] for i in layout.get_field_names()]
+                layout.extend([f for f in instance[0].fields.keys() if f not in rendered_fields])
+
             if layout is None:
                 layout = Layout(*instance[0].fields.keys())
-            elif type(layout) in (list, tuple) and len(layout) > 0:
-                layout = Layout(*layout)
+            elif isinstance(layout, LayoutObject):
+                layout = Layout(layout)
+                layout_hidden_fields(layout)
 
-                rendered_fields = [i[1] for i in layout.get_field_names()]
-                layout.extend([f for f in instance[0]
-                               .fields.keys() if f not in rendered_fields])
+            elif isinstance(layout, (list, tuple)) and len(layout) > 0:
+                layout = Layout(*layout)
+                layout_hidden_fields(layout)
 
             helper.add_layout(layout)
             style.update_layout(helper)
