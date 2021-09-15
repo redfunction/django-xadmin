@@ -317,11 +317,13 @@ class AdminSite:
 
         return self._admin_view_cache[new_class_name]
 
-    def create_admin_view(self, admin_view_class):
-        return self.get_view_class(admin_view_class).as_view()
+    def create_admin_view(self, admin_view_class, initargs=None, initkwargs=None):
+        view_class = self.get_view_class(admin_view_class)
+        return view_class.as_view(*(initargs or ()), **(initkwargs or {}))
 
-    def create_model_admin_view(self, admin_view_class, model, option_class):
-        return self.get_view_class(admin_view_class, option_class).as_view()
+    def create_model_admin_view(self, admin_view_class, model, option_class, initargs=None, initkwargs=None):
+        view_class = self.get_view_class(admin_view_class, option_class)
+        return view_class.as_view(*(initargs or ()), **(initkwargs or {}))
 
     def get_urls(self):
         from django.urls import include, path, re_path
