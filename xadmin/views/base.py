@@ -129,6 +129,11 @@ class JSONEncoder(DjangoJSONEncoder):
                 return smart_text(o)
 
 
+class BaseAdminMergeView:
+    """Reference class for merge view (Used to identify the final class)"""
+    pass
+
+
 class BaseAdminObject:
 
     def get_view(self, view_class, option_class=None, *args, **kwargs):

@@ -20,7 +20,8 @@ class NotRegistered(Exception):
 class MergeAdminMetaclass(type):
 
     def __new__(cls, name, bases, attrs):
-        return type.__new__(cls, str(name), bases, attrs)
+        from xadmin.views.base import BaseAdminMergeView
+        return type.__new__(cls, str(name), (BaseAdminMergeView,) + bases, attrs)
 
 
 class AdminSite:
