@@ -600,8 +600,8 @@ class ListAdminView(ModelAdminView):
                         edit_url = self.model_admin_url("change", getattr(obj, self.pk_attname))
                     else:
                         edit_url = ""
-                    item.wraps.append('<a data-res-uri="%s" data-edit-uri="%s" class="details-handler" rel="tooltip" title="%s">%%s</a>'
-                                      % (item_res_uri, edit_url, _(u'Details of %s') % str(obj)))
+                    item.wraps.append('<a data-res-uri="%s" href="" data-edit-uri="%s" class="details-handler" rel="tooltip" title="%s">%%s</a>'
+                                      % (item_res_uri, edit_url, _('Details of %s') % str(obj)))
             else:
                 url = self.url_for_result(obj)
                 item.wraps.append(u'<a href="%s">%%s</a>' % url)
