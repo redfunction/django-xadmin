@@ -158,21 +158,23 @@ class ModelFormAdminView(ModelAdminView):
         Returns a Form class for use in the admin add view. This is used by
         add_view and change_view.
         """
-        fields = self.get_modelform_fields()
-        if self.exclude is None:
+        form = self.get_form_class()
+        fields = self.get_form_fields()
+        form_exclude = self.get_form_exclude()
+        if form_exclude is None:
             exclude = []
         else:
-            exclude = list(self.exclude)
+            exclude = list(form_exclude)
         exclude.extend(self.get_readonly_fields())
-        if self.exclude is None and hasattr(self.form, '_meta') and self.form._meta.exclude:
+        if form_exclude is None and hasattr(form, '_meta') and form._meta.exclude:
             # Take the custom ModelForm's Meta.exclude into account only if the
             # ModelAdmin doesn't define its own.
-            exclude.extend(self.form._meta.exclude)
+            exclude.extend(form._meta.exclude)
         # if exclude is an empty list we pass None to be consistant with the
         # default on modelform_factory
         exclude = exclude or None
         defaults = {
-            "form": self.form,
+            "form": form,
             "fields": fields and list(fields) or None,
             "exclude": exclude,
             "formfield_callback": self.formfield_for_dbfield,
@@ -247,7 +249,15 @@ class ModelFormAdminView(ModelAdminView):
         return helper
 
     @filter_hook
-    def get_modelform_fields(self):
+    def get_form_class(self):
+        return self.form
+
+    @filter_hook
+    def get_form_exclude(self):
+        return self.exclude
+
+    @filter_hook
+    def get_form_fields(self):
         return self.fields
 
     @filter_hook
