@@ -209,7 +209,7 @@ msgstr "Alterado \"%(object)s\" - %(changes)s"
 #: xadmin/models.py:184
 #, python-format
 msgid "Deleted \"%(object)s.\""
-msgstr "Deletado \"%(object)s\""
+msgstr "\"%(object)s\" removido."
 
 #: xadmin/plugins/actions.py:67
 #, python-format
@@ -219,7 +219,7 @@ msgstr "Excluir %(verbose_name_plural)s selecionados"
 #: xadmin/plugins/actions.py:82
 #, python-format
 msgid "Batch delete %(count)d %(items)s."
-msgstr "Lote deletado %(count)d %(items)s."
+msgstr "Removido %(count)d %(items)s em lote."
 
 #: xadmin/plugins/actions.py:88
 #, python-format
@@ -293,7 +293,7 @@ msgstr "Pode editar %s"
 #: xadmin/plugins/auth.py:29
 #, python-format
 msgid "Can delete %s"
-msgstr "Pode deletar %s"
+msgstr "Pode remover %s"
 
 #: xadmin/plugins/auth.py:30
 #, python-format
@@ -592,7 +592,7 @@ msgstr "Excluídos %(verbose_name)s."
 #: xadmin/templates/xadmin/views/recover_form.html:21
 #, python-format
 msgid "Recover deleted %(name)s"
-msgstr "Recuperar deletado %(name)s"
+msgstr "Recuperar %(name)s removido"
 
 #: xadmin/plugins/xversion.py:250
 #, python-format
@@ -1399,9 +1399,8 @@ msgstr "Clique no botão recuperar abaixo para recuperar esta versão do objeto.
 #: xadmin/templates/xadmin/views/recover_list.html:11
 #, python-format
 msgid ""
-"Recover deleted\n"
-"            %(name)s"
-msgstr "Recuperar deletado %(name)s"
+"Recover deleted %(name)s"
+msgstr "Recuperar %(name)s removido"
 
 #: xadmin/templates/xadmin/views/recover_list.html:24
 msgid ""
