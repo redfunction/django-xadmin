@@ -1396,12 +1396,6 @@ msgstr "Limpar lista"
 msgid "Press the recover button below to recover this version of the object."
 msgstr "Clique no botão recuperar abaixo para recuperar esta versão do objeto."
 
-#: xadmin/templates/xadmin/views/recover_list.html:11
-#, python-format
-msgid ""
-"Recover deleted %(name)s"
-msgstr "Recuperar %(name)s removido"
-
 #: xadmin/templates/xadmin/views/recover_list.html:24
 msgid ""
 "Choose a date from the list below to recover a deleted version of an object."
