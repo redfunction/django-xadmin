@@ -88,6 +88,3 @@ msgstr "am pm"
 #: xadmin/static/xadmin/js/xadmin.widget.datetime.js:43
 msgid "%T"
 msgstr "%T"
-
-#~ msgid "Close"
-#~ msgstr "Fechar"
