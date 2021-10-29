@@ -87,7 +87,7 @@ class RelateFieldPlugin(BaseAdminPlugin):
         return attrs
 
     def formfield_for_dbfield(self, formfield, db_field, **kwargs):
-        if (isinstance(db_field, models.ForeignKey) and
+        if (isinstance(db_field, (models.ForeignKey, models.ManyToManyField)) and
                 getattr(db_field.remote_field, "limit_choices_to", None) and
                 (db_field.name in self.related_limit_choices_distinct or
                  type(db_field) in self.related_limit_choices_distinct)):
