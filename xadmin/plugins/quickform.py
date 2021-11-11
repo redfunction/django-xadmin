@@ -167,7 +167,7 @@ class RelatedFieldWidgetWrapper(forms.Widget):
         name = self.resolve_field_name_if_inline(name)
         self.widget.choices = self.choices
         output = []
-        output.extend(['<div class="d-flex align-items-start input-group">'])
+        output.extend(['<div class="d-flex align-items-start input-group quick-form-field">'])
         output.extend(['<div class="flex-grow-1 mr-2" id="id_%s_wrap_container">' % name,
                        self.widget.render(name, value, attrs=attrs, **kwargs), '</div>'])
         if self.add_url:
