@@ -35,8 +35,3 @@
     </button>
     {% endif %}
 </div>
-<script type="application/javascript">
-    $("#{{ opts.model_name }}_form").submit(function (){
-        $(this).find("button[name='_save']").prop('disabled', true);
-    });
-</script>
