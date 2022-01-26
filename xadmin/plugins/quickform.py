@@ -18,6 +18,8 @@ from xadmin.util import get_model_from_relation, vendor
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView
 import hashlib
 
+QUICKFORM_0_VAR = "_qfrm0"
+
 
 class QuickFormPrefix:
     """Generates a prefix + md5 hash (based on time) that avoids conflict with main form ids"""
@@ -62,6 +64,7 @@ class QuickFormPlugin(BaseAdminPlugin):
         self.request_params = self.request.GET
         return bool(self.request.method == 'GET' and
                     self.request_params.get(SEARCH_VAR) is None and
+                    self.request_params.get(QUICKFORM_0_VAR) is None and
                     self.request.is_ajax() or
                     self.request_params.get('_ajax'))
 
@@ -101,6 +104,7 @@ class QuickFormFormSetPlugin(BaseAdminPlugin):
 
     def init_request(self, *args, **kwargs):
         return bool(isinstance(self.admin_view, ModelFormAdminView) and
+                    self.request.GET.get(QUICKFORM_0_VAR) is None and
                     self.request.is_ajax() or
                     self.request.GET.get('_ajax'))
 
