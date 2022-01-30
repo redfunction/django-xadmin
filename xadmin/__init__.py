@@ -1,11 +1,13 @@
-VERSION = (0, 6, 0)
+
+VERSION = (0,6,0)
 
 import six
 import django
-
 setattr(django.utils, 'six', six)
 
+
 from xadmin.sites import AdminSite, site
+
 
 
 class Settings(object):
@@ -71,6 +73,5 @@ def autodiscover():
             # attempting to import it, otherwise we want it to bubble up.
             if module_has_submodule(mod, 'adminx'):
                 raise
-
 
 default_app_config = 'xadmin.apps.XAdminConfig'
