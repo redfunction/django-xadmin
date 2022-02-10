@@ -201,7 +201,7 @@ class AdminURLFieldWidget(forms.URLInput):
         super(AdminURLFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminIntegerFieldWidget(forms.TextInput):
+class AdminIntegerFieldWidget(forms.IntegerField):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'int-field'}
