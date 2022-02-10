@@ -201,7 +201,7 @@ class AdminURLFieldWidget(forms.URLInput):
         super(AdminURLFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminIntegerFieldWidget(forms.IntegerField):
+class AdminIntegerFieldWidget(forms.NumberInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'int-field'}
@@ -210,7 +210,7 @@ class AdminIntegerFieldWidget(forms.IntegerField):
         super(AdminIntegerFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminCommaSeparatedIntegerFieldWidget(forms.FloatField):
+class AdminCommaSeparatedIntegerFieldWidget(forms.NumberInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'sep-int-field'}
