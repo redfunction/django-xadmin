@@ -192,7 +192,7 @@ class AdminTextInputWidget(forms.TextInput):
         super(AdminTextInputWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminURLFieldWidget(forms.TextInput):
+class AdminURLFieldWidget(forms.URLInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'url-field'}
