@@ -210,11 +210,10 @@ class AdminIntegerFieldWidget(forms.IntegerField):
         super(AdminIntegerFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminCommaSeparatedIntegerFieldWidget(forms.TextInput):
+class AdminCommaSeparatedIntegerFieldWidget(forms.FloatField):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'sep-int-field'}
         if attrs is not None:
             final_attrs.update(attrs)
-        super(AdminCommaSeparatedIntegerFieldWidget,
-              self).__init__(attrs=final_attrs)
+        super(AdminCommaSeparatedIntegerFieldWidget, self).__init__(attrs=final_attrs)
