@@ -29,7 +29,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import View
 from collections import OrderedDict
 from xadmin.util import static, json, vendor, sortkeypicker
-from django.utils.functional import Promise
 
 from xadmin.models import Log
 
@@ -90,9 +89,10 @@ def inclusion_tag(file_name, context_class=Context, takes_context=False):
         def method(self, context, nodes, *arg, **kwargs):
             _dict = func(self, context, nodes, *arg, **kwargs)
             from django.template.loader import get_template, select_template
+            cls_str = str if six.PY3 else basestring
             if isinstance(file_name, Template):
                 t = file_name
-            elif not isinstance(file_name, str) and is_iterable(file_name):
+            elif not isinstance(file_name, cls_str) and is_iterable(file_name):
                 t = select_template(file_name)
             else:
                 t = get_template(file_name)
@@ -129,18 +129,11 @@ class JSONEncoder(DjangoJSONEncoder):
                 return smart_text(o)
 
 
-class BaseAdminMergeView:
-    """Reference class for merge view (Used to identify the final class)"""
-    pass
-
-
-class BaseAdminObject:
+class BaseAdminObject(object):
 
     def get_view(self, view_class, option_class=None, *args, **kwargs):
         opts = kwargs.pop('opts', {})
-        view = self.admin_site.get_view_class(view_class, option_class, **opts)()
-        view.setup(self.request, *args, **kwargs)
-        return view
+        return self.admin_site.get_view_class(view_class, option_class, **opts)(self.request, *args, **kwargs)
 
     def get_model_view(self, view_class, model, *args, **kwargs):
         return self.get_view(view_class, self.admin_site._registry.get(model), *args, **kwargs)
@@ -239,56 +232,18 @@ class BaseAdminObject:
         log.save()
 
 
-@functools.total_ordering
 class BaseAdminPlugin(BaseAdminObject):
-    __order__ = 100   # load order
 
     def __init__(self, admin_view):
         self.admin_view = admin_view
         self.admin_site = admin_view.admin_site
-        self.request = admin_view.request
-        self.user = admin_view.user
-        self.args = admin_view.args
-        self.kwargs = admin_view.kwargs
 
         if hasattr(admin_view, 'model'):
             self.model = admin_view.model
             self.opts = admin_view.model._meta
 
-    def __lt__(self, plugin):
-        return self.__order__ < plugin.__order__
-
-    def __eq__(self, plugin):
-        return self.__order__ == plugin.__order__
-
     def init_request(self, *args, **kwargs):
-        """Initializes the activation of the plugin (Returning False makes the plugin disabled)"""
         pass
-
-    def setup(self, *args, **kwargs):
-        """Configure the plugin after activation"""
-        pass
-
-
-class PluginManager:
-    """Manages plugins initialization"""
-    def __init__(self, admin_view):
-        self.base_plugins = sorted(getattr(admin_view, "plugin_classes", ()),
-                                   key=lambda plugin: plugin.__order__)
-        self.admin_view = admin_view
-
-    def init(self, *initargs, **initkwargs):
-        """Instance of plugins linking them to admin view"""
-        plugins = []
-        view = self.admin_view
-        for plugin_class in self.base_plugins:
-            plg = plugin_class(view)
-            active = plg.init_request(*initargs, **initkwargs)
-            if active is not False:
-                plg.setup(*initargs, **initkwargs)
-                plugins.append(plg)
-        # active plugins ordered
-        return sorted(plugins)
 
 
 class BaseAdminView(BaseAdminObject, View):
@@ -297,33 +252,55 @@ class BaseAdminView(BaseAdminObject, View):
     base_template = 'xadmin/base.html'
     need_site_permission = True
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.request_method = None
-        self.plugin_manager = None
-        self.user = None
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
         self.request_method = request.method.lower()
         self.user = request.user
 
-        self.plugin_manager = PluginManager(self)
+        self.base_plugins = [p(self) for p in getattr(self,
+                                                      "plugin_classes", [])]
 
+        self.args = args
+        self.kwargs = kwargs
         self.init_plugin(*args, **kwargs)
         self.init_request(*args, **kwargs)
 
     @classonlymethod
-    def as_view(cls, *initargs, **initkwargs):
-        view = super().as_view(*initargs, **initkwargs)
+    def as_view(cls):
+        def view(request, *args, **kwargs):
+            self = cls(request, *args, **kwargs)
+
+            if hasattr(self, 'get') and not hasattr(self, 'head'):
+                self.head = self.get
+
+            if self.request_method in self.http_method_names:
+                handler = getattr(
+                    self, self.request_method, self.http_method_not_allowed)
+            else:
+                handler = self.http_method_not_allowed
+
+            return handler(request, *args, **kwargs)
+
+        # take name and docstring from class
+        update_wrapper(view, cls, updated=())
         view.need_site_permission = cls.need_site_permission
+
         return view
 
     def init_request(self, *args, **kwargs):
         pass
 
     def init_plugin(self, *args, **kwargs):
-        self.plugins = self.plugin_manager.init(*args, **kwargs)
+        plugins = []
+        for p in self.base_plugins:
+            p.request = self.request
+            p.user = self.user
+            p.args = self.args
+            p.kwargs = self.kwargs
+            result = p.init_request(*args, **kwargs)
+            if result is not False:
+                plugins.append(p)
+        self.plugins = plugins
 
     @filter_hook
     def get_context(self):
@@ -343,8 +320,8 @@ class CommAdminView(BaseAdminView):
     base_template = 'xadmin/base_site.html'
     menu_template = 'xadmin/includes/sitemenu_default.html'
 
-    site_title = getattr(settings, "XADMIN_TITLE", _("Django Xadmin"))
-    site_footer = getattr(settings, "XADMIN_FOOTER_TITLE", _("my-company.inc"))
+    site_title = getattr(settings, "XADMIN_TITLE", _(u"Django Xadmin"))
+    site_footer = getattr(settings, "XADMIN_FOOTER_TITLE", _(u"my-company.inc"))
 
     global_models_icon = {}
     default_model_icon = None
@@ -353,19 +330,6 @@ class CommAdminView(BaseAdminView):
 
     def get_site_menu(self):
         return None
-
-    @filter_hook
-    def hidden_model_menu(self, model, model_admin):
-        """Hook that lets you configure menus dynamically through plugins
-        'hidden_menu' when defined in model-admin, represents a static configuration
-        and this creates problems in a multithreads environment.
-        Example usage:
-            class MenuHiddenPlugin(BaseAdminPlugin):
-                # Example of a plugin that changes the default setting given in model-admin
-                def hidden_model_menu(self, hidden_menu, model, model_admin):
-                    return not hidden_menu
-        """
-        return getattr(model_admin, 'hidden_menu', False)
 
     @filter_hook
     def get_nav_menu(self):
@@ -383,8 +347,7 @@ class CommAdminView(BaseAdminView):
         nav_menu = OrderedDict()
 
         for model, model_admin in self.admin_site._registry.items():
-            # Menus will be shown based on model-admin configuration or plugins.
-            if self.hidden_model_menu(model, model_admin):
+            if getattr(model_admin, 'hidden_menu', False):
                 continue
             app_label = model._meta.app_label
             app_icon = None
@@ -471,7 +434,6 @@ class CommAdminView(BaseAdminView):
             nav_menu = list(filter(lambda x: x, nav_menu))
 
             if not settings.DEBUG:
-                self.request.session['nav_menu'] = json.dumps(nav_menu, cls=JSONEncoder)
                 self.request.session['nav_menu'] = json.dumps(nav_menu, cls=JSONEncoder, ensure_ascii=False)
                 self.request.session.modified = True
 
@@ -528,13 +490,13 @@ class ModelAdminView(CommAdminView):
     model = None
     remove_permissions = []
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # model options
+    def __init__(self, request, *args, **kwargs):
         self.opts = self.model._meta
-        self.app_label = self.opts.app_label
-        self.model_name = self.opts.model_name
+        self.app_label = self.model._meta.app_label
+        self.model_name = self.model._meta.model_name
         self.model_info = (self.app_label, self.model_name)
+
+        super(ModelAdminView, self).__init__(request, *args, **kwargs)
 
     @filter_hook
     def get_context(self):

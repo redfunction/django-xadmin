@@ -8,7 +8,6 @@ from django.forms.forms import DeclarativeFieldsMetaclass
 from django.forms.utils import flatatt
 from django.template import loader
 from django.http import Http404
-from django.template.loader import render_to_string
 from django.test.client import RequestFactory
 from django.utils.encoding import force_text, smart_text
 from django.utils.html import escape
@@ -34,11 +33,11 @@ class WidgetTypeSelect(forms.Widget):
         super(WidgetTypeSelect, self).__init__(attrs)
         self._widgets = widgets
 
-    def render(self, name, value, attrs=None, **kwargs):
+    def render(self, name, value, attrs=None, renderer=None):
         if value is None:
             value = ''
         final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
-        final_attrs['class'] = 'nav nav-pills flex-column'
+        final_attrs['class'] = 'nav nav-pills nav-stacked'
         output = [u'<ul%s>' % flatatt(final_attrs)]
         options = self.render_options(force_text(value), final_attrs['id'])
         if options:
@@ -49,15 +48,18 @@ class WidgetTypeSelect(forms.Widget):
         return mark_safe(u'\n'.join(output))
 
     def render_option(self, selected_choice, widget, id):
-        is_active = widget.widget_type == selected_choice
-        return render_to_string('xadmin/plugins/dashboard_widget_options.html', context={
-            'widget_title': widget.widget_title or widget.widget_type,
-            'widget_description': widget.description,
-            'widget_type': widget.widget_type,
-            'widget_icon': widget.widget_icon,
-            'is_active': is_active,
-            'id': id
-        })
+        if widget.widget_type == selected_choice:
+            selected_html = u' class="active"'
+        else:
+            selected_html = ''
+        return (u'<li%s><a onclick="' +
+                'javascript:$(this).parent().parent().find(\'>li\').removeClass(\'active\');$(this).parent().addClass(\'active\');' +
+                '$(\'#%s_input\').attr(\'value\', \'%s\')' % (id, widget.widget_type) +
+                '"><h4><i class="%s"></i> %s</h4><p>%s</p></a></li>') % (
+                    selected_html,
+                    widget.widget_icon,
+                    widget.widget_title or widget.widget_type,
+                    widget.description)
 
     def render_options(self, selected_choice, id):
         # Normalize to strings.
@@ -67,7 +69,7 @@ class WidgetTypeSelect(forms.Widget):
         return u'\n'.join(output)
 
 
-class UserWidgetAdmin:
+class UserWidgetAdmin(object):
 
     model_icon = 'fa fa-dashboard'
     list_display = ('widget_type', 'page_id', 'user')
@@ -77,8 +79,8 @@ class UserWidgetAdmin:
     hidden_menu = True
 
     wizard_form_list = (
-        (_("Widget Type"), ('page_id', 'widget_type')),
-        (_("Widget Params"), {'callback':
+        (_(u"Widget Type"), ('page_id', 'widget_type')),
+        (_(u"Widget Params"), {'callback':
                                "get_widget_params_form", 'convert': "convert_widget_params"})
     )
 
@@ -90,7 +92,8 @@ class UserWidgetAdmin:
                                      widget=form_widget, label=_('Widget Type'))
         if 'page_id' in self.request.GET and db_field.name == 'page_id':
             kwargs['widget'] = forms.HiddenInput
-        field = super(UserWidgetAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        field = super(
+            UserWidgetAdmin, self).formfield_for_dbfield(db_field, **kwargs)
         return field
 
     def get_widget_params_form(self, wizard):
@@ -144,7 +147,7 @@ class UserWidgetAdmin:
 site.register(UserWidget, UserWidgetAdmin)
 
 
-class WidgetManager:
+class WidgetManager(object):
     _widgets = None
 
     def __init__(self):
@@ -199,7 +202,6 @@ class BaseWidget(forms.Form):
     def setup(self):
         helper = FormHelper()
         helper.form_tag = False
-        helper.use_custom_control = False
         helper.include_media = False
         self.helper = helper
 
@@ -246,7 +248,8 @@ class BaseWidget(forms.Form):
 class HtmlWidget(BaseWidget):
     widget_type = 'html'
     widget_icon = 'fa fa-file-o'
-    description = _(u'Html Content Widget, can write any html content in widget.')
+    description = _(
+        u'Html Content Widget, can write any html content in widget.')
 
     content = forms.CharField(label=_(
         'Html Content'), widget=exwidgets.AdminTextareaWidget, required=False)
@@ -258,7 +261,7 @@ class HtmlWidget(BaseWidget):
         context['content'] = self.cleaned_data['content']
 
 
-class ModelChoiceIterator:
+class ModelChoiceIterator(object):
 
     def __init__(self, field):
         self.field = field
@@ -365,7 +368,7 @@ class QuickBtnWidget(BaseWidget):
     widget_type = 'qbutton'
     description = _(u'Quick button Widget, quickly open any page.')
     template = "xadmin/widgets/qbutton.html"
-    base_title = _("Quick Buttons")
+    base_title = _(u"Quick Buttons")
     widget_icon = 'fa fa-caret-square-o-right'
 
     def convert(self, data):
@@ -469,7 +472,6 @@ class AddFormWidget(ModelBaseWidget, PartialBaseWidget):
     def context(self, context):
         helper = FormHelper()
         helper.form_tag = False
-        helper.use_custom_control = False
         helper.include_media = False
 
         context.update({
@@ -487,7 +489,7 @@ class Dashboard(CommAdminView):
 
     widget_customiz = True
     widgets = []
-    title = _("Dashboard")
+    title = _(u"Dashboard")
     icon = None
 
     def get_page_id(self):
@@ -522,15 +524,13 @@ class Dashboard(CommAdminView):
         for col in widgets:
             portal_col = []
             for opts in col:
-                widget = UserWidget(user=self.user, page_id=self.get_page_id(),
-                                    widget_type=opts['type'])
                 try:
+                    widget = UserWidget(user=self.user, page_id=self.get_page_id(), widget_type=opts['type'])
                     widget.set_value(opts)
                     widget.save()
                     portal_col.append(self.get_widget(widget))
                 except (PermissionDenied, WidgetDataError):
-                    if widget.pk is not None:
-                        widget.delete()
+                    widget.delete()
                     continue
             portal.append(portal_col)
 
@@ -544,7 +544,8 @@ class Dashboard(CommAdminView):
     def get_widgets(self):
 
         if self.widget_customiz:
-            portal_pos = UserSettings.objects.filter(user=self.user, key=self.get_portal_key())
+            portal_pos = UserSettings.objects.filter(
+                user=self.user, key=self.get_portal_key())
             if len(portal_pos):
                 portal_pos = portal_pos[0].value
                 widgets = []
@@ -557,11 +558,7 @@ class Dashboard(CommAdminView):
                             try:
                                 widget = user_widgets.get(int(wid))
                                 if widget:
-                                    try:
-                                        ws.append(self.get_widget(widget))
-                                    except LookupError:
-                                        # remove invalid widget
-                                        widget.delete()
+                                    ws.append(self.get_widget(widget))
                             except Exception as e:
                                 import logging
                                 logging.error(e, exc_info=True)
@@ -634,7 +631,7 @@ class Dashboard(CommAdminView):
 
 class ModelDashboard(Dashboard, ModelAdminView):
 
-    title = _("%s Dashboard")
+    title = _(u"%s Dashboard")
 
     def get_page_id(self):
         return 'model:%s/%s' % self.model_info

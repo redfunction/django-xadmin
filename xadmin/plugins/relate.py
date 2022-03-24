@@ -3,7 +3,6 @@ from itertools import chain
 
 from django.urls.base import reverse
 from django.db.models.options import PROXY_PARENTS
-from django.template.loader import render_to_string
 from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.encoding import smart_str
@@ -69,7 +68,7 @@ class RelateMenuPlugin(BaseAdminPlugin):
         return self._related_acts
 
     def related_link(self, instance):
-        menu_links = []
+        links = []
         for rel, view_perm, add_perm in self.get_related_list():
             opts = rel.related_model._meta
 
@@ -82,31 +81,27 @@ class RelateMenuPlugin(BaseAdminPlugin):
             verbose_name = force_text(opts.verbose_name)
             lookup_name = '%s__%s__exact' % (field.name, rel_name)
 
-            menu = {
-                'view_link': {
-                    'has_perm': view_perm,
-                    'title': verbose_name
-                },
-                'add_link': {
-                    'has_perm': add_perm
-                }
-            }
-            if view_perm:
-                menu['view_link']['url'] = reverse('%s:%s_%s_changelist' % (self.admin_site.app_name, label, model_name))
-                menu['view_link']['url'] += "?%(query)s=%(pk)s" % {
-                    'query': RELATE_PREFIX + lookup_name,
-                    'pk': instance.pk
-                }
-            if add_perm:
-                menu['add_link']['url'] = reverse('%s:%s_%s_add' % ( self.admin_site.app_name, label, model_name))
-                menu['add_link']['url'] += "?%(query)s=%(pk)s" % {
-                    'query': RELATE_PREFIX + lookup_name,
-                    'pk': instance.pk
-                }
+            link = ''.join(('<li class="with_menu_btn">',
 
-            menu_links.append(menu)
-        return render_to_string('xadmin/plugins/related_links.html', context={'menu_links': menu_links})
+                            '<a href="%s?%s=%s" title="%s"><i class="icon fa fa-th-list"></i> %s</a>' %
+                            (
+                                reverse('%s:%s_%s_changelist' % (
+                                    self.admin_site.app_name, label, model_name)),
+                                RELATE_PREFIX + lookup_name, str(instance.pk), verbose_name, verbose_name) if view_perm else
+                            '<a><span class="text-muted"><i class="icon fa fa-blank"></i> %s</span></a>' % verbose_name,
 
+                            '<a class="add_link dropdown-menu-btn" href="%s?%s=%s"><i class="icon fa fa-plus pull-right"></i></a>' %
+                            (
+                                reverse('%s:%s_%s_add' % (
+                                    self.admin_site.app_name, label, model_name)),
+                                RELATE_PREFIX + lookup_name, str(
+                                    instance.pk)) if add_perm else "",
+
+                            '</li>'))
+            links.append(link)
+        ul_html = '<ul class="dropdown-menu" role="menu">%s</ul>' % ''.join(
+            links)
+        return '<div class="dropdown related_menu pull-right"><a title="%s" class="relate_menu dropdown-toggle" data-toggle="dropdown"><i class="icon fa fa-list"></i></a>%s</div>' % (_('Related Objects'), ul_html)
     related_link.short_description = '&nbsp;'
     related_link.allow_tags = True
     related_link.allow_export = False
@@ -119,7 +114,7 @@ class RelateMenuPlugin(BaseAdminPlugin):
         return list_display
 
 
-class RelateObject:
+class RelateObject(object):
 
     def __init__(self, admin_view, lookup, value):
         self.admin_view = admin_view
@@ -152,7 +147,7 @@ class RelateObject:
         else:
             to_model_name = force_text(self.to_model._meta.verbose_name)
 
-        return mark_safe("<span class='rel-brand'>%s <i class='fa fa-caret-right'></i></span> %s" % (to_model_name, force_text(self.opts.verbose_name_plural)))
+        return mark_safe(u"<span class='rel-brand'>%s <i class='fa fa-caret-right'></i></span> %s" % (to_model_name, force_text(self.opts.verbose_name_plural)))
 
 
 class BaseRelateDisplayPlugin(BaseAdminPlugin):
@@ -213,7 +208,8 @@ class EditRelateDisplayPlugin(BaseRelateDisplayPlugin):
         return datas
 
     def post_response(self, response):
-        if isinstance(response, str) and response != self.get_admin_url('index'):
+        cls_str = str if six.PY3 else basestring
+        if isinstance(response, cls_str) and response != self.get_admin_url('index'):
             return self._get_url(response)
         return response
 
@@ -229,7 +225,8 @@ class EditRelateDisplayPlugin(BaseRelateDisplayPlugin):
 class DeleteRelateDisplayPlugin(BaseRelateDisplayPlugin):
 
     def post_response(self, response):
-        if isinstance(response, str) and response != self.get_admin_url('index'):
+        cls_str = str if six.PY3 else basestring
+        if isinstance(response, cls_str) and response != self.get_admin_url('index'):
             return self._get_url(response)
         return response
 

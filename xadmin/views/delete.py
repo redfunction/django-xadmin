@@ -7,7 +7,8 @@ from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
-from xadmin.util import get_deleted_objects
+from django.contrib.admin.utils import get_deleted_objects
+
 from xadmin.util import unquote
 from xadmin.views.edit import UpdateAdminView
 from xadmin.views.detail import DetailAdminView
@@ -17,15 +18,15 @@ from xadmin.views.base import ModelAdminView, filter_hook, csrf_protect_m
 class DeleteAdminView(ModelAdminView):
     delete_confirmation_template = None
 
-    def __init__(self, *args, **kwargs):
-        super(DeleteAdminView, self).__init__(*args, **kwargs)
-        admin_site_registry = self.admin_site._registry
-        for model in admin_site_registry:
-            if not hasattr(admin_site_registry[model], 'has_delete_permission'):
-                setattr(admin_site_registry[model], 'has_delete_permission', self.has_delete_permission)
+    def __init__(self, request, *args, **kwargs):
+        if django_version > (2, 0):
+            for model in self.admin_site._registry:
+                if not hasattr(self.admin_site._registry[model], 'has_delete_permission'):
+                    setattr(self.admin_site._registry[model], 'has_delete_permission', self.has_delete_permission)
+        super(DeleteAdminView, self).__init__(request, *args, **kwargs)
 
     def init_request(self, object_id, *args, **kwargs):
-        """The 'delete' admin view for this model."""
+        "The 'delete' admin view for this model."
         self.obj = self.get_object(unquote(object_id))
 
         if not self.has_delete_permission(self.obj):
@@ -38,14 +39,12 @@ class DeleteAdminView(ModelAdminView):
 
         # Populate deleted_objects, a data structure of all related objects that
         # will also be deleted.
-        self.deleted_objects, model_count, self.perms_needed, self.protected = self.get_deleted_objects([self.obj])
-
-    @filter_hook
-    def get_deleted_objects(self, queryset):
-        # Populate deleted_objects, a data structure of all related objects that
-        # will also be deleted.
-        deleted_objects, model_count, perms_needed, protected = get_deleted_objects(queryset, self)
-        return deleted_objects, model_count, perms_needed, protected
+        if django_version > (2, 1):
+            (self.deleted_objects, model_count, self.perms_needed, self.protected) = get_deleted_objects(
+                [self.obj], self.opts, self.admin_site)
+        else:
+            (self.deleted_objects, model_count, self.perms_needed, self.protected) = get_deleted_objects(
+                [self.obj], self.opts, self.request.user, self.admin_site, using)
 
     @csrf_protect_m
     @filter_hook
@@ -65,7 +64,8 @@ class DeleteAdminView(ModelAdminView):
         self.delete_model()
 
         response = self.post_response()
-        if isinstance(response, str):
+        cls_str = str if six.PY3 else basestring
+        if isinstance(response, cls_str):
             response = HttpResponseRedirect(response)
         return response
 

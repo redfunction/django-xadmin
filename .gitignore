@@ -1,3 +1,7 @@
+# 编辑器缓存文件夹
+.idea
+.idea/
+
 *.py[cod]
 
 # C extensions

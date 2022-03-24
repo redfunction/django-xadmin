@@ -1,8 +1,7 @@
-from django import forms
 from django.db import models
-from django.utils.safestring import mark_safe
+from django import forms
 from django.utils.translation import ugettext as _
-
+from django.utils.safestring import mark_safe
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView, DetailAdminView, ListAdminView
 
@@ -40,25 +39,16 @@ class AdminImageWidget(forms.FileInput):
     """
     A ImageField Widget that shows its current value if it has one.
     """
-
     def __init__(self, attrs={}):
         super(AdminImageWidget, self).__init__(attrs)
 
     def render(self, name, value, attrs=None, renderer=None):
         output = []
-        label = self.attrs.get('label', name)
-        css_class = self.attrs.get("class", "")
-        css_class += " custom-file-input"
-        attrs["class"] = css_class
         if value and hasattr(value, "url"):
-            output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery">'
-                          '<img src="%s" class="field_img img-thumbnail mb-2"/></a>'
-                          '<span class="text-muted d-block mb-1">%s</span>' %
-                          (value.url, label, value.url, _('Change')))
-
-        output.append('<div class="custom-file w-auto">%s<label class="custom-file-label" '
-                      'for="inputGroupFile01">%s <span class="text-lowercase">%s</span></label></div>'
-                      % (super(AdminImageWidget, self).render(name, value, attrs, renderer), _('Choose'), label))
+            label = self.attrs.get('label', name)
+            output.append('<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img"/></a><br/>%s ' %
+                         (value.url, label, value.url, _('Change:')))
+        output.append(super(AdminImageWidget, self).render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
 
 
@@ -79,9 +69,7 @@ class ModelDetailPlugin(BaseAdminPlugin):
         if isinstance(result.field, models.ImageField):
             if result.value:
                 img = getattr(result.obj, field_name)
-                result.text = mark_safe(
-                    '<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img '
-                    'img-thumbnail"/></a>' % (img.url, result.label, img.url))
+                result.text = mark_safe('<a href="%s" target="_blank" title="%s" data-gallery="gallery"><img src="%s" class="field_img"/></a>' % (img.url, result.label, img.url))
                 self.include_image = True
         return result
 
@@ -106,6 +94,7 @@ class ModelDetailPlugin(BaseAdminPlugin):
 
 
 class ModelListPlugin(BaseAdminPlugin):
+
     list_gallery = False
 
     def init_request(self, *args, **kwargs):

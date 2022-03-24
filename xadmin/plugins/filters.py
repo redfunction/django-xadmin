@@ -1,16 +1,13 @@
-import urllib.parse
-
 import operator
-
-from django.template.loader import render_to_string
-
+from future.utils import iteritems
 from xadmin import widgets
 from xadmin.plugins.utils import get_context_dict
 
 from django.contrib.admin.utils import get_fields_from_path, lookup_needs_distinct
 from django.core.exceptions import SuspiciousOperation, ImproperlyConfigured, ValidationError
 from django.db import models
-from django.db.models.fields import FieldDoesNotExist
+# from django.db.models.fields import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models.constants import LOOKUP_SEP
 # from django.db.models.sql.constants import QUERY_TERMS
 from django.template import loader
@@ -22,7 +19,7 @@ from xadmin.filters import manager as filter_manager, FILTER_PREFIX, SEARCH_VAR,
     RelatedFieldSearchFilter
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ListAdminView
-from xadmin.util import is_related_field, get_model_from_relation
+from xadmin.util import is_related_field
 from functools import reduce
 
 
@@ -65,7 +62,7 @@ class FilterPlugin(BaseAdminPlugin):
                 # later.
                 return True
             if hasattr(field, 'remote_field'):
-                model = field.remote_field.model
+                model = field.remote_field.to
                 rel_name = field.remote_field.get_related_field().name
             elif is_related_field(field):
                 model = field.model
@@ -80,25 +77,10 @@ class FilterPlugin(BaseAdminPlugin):
         clean_lookup = LOOKUP_SEP.join(parts)
         return clean_lookup in self.list_filter
 
-    @staticmethod
-    def get_related_title(field, default):
-        """Attempts to extract the verbose name from a related field"""
-        if isinstance(field, models.ForeignKey):  # ForeignKey / verbose_name
-            verbose_name = getattr(field, "verbose_name", default) or default
-        elif isinstance(field, (models.OneToOneRel, models.OneToOneField)):
-            if field.auto_created and field.related_model:
-                opts = get_model_from_relation(field)._meta
-            else:
-                opts = field
-            verbose_name = getattr(opts, "verbose_name", default) or default
-        else:
-            verbose_name = default
-        return verbose_name
-
     def get_list_queryset(self, queryset):
         lookup_params = dict([(smart_str(k)[len(FILTER_PREFIX):], v) for k, v in self.admin_view.params.items()
                               if smart_str(k).startswith(FILTER_PREFIX) and v != ''])
-        for p_key, p_val in six.iteritems(lookup_params):
+        for p_key, p_val in iteritems(lookup_params):
             if p_val == "False":
                 lookup_params[p_key] = False
         use_distinct = False
@@ -135,7 +117,8 @@ class FilterPlugin(BaseAdminPlugin):
                         field, field_list_filter_class = list_filter, filter_manager.create
                     if not isinstance(field, models.Field):
                         field_path = field
-                        field_parts = get_fields_from_path(self.model, field_path)
+                        field_parts = get_fields_from_path(
+                            self.model, field_path)
                         field = field_parts[-1]
                     spec = field_list_filter_class(
                         field, self.request, lookup_params,
@@ -143,23 +126,14 @@ class FilterPlugin(BaseAdminPlugin):
 
                     if len(field_parts) > 1:
                         # Add related model name to title
-                        field_part = field_parts[-2]
-                        field_part_name = field_part.name
-                        field_part_name = self.get_related_title(field_part, field_part_name)
-                        spec.title = render_to_string("xadmin/filters/arrow.html", context={
-                            'name': field_part_name,
-                            'title': spec.title
-                        })
+                        spec.title = "%s %s" % (field_parts[-2].name, spec.title)
 
                     # Check if we need to use distinct()
                     use_distinct = (use_distinct or
                                     lookup_needs_distinct(self.opts, field_path))
                 if spec and spec.has_output():
                     try:
-                        if hasattr(spec, 'do_filte'):
-                            new_qs = spec.do_filte(queryset)
-                        else:
-                            new_qs = spec.do_filter(queryset)
+                        new_qs = spec.do_filte(queryset)
                     except ValidationError as e:
                         new_qs = None
                         self.admin_view.message_user(_("<b>Filtering error:</b> %s") % e.messages[0], 'error')
@@ -170,12 +144,15 @@ class FilterPlugin(BaseAdminPlugin):
 
         self.has_filters = bool(self.filter_specs)
         self.admin_view.filter_specs = self.filter_specs
-        obj = [fspec for fspec in self.filter_specs if fspec.is_used]
+        obj = filter(lambda f: f.is_used, self.filter_specs)
+        if six.PY3:
+            obj = list(obj)
         self.admin_view.used_filter_num = len(obj)
 
         try:
             for key, value in lookup_params.items():
-                use_distinct = (use_distinct or lookup_needs_distinct(self.opts, key))
+                use_distinct = (
+                    use_distinct or lookup_needs_distinct(self.opts, key))
         except FieldDoesNotExist as e:
             raise IncorrectLookupParameters(e)
 
@@ -198,7 +175,7 @@ class FilterPlugin(BaseAdminPlugin):
             if not isinstance(queryset, models.query.QuerySet):
                 pass
 
-        query = urllib.parse.unquote_plus(self.request.GET.get(SEARCH_VAR, ''))
+        query = self.request.GET.get(SEARCH_VAR, '')
 
         # Apply keyword searches.
         def construct_search(field_name):
@@ -223,7 +200,7 @@ class FilterPlugin(BaseAdminPlugin):
                     if lookup_needs_distinct(self.opts, search_spec):
                         use_distinct = True
                         break
-        self.admin_view.search_query = query
+            self.admin_view.search_query = query
 
         if use_distinct:
             return queryset.distinct()
@@ -232,11 +209,18 @@ class FilterPlugin(BaseAdminPlugin):
 
     # Media
     def get_media(self, media):
-        for fspec in self.filter_specs:
-            try:
-                media += fspec.get_media()
-            except NotImplementedError:
-                continue
+        arr = filter(lambda s: isinstance(s, DateFieldListFilter), self.filter_specs)
+        if six.PY3:
+            arr = list(arr)
+        if bool(arr):
+            media = media + self.vendor('datepicker.css', 'datepicker.js',
+                                        'xadmin.widget.datetime.js')
+        arr = filter(lambda s: isinstance(s, RelatedFieldSearchFilter), self.filter_specs)
+        if six.PY3:
+            arr = list(arr)
+        if bool(arr):
+            media = media + self.vendor(
+                'select.js', 'select.css', 'xadmin.widget.select.js')
         return media + self.vendor('xadmin.plugin.filters.js')
 
     # Block Views

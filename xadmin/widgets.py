@@ -1,18 +1,20 @@
 """
 Form Widget classes specific to the Django admin site.
 """
-import re
+from __future__ import absolute_import
 from itertools import chain
-
 from django import forms
-from django.template.loader import render_to_string
-from django.forms.widgets import ChoiceWidget as RadioChoiceInput
+try:
+    from django.forms.widgets import ChoiceWidget as RadioChoiceInput
+except:
+    from django.forms.widgets import RadioFieldRenderer, RadioChoiceInput
 from django.utils.encoding import force_text
 
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
+from django.utils.translation import ugettext as _
 
-from xadmin.util import vendor
+from .util import vendor
 
 
 class AdminDateWidget(forms.DateInput):
@@ -22,14 +24,15 @@ class AdminDateWidget(forms.DateInput):
         return vendor('datepicker.js', 'datepicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'date-field form-control', 'size': '10', 'autocomplete': 'off'}
+        final_attrs = {'class': 'date-field form-control', 'size': '10'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminDateWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None, **kwargs):
-        input_html = super(AdminDateWidget, self).render(name, value, attrs, **kwargs)
-        return mark_safe(render_to_string('xadmin/widgets/date.html', context={'date_input_html': input_html}))
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = super(AdminDateWidget, self).render(name, value, attrs, renderer)
+        return mark_safe('<div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
+                         '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Today')))
 
 
 class AdminTimeWidget(forms.TimeInput):
@@ -39,14 +42,15 @@ class AdminTimeWidget(forms.TimeInput):
         return vendor('datepicker.js', 'clockpicker.js', 'clockpicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'time-field form-control', 'size': '8',  'autocomplete': 'off'}
+        final_attrs = {'class': 'time-field form-control', 'size': '8'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminTimeWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None, **kwargs):
-        input_html = super(AdminTimeWidget, self).render(name, value, attrs, **kwargs)
-        return mark_safe(render_to_string("xadmin/widgets/time.html", context={'time_input_html': input_html}))
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = super(AdminTimeWidget, self).render(name, value, attrs, renderer)
+        return mark_safe('<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
+                         '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Now')))
 
 
 class AdminSelectWidget(forms.Select):
@@ -65,18 +69,15 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
         widgets = [AdminDateWidget, AdminTimeWidget]
         # Note that we're calling MultiWidget, not SplitDateTimeWidget, because
         # we want to define widgets.
-        final_attrs = {'autocomplete': 'off'}
-        if attrs is not None:
-            final_attrs.update(attrs)
-        forms.MultiWidget.__init__(self, widgets, attrs=final_attrs)
+        forms.MultiWidget.__init__(self, widgets, attrs)
 
-    def render(self, name, value, attrs=None, **kwargs):
-        input_html = super(AdminSplitDateTime, self).render(name, value, attrs)
-        input_html = re.findall('<input.+?>', input_html)
-        return mark_safe(render_to_string('xadmin/widgets/datetime.html', context={
-            'date_input_html': input_html[0],
-            'time_input_html': input_html[1]
-        }))
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = [ht for ht in super(AdminSplitDateTime, self).render(name, value, attrs, renderer).replace('><input', '>\n<input').split('\n') if ht != '']
+        # return input_html
+        return mark_safe('<div class="datetime clearfix"><div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
+                         '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>'
+                         '<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
+                         '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div></div>' % (input_html[0], _(u'Today'), input_html[1], _(u'Now')))
 
     def format_output(self, rendered_widgets):
         return mark_safe(u'<div class="datetime clearfix">%s%s</div>' %
@@ -111,7 +112,7 @@ class AdminRadioFieldRenderer(forms.RadioSelect):
         choice = self.choices[idx]  # Let the IndexError propogate
         return AdminRadioInput(self.name, self.value, self.attrs.copy(), choice, idx)
 
-    def render(self, *args, **kwargs):
+    def render(self):
         return mark_safe(u'\n'.join([force_text(w) for w in self]))
 
 
@@ -121,7 +122,7 @@ class AdminRadioSelect(forms.RadioSelect):
 
 class AdminCheckboxSelect(forms.CheckboxSelectMultiple):
 
-    def render(self, name, value, attrs=None, choices=(), **kwargs):
+    def render(self, name, value, attrs=None, choices=()):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs
@@ -161,17 +162,10 @@ class AdminSelectMultiple(forms.SelectMultiple):
 
 
 class AdminFileWidget(forms.ClearableFileInput):
-    template_name = 'xadmin/widgets/clearable_file_input.html'
     template_with_initial = (u'<p class="file-upload">%s</p>'
                              % forms.ClearableFileInput.initial_text)
     template_with_clear = (u'<span class="clearable-file-input">%s</span>'
                            % forms.ClearableFileInput.clear_checkbox_label)
-
-    def __init__(self, attrs=None):
-        final_attrs = {'class': 'custom-file-input'}
-        if attrs is not None:
-            final_attrs.update(attrs)
-        super(AdminFileWidget, self).__init__(attrs=final_attrs)
 
 
 class AdminTextareaWidget(forms.Textarea):
@@ -192,7 +186,7 @@ class AdminTextInputWidget(forms.TextInput):
         super(AdminTextInputWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminURLFieldWidget(forms.URLInput):
+class AdminURLFieldWidget(forms.TextInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'url-field'}
@@ -201,7 +195,7 @@ class AdminURLFieldWidget(forms.URLInput):
         super(AdminURLFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminIntegerFieldWidget(forms.NumberInput):
+class AdminIntegerFieldWidget(forms.TextInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'int-field'}
@@ -210,10 +204,11 @@ class AdminIntegerFieldWidget(forms.NumberInput):
         super(AdminIntegerFieldWidget, self).__init__(attrs=final_attrs)
 
 
-class AdminCommaSeparatedIntegerFieldWidget(forms.NumberInput):
+class AdminCommaSeparatedIntegerFieldWidget(forms.TextInput):
 
     def __init__(self, attrs=None):
         final_attrs = {'class': 'sep-int-field'}
         if attrs is not None:
             final_attrs.update(attrs)
-        super(AdminCommaSeparatedIntegerFieldWidget, self).__init__(attrs=final_attrs)
+        super(AdminCommaSeparatedIntegerFieldWidget,
+              self).__init__(attrs=final_attrs)

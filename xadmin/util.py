@@ -1,13 +1,13 @@
+from __future__ import absolute_import
 import django
-from django.contrib.admin.widgets import url_params_from_lookup_dict
-from django.db import models, router
+from django.db import models
 from django.db.models.sql.query import LOOKUP_SEP
 from django.db.models.deletion import Collector
 from django.db.models.fields.related import ForeignObjectRel
-from django.forms.forms import pretty_name
-from django.urls import NoReverseMatch
+# from django.forms.forms import pretty_name
+from django.forms.utils import pretty_name
 from django.utils import formats, six
-from django.utils.html import escape, format_html
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.encoding import force_text, smart_text, smart_str
@@ -16,13 +16,14 @@ from django.urls.base import reverse
 from django.conf import settings
 from django.forms import Media
 from django.utils.translation import get_language
-from django.contrib.admin.utils import label_for_field, help_text_for_field, NestedObjects
+from django.contrib.admin.utils import label_for_field, help_text_for_field
 from django import VERSION as version
 import datetime
 import decimal
 
 if 'django.contrib.staticfiles' in settings.INSTALLED_APPS:
-    from django.contrib.staticfiles.templatetags.staticfiles import static
+    # from django.contrib.staticfiles.templatetags.staticfiles import static
+    from django.templatetags.static import static
 else:
     from django.templatetags.static import static
 
@@ -44,6 +45,7 @@ def xstatic(*tags):
     fs = []
     lang = get_language()
 
+    cls_str = str if six.PY3 else basestring
     for tag in tags:
         try:
             for p in tag.split('.'):
@@ -58,7 +60,7 @@ def xstatic(*tags):
             else:
                 raise e
 
-        if isinstance(node, str):
+        if isinstance(node, cls_str):
             files = node
         else:
             mode = 'dev'
@@ -128,7 +130,8 @@ def quote(s):
     quoting is slightly different so that it doesn't get automatically
     unquoted by the Web browser.
     """
-    if not isinstance(s, str):
+    cls_str = str if six.PY3 else basestring
+    if not isinstance(s, cls_str):
         return s
     res = list(s)
     for i in range(len(res)):
@@ -142,7 +145,8 @@ def unquote(s):
     """
     Undo the effects of quote(). Based heavily on urllib.unquote().
     """
-    if not isinstance(s, str):
+    cls_str = str if six.PY3 else basestring
+    if not isinstance(s, cls_str):
         return s
     mychr = chr
     myatoi = int
@@ -174,57 +178,56 @@ def flatten_fieldsets(fieldsets):
     return field_names
 
 
-def get_deleted_objects(objs, admin_view):
-    """
-    Find all objects related to ``objs`` that should also be deleted. ``objs``
-    must be a homogeneous iterable of objects (e.g. a QuerySet).
+class NestedObjects(Collector):
 
-    Return a nested list of strings suitable for display in the
-    template with the ``unordered_list`` filter.
+    def __init__(self, *args, **kwargs):
+        super(NestedObjects, self).__init__(*args, **kwargs)
+        self.edges = {}  # {from_instance: [to_instances]}
+        self.protected = set()
 
-    *** Warning
-    xadmin has generic inheritance, so it is necessary to use
-    the admin_view that already includes plugins and options.
-    """
-    try:
-        obj = objs[0]
-    except IndexError:
-        return [], {}, set(), []
-    else:
-        using = router.db_for_write(obj._meta.model)
-    collector = NestedObjects(using=using)
-    collector.collect(objs)
-    perms_needed = set()
+    def add_edge(self, source, target):
+        self.edges.setdefault(source, []).append(target)
 
-    def format_callback(obj):
-        opts = obj._meta
-
-        no_edit_link = '%s: %s' % (capfirst(opts.verbose_name), obj)
-
-        if not admin_view.has_delete_permission(obj):
-            perms_needed.add(opts.verbose_name)
+    def collect(self, objs, source_attr=None, **kwargs):
+        for obj in objs:
+            if source_attr and hasattr(obj, source_attr):
+                self.add_edge(getattr(obj, source_attr), obj)
+            else:
+                self.add_edge(None, obj)
         try:
-            admin_url = reverse('%s:%s_%s_change'
-                                % (admin_view.admin_site.name,
-                                   opts.app_label,
-                                   opts.model_name),
-                                None, (quote(obj.pk),))
-        except NoReverseMatch:
-            # Change url doesn't exist -- don't display link to edit
-            return no_edit_link
+            return super(NestedObjects, self).collect(objs, source_attr=source_attr, **kwargs)
+        except models.ProtectedError as e:
+            self.protected.update(e.protected_objects)
 
-        # Display a link to the admin page.
-        return format_html('{}: <a href="{}">{}</a>',
-                           capfirst(opts.verbose_name),
-                           admin_url,
-                           obj)
+    def related_objects(self, related, objs):
+        qs = super(NestedObjects, self).related_objects(related, objs)
+        return qs.select_related(related.field.name)
 
-    to_delete = collector.nested(format_callback)
+    def _nested(self, obj, seen, format_callback):
+        if obj in seen:
+            return []
+        seen.add(obj)
+        children = []
+        for child in self.edges.get(obj, ()):
+            children.extend(self._nested(child, seen, format_callback))
+        if format_callback:
+            ret = [format_callback(obj)]
+        else:
+            ret = [obj]
+        if children:
+            ret.append(children)
+        return ret
 
-    protected = [format_callback(obj) for obj in collector.protected]
-    model_count = {model._meta.verbose_name_plural: len(objs) for model, objs in collector.model_objs.items()}
+    def nested(self, format_callback=None):
+        """
+        Return the graph as a nested list.
 
-    return to_delete, model_count, perms_needed, protected
+        """
+        seen = set()
+        roots = []
+        for root in self.edges.get(None, ()):
+            roots.extend(self._nested(root, seen, format_callback))
+        return roots
 
 
 def model_format_dict(obj):
@@ -269,9 +272,8 @@ def model_ngettext(obj, n=None):
 def is_rel_field(name, model):
     if hasattr(name, 'split') and name.find("__") > 0:
         parts = name.split("__")
-        for field in model._meta.get_fields():
-            if parts[0] == field.name:
-                return True
+        if parts[0] in model._meta.get_all_field_names():
+            return True
     return False
 
 
@@ -372,7 +374,7 @@ def get_model_from_relation(field):
     elif is_related_field(field):
         return field.model
     elif getattr(field, 'remote_field'):  # or isinstance?
-        return field.remote_field.model
+        return field.remote_field.to
     else:
         raise NotRelationField
 
@@ -400,12 +402,12 @@ def reverse_field_path(model, path):
                 break
         if direct:
             related_name = field.related_query_name()
-            parent = field.remote_field.model
+            parent = field.rel.to
         else:
             related_name = field.field.name
             parent = field.model
         reversed_path.insert(0, related_name)
-    return parent, LOOKUP_SEP.join(reversed_path)
+    return (parent, LOOKUP_SEP.join(reversed_path))
 
 
 def get_fields_from_path(model, path):
@@ -437,14 +439,6 @@ def remove_trailing_data_field(fields):
     return fields
 
 
-def get_limit_choices_to(field):
-    """Returns the value of limit_choices_to from field"""
-    limit_choices_to = getattr(field, 'limit_choices_to', None)
-    if callable(limit_choices_to):
-        limit_choices_to = limit_choices_to()
-    return limit_choices_to
-
-
 def get_limit_choices_to_from_path(model, path):
     """ Return Q object for limiting choices if applicable.
 
@@ -454,25 +448,15 @@ def get_limit_choices_to_from_path(model, path):
 
     fields = get_fields_from_path(model, path)
     fields = remove_trailing_data_field(fields)
-    try:
-        field = fields[-1].remote_field
-    except (IndexError, AttributeError):
-        return models.Q()  # empty Q
-    limit_choices_to = get_limit_choices_to(field)
+    limit_choices_to = (
+        fields and hasattr(fields[-1], 'remote_field') and
+        getattr(fields[-1].remote_field, 'limit_choices_to', None))
     if not limit_choices_to:
         return models.Q()  # empty Q
     elif isinstance(limit_choices_to, models.Q):
         return limit_choices_to  # already a Q
     else:
         return models.Q(**limit_choices_to)  # convert dict to Q
-
-
-def get_limit_choices_to_url_params(field):
-    """limit choices to format with urls parameter"""
-    limit_choices_to = get_limit_choices_to(field)
-    if limit_choices_to:
-        limit_choices_to = url_params_from_lookup_dict(limit_choices_to)
-    return limit_choices_to
 
 
 def sortkeypicker(keynames):

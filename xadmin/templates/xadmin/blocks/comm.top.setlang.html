@@ -1,26 +1,21 @@
 {% load i18n xadmin_tags %}
 
-<li class="nav-item dropdown g-setlang">
- <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" href="#">
-   <i class="fa fa-globe"></i>
-   <span class="d-md-none d-lg-inline">
-    {% get_language_info for LANGUAGE_CODE as lang  %}{{ lang.name_local }}
-   </span>
-  </a>
-  <form id="setlang-form" class="d-none" action="{% url 'xadmin:set_language' %}" method="post" {% view_block 'form_tag_attrs' %}>
+<li class="dropdown g-setlang">
+  <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+  <i class="fa fa-globe"></i> <span class="hide-sm">
+    {% get_current_language as l %}{{ l.name_local }}
+    <i class="caret"></i></span></a>
+  <form id="setlang-form" action="{% url 'xadmin:set_language' %}" method="post" style="display:none;">
     {% csrf_token %}
     <input name="next" type="hidden" value="{{ redirect_to }}" />
     <input id="setlang-id_language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}" />
   </form>
-  <div id="g-setlang-menu" class="dropdown-menu" aria-labelledby="navbarDropdown">
+  <ul id="g-setlang-menu" class="dropdown-menu" role="menu">
     {% get_language_info_list for LANGUAGES as languages %}
     {% for language in languages %}
-      <a class="dropdown-item {% if language.code == LANGUAGE_CODE %}active{% endif %}" data-lang="{{ language.code }}" href="#">
-          <i class="fa fa-flag"></i>
-          {{ language.name_local }} ({{ language.code }})
-      </a>
+      <li{% if language.code == LANGUAGE_CODE %} class="active"{% endif %}><a data-lang="{{ language.code }}"><i class="fa fa-flag"></i> {{ language.name_local }} ({{ language.code }})</a></li>
     {% endfor %}
-  </div>
+  </ul>
 </li>
 <script type="text/javascript">
   $(function(){

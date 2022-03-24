@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import copy
-import re
+
 from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.contrib.contenttypes.models import ContentType
@@ -16,11 +17,11 @@ from django.template import loader
 from django.utils.translation import ugettext as _
 from django.forms.widgets import Media
 from xadmin import widgets
-from xadmin.layout import FormHelper, Layout, Fieldset, TabHolder, Container, Column, Col, Field, Tab
+from xadmin.layout import FormHelper, Layout, Fieldset, TabHolder, Container, Column, Col, Field
 from xadmin.util import unquote
 from xadmin.views.detail import DetailAdminUtil
 
-from xadmin.views.base import ModelAdminView, filter_hook, csrf_protect_m
+from .base import ModelAdminView, filter_hook, csrf_protect_m
 
 
 FORMFIELD_FOR_DBFIELD_DEFAULTS = {
@@ -45,7 +46,7 @@ FORMFIELD_FOR_DBFIELD_DEFAULTS = {
 
 
 class ReadOnlyField(Field):
-    template = "xadmin/layout/field_value_form.html"
+    template = "xadmin/layout/field_value.html"
 
     def __init__(self, *args, **kwargs):
         self.detail = kwargs.pop('detail')
@@ -77,11 +78,11 @@ class ModelFormAdminView(ModelAdminView):
 
     form_layout = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, request, *args, **kwargs):
         overrides = FORMFIELD_FOR_DBFIELD_DEFAULTS.copy()
         overrides.update(self.formfield_overrides)
         self.formfield_overrides = overrides
+        super(ModelFormAdminView, self).__init__(request, *args, **kwargs)
 
     @filter_hook
     def formfield_for_dbfield(self, db_field, **kwargs):
@@ -118,8 +119,8 @@ class ModelFormAdminView(ModelAdminView):
             if attrs:
                 return attrs
 
-        if hasattr(db_field, "remote_field") and db_field.remote_field:
-            related_modeladmin = self.admin_site._registry.get(db_field.remote_field.model)
+        if hasattr(db_field, "rel") and db_field.rel:
+            related_modeladmin = self.admin_site._registry.get(db_field.rel.to)
             if related_modeladmin and hasattr(related_modeladmin, 'relfield_style'):
                 attrs = self.get_field_style(
                     db_field, related_modeladmin.relfield_style, **kwargs)
@@ -158,24 +159,21 @@ class ModelFormAdminView(ModelAdminView):
         Returns a Form class for use in the admin add view. This is used by
         add_view and change_view.
         """
-        form = self.get_form_class()
-        fields = self.get_form_fields()
-        form_exclude = self.get_form_exclude()
-        if form_exclude is None:
+        if self.exclude is None:
             exclude = []
         else:
-            exclude = list(form_exclude)
+            exclude = list(self.exclude)
         exclude.extend(self.get_readonly_fields())
-        if form_exclude is None and hasattr(form, '_meta') and form._meta.exclude:
+        if self.exclude is None and hasattr(self.form, '_meta') and self.form._meta.exclude:
             # Take the custom ModelForm's Meta.exclude into account only if the
             # ModelAdmin doesn't define its own.
-            exclude.extend(form._meta.exclude)
+            exclude.extend(self.form._meta.exclude)
         # if exclude is an empty list we pass None to be consistant with the
         # default on modelform_factory
         exclude = exclude or None
         defaults = {
-            "form": form,
-            "fields": fields and list(fields) or None,
+            "form": self.form,
+            "fields": self.fields and list(self.fields) or None,
             "exclude": exclude,
             "formfield_callback": self.formfield_for_dbfield,
         }
@@ -186,18 +184,24 @@ class ModelFormAdminView(ModelAdminView):
 
         return modelform_factory(self.model, **defaults)
 
-    @filter_hook
-    def get_full_layout(self, fields, **options):
-        """Default layout for when one has not been defined"""
-        return Layout(Container(Col('full', Fieldset("", *fields, **options),
-                                horizontal=True, span=12)))
+        try:
+            return modelform_factory(self.model, **defaults)
+        except FieldError as e:
+            raise FieldError('%s. Check fields/fieldsets/exclude attributes of class %s.'
+                             % (e, self.__class__.__name__))
 
     @filter_hook
     def get_form_layout(self):
         layout = copy.deepcopy(self.form_layout)
-        fields = list(self.form_obj.fields.keys()) + list(self.get_readonly_fields())
+        arr = self.form_obj.fields.keys()
+        if six.PY3:
+            arr = [k for k in arr]
+        fields = arr + list(self.get_readonly_fields())
+
         if layout is None:
-            layout = self.get_full_layout(fields, css_class="unsort no_title")
+            layout = Layout(Container(Col('full',
+                                          Fieldset("", *fields, css_class="unsort no_title"), horizontal=True, span=12)
+                                      ))
         elif type(layout) in (list, tuple) and len(layout) > 0:
             if isinstance(layout[0], Column):
                 fs = layout
@@ -213,52 +217,28 @@ class ModelFormAdminView(ModelAdminView):
             other_fieldset = Fieldset(_(u'Other Fields'), *[f for f in fields if f not in rendered_fields])
 
             if len(other_fieldset.fields):
-                if len(container) and isinstance(container[0].fields[0], TabHolder):
-
-                    other_fieldset.css_class='unsort no_title'
-                    container[0].fields[0].append(Tab(_('Other Fields'), other_fieldset))
-
-                elif len(container) and isinstance(container[0], Column):
+                if len(container) and isinstance(container[0], Column):
                     container[0].fields.append(other_fieldset)
                 else:
                     container.append(other_fieldset)
 
         return layout
 
-    @filter_hook
     def get_form_helper(self):
         helper = FormHelper()
-        helper.disable_csrf = True
         helper.form_tag = False
-        helper.html5_required = True
-        helper.label_class = 'font-weight-bold'
-        helper.field_class = 'controls'
         helper.include_media = False
-        helper.use_custom_control = False
         helper.add_layout(self.get_form_layout())
 
         # deal with readonly fields
         readonly_fields = self.get_readonly_fields()
         if readonly_fields:
-            detail = self.get_model_view(DetailAdminUtil, self.model,
-                                         self.form_obj.instance,
-                                         form_obj=self.form_obj)
+            detail = self.get_model_view(
+                DetailAdminUtil, self.model, self.form_obj.instance)
             for field in readonly_fields:
                 helper[field].wrap(ReadOnlyField, detail=detail)
 
         return helper
-
-    @filter_hook
-    def get_form_class(self):
-        return self.form
-
-    @filter_hook
-    def get_form_exclude(self):
-        return self.exclude
-
-    @filter_hook
-    def get_form_fields(self):
-        return self.fields
 
     @filter_hook
     def get_readonly_fields(self):
@@ -312,12 +292,13 @@ class ModelFormAdminView(ModelAdminView):
             self.save_models()
             self.save_related()
             response = self.post_response()
-            if isinstance(response, str):
+            cls_str = str if six.PY3 else basestring
+            if isinstance(response, cls_str):
                 return HttpResponseRedirect(response)
             else:
                 return response
-        else:
-            return self.get_response()
+
+        return self.get_response()
 
     @filter_hook
     def get_context(self):
@@ -399,21 +380,13 @@ class CreateAdminView(ModelFormAdminView):
         # We have to special-case M2Ms as a list of comma-separated PKs.
         if self.request_method == 'get':
             initial = dict(self.request.GET.items())
-            initial_new = {}
-            for key in initial:
-                key_prefix = key
-                if self.model_form.prefix:
-                    key = re.sub('^' + re.escape(self.model_form.prefix + '-'), '', key)
+            for k in initial:
                 try:
-                    field = self.opts.get_field(key)
+                    f = self.opts.get_field(k)
                 except models.FieldDoesNotExist:
                     continue
-                if isinstance(field, models.ManyToManyField):
-                    initial_new[key] = initial[key_prefix].split(",")
-                else:
-                    # field value without a prefix
-                    initial_new[key] = initial[key_prefix]
-            initial.update(initial_new)
+                if isinstance(f, models.ManyToManyField):
+                    initial[k] = initial[k].split(",")
             return {'initial': initial}
         else:
             return {'data': self.request.POST, 'files': self.request.FILES}
@@ -453,16 +426,13 @@ class CreateAdminView(ModelFormAdminView):
         """
         request = self.request
 
-        msg = _('The %(name)s "%(obj)s" was added successfully.') % {
-            'name': force_text(self.opts.verbose_name),
-            'obj': "<a class='alert-link' href='%s'>%s</a>" % (
-                self.model_admin_url('change', self.new_obj._get_pk_val()),
-                force_text(self.new_obj)
-            )
-        }
+        msg = _(
+            'The %(name)s "%(obj)s" was added successfully.') % {'name': force_text(self.opts.verbose_name),
+                                                                 'obj': "<a class='alert-link' href='%s'>%s</a>" % (self.model_admin_url('change', self.new_obj._get_pk_val()), force_text(self.new_obj))}
 
         if "_continue" in request.POST:
-            self.message_user(msg + ' ' + _("You may edit it again below."), 'success')
+            self.message_user(
+                msg + ' ' + _("You may edit it again below."), 'success')
             return self.model_admin_url('change', self.new_obj._get_pk_val())
 
         if "_addanother" in request.POST:
@@ -514,13 +484,6 @@ class UpdateAdminView(ModelFormAdminView):
         context = super(UpdateAdminView, self).get_context()
         context.update(new_context)
         return context
-
-    def block_extrahead(self, context, nodes):
-        nodes.append(f"""
-        <script type="text/javascript">
-        window.__admin_object_id__ = "{context['object_id']}";
-        </script>
-         """)
 
     @filter_hook
     def get_breadcrumb(self):
