@@ -1,18 +1,11 @@
 import sys
 from functools import update_wrapper
-from future.utils import iteritems
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
-from django.utils import six
 from django.views.decorators.cache import never_cache
 from django.template.engine import Engine
 import inspect
-
-if six.PY2 and sys.getdefaultencoding() == 'ascii':
-    import imp
-    imp.reload(sys)
-    sys.setdefaultencoding("utf-8")
 
 
 class AlreadyRegistered(Exception):
@@ -321,7 +314,7 @@ class AdminSite(object):
         ]
 
         # Add in each model's views.
-        for model, admin_class in iteritems(self._registry):
+        for model, admin_class in self._registry.items():
             view_urls = [
                 re_path(
                     _path,

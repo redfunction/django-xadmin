@@ -51,7 +51,7 @@ from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ListAdminView, ModelAdminView
 from xadmin.views.base import csrf_protect_m, filter_hook
 from django.db import transaction
-from import_export.admin import DEFAULT_FORMATS
+from import_export.formats.base_formats import DEFAULT_FORMATS
 try:
     from import_export.admin import SKIP_ADMIN_LOG, TMP_STORAGE_CLASS
 except ImportError:

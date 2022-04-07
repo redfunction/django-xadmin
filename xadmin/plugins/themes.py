@@ -1,6 +1,6 @@
 # coding:utf-8
 from __future__ import print_function
-import httplib2
+import requests
 from django.template import loader
 from django.core.cache import cache
 from django.utils import six
@@ -71,8 +71,7 @@ class ThemePlugin(BaseAdminPlugin):
             else:
                 ex_themes = []
                 try:
-                    h = httplib2.Http()
-                    resp, content = h.request("https://bootswatch.com/api/3.json", 'GET', '',
+                    resp, content = requests.get("https://bootswatch.com/api/3.json",
                                               headers={"Accept": "application/json", "User-Agent": self.request.META['HTTP_USER_AGENT']})
                     if six.PY3:
                         content = content.decode()
