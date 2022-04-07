@@ -4,11 +4,8 @@ Make items sortable by drag-drop in list view. Diffierent from
 builtin plugin sortable, it touches model field indeed intead
 of only for display.
 """
-
-from __future__ import unicode_literals
-
 from django.template.loader import render_to_string
-from django.core.urlresolvers import reverse
+from django.urls.base import reverse
 from django.db import transaction
 
 from xadmin.plugins.utils import get_context_dict
@@ -70,6 +67,7 @@ class SaveOrderView(ModelAdminView):
         order_objs = request.POST.getlist("order[]")
         for order_value, pk in enumerate(order_objs, start=1):
             self.save_order(pk, order_value)
+        self.message_user('Alteração feita com sucesso', 'success')
         return self.render_response({})
 
     def save_order(self, pk, order_value):

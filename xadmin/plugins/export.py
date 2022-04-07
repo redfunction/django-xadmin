@@ -1,31 +1,25 @@
+import copy
 import datetime
 import sys
-import copy
 import threading
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import BooleanField, NullBooleanField
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.utils import six
-if six.PY2:
-    # python 2.x need to work with unicode
-    from django.utils.encoding import \
-        smart_unicode as smart_text, \
-        force_unicode as force_text
-else:
-    from django.utils.encoding import force_text, smart_text
+from django.utils.encoding import force_text, smart_text
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.xmlutils import SimplerXMLGenerator
-from django.db.models import BooleanField, NullBooleanField
 
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
-from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.util import json
+from xadmin.views import BaseAdminPlugin, ListAdminView
 from xadmin.views.list import ALL_VAR
 
 try:
@@ -121,7 +115,7 @@ class ExportPlugin(BaseAdminPlugin):
         model_name = self.opts.verbose_name
         book = xlsxwriter.Workbook(output)
         sheet = book.add_worksheet(
-            u"%s %s" % (_(u'Sheet'), force_text(model_name)))
+            "%s %s" % (_(u'Sheet'), force_text(model_name)))
         styles = {'datetime': book.add_format({'num_format': 'yyyy-mm-dd hh:mm:ss'}),
                   'date': book.add_format({'num_format': 'yyyy-mm-dd'}),
                   'time': book.add_format({'num_format': 'hh:mm:ss'}),
@@ -155,7 +149,7 @@ class ExportPlugin(BaseAdminPlugin):
         export_header = self._options_is_on('export_xls_header')
         model_name = self.opts.verbose_name
         book = xlwt.Workbook(encoding=self.export_unicode_encoding)
-        sheet = book.add_sheet(u"%s %s" % (_(u'Sheet'), force_text(model_name)))
+        sheet = book.add_sheet("%s %s" % (_(u'Sheet'), force_text(model_name)))
         styles = {'datetime': xlwt.easyxf(num_format_str='yyyy-mm-dd hh:mm:ss'),
                   'date': xlwt.easyxf(num_format_str='yyyy-mm-dd'),
                   'time': xlwt.easyxf(num_format_str='hh:mm:ss'),
@@ -187,8 +181,7 @@ class ExportPlugin(BaseAdminPlugin):
         if isinstance(t, bool):
             return _('Yes') if t else _('No')
         t = t.replace('"', '""').replace(',', '\,')
-        cls_str = str if six.PY3 else basestring
-        if isinstance(t, cls_str):
+        if isinstance(t, str):
             t = '"%s"' % t
         return t
 
@@ -293,7 +286,7 @@ class ExportPlugin(BaseAdminPlugin):
     def _get_file_spec(self, data, context):
         file_type = data.get('export_type', 'csv')
         content = getattr(self, 'get_%s_export' % file_type)(context)
-        filename = u"{0:s}.{1:s}".format(self.opts.verbose_name.replace(' ', '_'),
+        filename = "{0:s}.{1:s}".format(self.opts.verbose_name.replace(' ', '_'),
                                          file_type)
         file_mimetype = self.export_mimes[file_type]
         return filename, content, file_mimetype

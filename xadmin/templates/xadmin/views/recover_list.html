@@ -4,11 +4,15 @@
 {% load xadmin_tags %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-  <li><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-  <li><a href="{{changelist_url}}">{{opts.verbose_name_plural|capfirst}}</a></li>
-  <li class="active">{% blocktrans with opts.verbose_name_plural|escape as name %}Recover deleted {{name}}{% endblocktrans %}</li>
-</ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
+        <li class="breadcrumb-item"><a href="{{ changelist_url }}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{% blocktrans with opts.verbose_name_plural|escape as name %}Recover deleted
+            {{ name }}{% endblocktrans %}
+        </li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block nav_title %}
@@ -16,7 +20,9 @@
 {% endblock %}
 
 {% block content %}
-  <div class="alert alert-info">{% blocktrans %}Choose a date from the list below to recover a deleted version of an object.{% endblocktrans %}</div>
+  <div class="alert alert-info mt-2">
+      {% blocktrans %}Choose a date from the list below to recover a deleted version of an object.{% endblocktrans %}
+  </div>
   <div class="module">
     {% if deleted %}
       <table id="change-history" class="table table-bordered table-hover">
@@ -36,7 +42,9 @@
         </tbody>
       </table>
     {% else %}
-      <p class="well">{% trans "There are no deleted objects to recover." %}</p>
+      <div class="d-flex justify-content-center bg-light p-2">
+       <p>{% trans "There are no deleted objects to recover." %}</p>
+       </div>
     {% endif %}
   </div>
 {% endblock %}

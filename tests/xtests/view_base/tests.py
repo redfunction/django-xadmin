@@ -1,19 +1,20 @@
 from __future__ import absolute_import
 
+from base import BaseTest
 from django.contrib.auth.models import User
 
-from base import BaseTest
-from xadmin.views import BaseAdminView, BaseAdminPlugin, ModelAdminView, ListAdminView
-
-from .models import ModelA, ModelB
+from xadmin.views import ListAdminView
 from .adminx import site, ModelAAdmin, TestBaseView, TestCommView, TestAView, OptionA
+from .models import ModelA, ModelB
+
 
 class BaseAdminTest(BaseTest):
 
     def setUp(self):
         super(BaseAdminTest, self).setUp()
         self.test_view_class = site.get_view_class(TestBaseView)
-        self.test_view = self.test_view_class(self._mocked_request('test/'))
+        self.test_view = self.test_view_class()
+        self.test_view.setup(self._mocked_request('test/'))
 
     def test_get_view(self):
         test_a = self.test_view.get_view(TestAView, OptionA, opts={'test_attr': 'test'})
@@ -53,8 +54,9 @@ class CommAdminTest(BaseTest):
     def setUp(self):
         super(CommAdminTest, self).setUp()
         self.test_view_class = site.get_view_class(TestCommView)
-        self.test_view = self.test_view_class(self._mocked_request('test/comm'))
+        self.test_view = self.test_view_class()
+        self.test_view.setup(self._mocked_request('test/comm'))
 
-    def test_model_icon(self):  
+    def test_model_icon(self):
         self.assertEqual(self.test_view.get_model_icon(ModelA), 'flag')
         self.assertEqual(self.test_view.get_model_icon(ModelB), 'test')

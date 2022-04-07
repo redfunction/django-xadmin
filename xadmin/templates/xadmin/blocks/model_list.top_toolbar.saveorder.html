@@ -1,6 +1,6 @@
 {% load i18n %}
 <div class="btn-group">
-  <a href="#" id="save-order" class="btn btn-success btn-sm" style="display: None" post-url="{{ save_order_url }}">
-      <i class="fa fa-save">&nbsp;</i>{% trans "Save Order" %}
+  <a href="#" id="save-order" class="btn btn-success btn-sm" data-loading-icon="fa fa-spinner fa-spin" style="display: none" post-url="{{ save_order_url }}">
+      <i class="fa fa-save" id="save-order-icon"></i> {% trans "Save Order" %}
   </a>
 </div>

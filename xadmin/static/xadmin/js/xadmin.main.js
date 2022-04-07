@@ -14,6 +14,17 @@
     $('.exform:not(.rended)').exform();
   });
 
+  /*Returns the value of the name of a url parameter*/
+  $.urlParam = function (name, url) {
+    url = url ? url: window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+ }
+
   $.setCookie = function(name, value, options){
     options = options || {};
     if (value === null) {
@@ -39,12 +50,12 @@
 
   $.getCookie = function(name) {
       var cookieValue = null;
-      if (document.cookie && document.cookie != '') {
+      if (document.cookie && document.cookie !== '') {
           var cookies = document.cookie.split(';');
           for (var i = 0; i < cookies.length; i++) {
-              var cookie = jQuery.trim(cookies[i]);
+              var cookie = $.trim(cookies[i]);
               // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
                   cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                   break;
               }
@@ -73,13 +84,13 @@
   
   //toggle class button
   $('body').on('click.xa.togglebtn.data-api', '[data-toggle=class]', function (e) {
-    var $this  = $(this), href
+    var $this  = $(this), href;
     var target = $this.attr('data-target')
         || e.preventDefault()
-        || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
-    var className = $this.attr('data-class-name')
+        || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, ''); //strip for ie7
+    var className = $this.attr('data-class-name');
     $(target).toggleClass(className)
-  })
+  });
   
   // loading btn
   // $('.btn.btn-loading,.btn[type=submit]')
@@ -111,7 +122,7 @@
   // g-search
   $('#g-search .dropdown-menu a').click(function(){
       $('#g-search').attr('action', $(this).data('action')).submit();
-  })
+  });
 
   // save settings
   $.save_user_settings = function(key, value, success, error){
@@ -128,4 +139,4 @@
     });
   }
   
-})(jQuery)
+})(jQuery);

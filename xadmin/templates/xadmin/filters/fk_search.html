@@ -1,12 +1,15 @@
 {% load i18n %}
-<li class="dropdown-submenu filter-fk-search">
-  <a><i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i> {{ title }}</a>
-  <div class="popover right">
+<div class="dropdown-submenu filter-fk-search">
+  <a class="dropdown-item">
+      <i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i>
+      {{ title }}
+  </a>
+  <div class="popover bs-popover-right">
     <div class="arrow"></div>
-    <h3 class="popover-title">
+    <h6 class="popover-header">
       {% trans "Search" %} {{title}}
-    </h3>
-    <div class="popover-content">
+    </h6>
+    <div class="popover-body">
       <form class="exform" method="get" action="">
         {{ form_params|safe }}
           <select name="{{exact_name}}" class="select-search {% if relfield_style == 'fk-select' %}select-preload{% endif %}" data-search-url="{{search_url}}" data-choices="{{ choices }}"
@@ -21,11 +24,11 @@
           {% endif %}
           </select>
 
-          <button type="submit" class="btn btn-success">{% trans "Apply" %}</button>
+          <button type="submit" class="btn btn-success btn-sm">{% trans "Apply" %}</button>
         {% if spec.used_params %}
-          <a class="btn btn-default" href="{{remove_url}}">{% trans "Clean" %}</a>
+          <a class="btn btn-danger btn-sm" href="{{remove_url}}">{% trans "Clean" %}</a>
         {% endif %}
       </form>
     </div>
   </div>
-</li>
+</div>

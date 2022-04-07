@@ -21,6 +21,33 @@
                 $(options.allToggle).prop('checked', false);
             }
         }
+        var checker = function(e, checked){
+            $(this).prop("checked", checked)
+                .parentsUntil('.grid-item').parent().toggleClass(options.selectedClass, checked);
+            updateCounter();
+        }
+
+        lastChecked = null;
+        var actionLastChecked = function(event) {
+            if (!event) { var event = window.event; }
+            var target = event.target ? event.target : event.srcElement;
+
+            if (lastChecked && $.data(lastChecked) != $.data(target) && event.shiftKey == true) {
+                var inrange = false;
+                $(lastChecked).trigger('checker', target.checked);
+                $(actionCheckboxes).each(function() {
+                    if ($.data(this) == $.data(lastChecked) || $.data(this) == $.data(target)) {
+                        inrange = (inrange) ? false : true;
+                    }
+                    if (inrange) {
+                        $(this).trigger('checker', target.checked);
+                    }
+                });
+            }
+
+            $(target).trigger('checker', target.checked);
+            lastChecked = target;
+        }
         showQuestion = function() {
             $(options.acrossClears).hide();
             $(options.acrossQuestions).show();
@@ -43,6 +70,16 @@
             $(options.acrossInput).val(0);
         }
 
+        // receiver live inputs
+        actionCheckboxes.on("actions.live", function (evt, action){
+            $(action).bind('checker', checker)
+                     .click(actionLastChecked);
+            actionCheckboxes = actionCheckboxes.add(action);
+        });
+
+        // receiver action update
+        actionCheckboxes.on("actions.updateCounter", updateCounter);
+
         // Show counter by default
         $(options.counterContainer).show();
         $(options.allToggle).show().click(function() {
@@ -61,33 +98,8 @@
             clearAcross();
         });
 
-        $(actionCheckboxes).bind('checker', function(e, checked){
-            $(this).prop("checked", checked)
-                .parentsUntil('.grid-item').parent().toggleClass(options.selectedClass, checked);
-            updateCounter();
-        });
-
-        lastChecked = null;
-        $(actionCheckboxes).click(function(event) {
-            if (!event) { var event = window.event; }
-            var target = event.target ? event.target : event.srcElement;
-
-            if (lastChecked && $.data(lastChecked) != $.data(target) && event.shiftKey == true) {
-                var inrange = false;
-                $(lastChecked).trigger('checker', target.checked);
-                $(actionCheckboxes).each(function() {
-                    if ($.data(this) == $.data(lastChecked) || $.data(this) == $.data(target)) {
-                        inrange = (inrange) ? false : true;
-                    }
-                    if (inrange) {
-                        $(this).trigger('checker', target.checked);
-                    }
-                });
-            }
-
-            $(target).trigger('checker', target.checked);
-            lastChecked = target;
-        });
+        $(actionCheckboxes).bind('checker', checker);
+        $(actionCheckboxes).click(actionLastChecked);
 
         // Check state of checkboxes and reinit state if needed
         $(this).filter(":checked").trigger('checker', true);

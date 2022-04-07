@@ -13,7 +13,8 @@
                   "for", "id", "name", "href",
                   // quick-form ...
                   "data-for-id",
-                  "data-refresh-url"
+                  "data-refresh-url",
+                  "data-target"
               ];
               var index, name;
               for (index = 0; index < attrs.length; index++) {
@@ -33,7 +34,7 @@
                     updateElementIndex(elem, options.prefix, i);
                 }));
                 updateElementIndex(row, options.prefix, i);
-                row.find('input,select,textarea,label,div,a').each(function() {
+                row.find('input,select,textarea,label,div,a,button,script').each(function() {
                     updateElementIndex($(this), options.prefix, i);
                 });
                 row.data('row-index', i);
@@ -83,6 +84,7 @@
             }
             // text to html / insert dom
             el.html($.parseHTML(template));
+            el.wrap("<form></form>"); //  avoid sending the template
             template = el.children();  // html
             template.removeAttr('id');
             if(template.data("replace-id")){
@@ -91,18 +93,24 @@
             }
             options.formTemplate = template;
 
-            $('#' + options.prefix + '-add-row').click(function() {
-                var formCount = parseInt($('#id_' + options.prefix + '-TOTAL_FORMS').val()),
-                    row = options.formTemplate.clone(true).removeClass('empty-form');
-                updateRowIndex(row, formCount);
-                row.appendTo($$);
-                insertDeleteLink(row);
-                row.exform();
-                $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
-                // If a post-add callback was supplied, call it with the added form:
-                if (options.added) options.added(row, $$);
-                $(document).trigger("formset:added", [row]);
-                return false;
+            $('#' + options.prefix + '-add-row').each(function (){
+                var $addrow = $(this),
+                    event = "click." + options.prefix;
+                if ($addrow.data(event)) return;
+                $addrow.data(event, function() {
+                    var formCount = parseInt($('#id_' + options.prefix + '-TOTAL_FORMS').val()),
+                        row = options.formTemplate.clone(true).removeClass('empty-form');
+                    updateRowIndex(row, formCount);
+                    row.appendTo($$);
+                    insertDeleteLink(row);
+                    row.exform();
+                    $('#id_' + options.prefix + '-TOTAL_FORMS').val(formCount + 1);
+                    // If a post-add callback was supplied, call it with the added form:
+                    if (options.added) options.added(row, $$);
+                    $(document).trigger("formset:added", [row]);
+                    return false;
+                });
+                $addrow.on(event, $addrow.data(event));
             });
         }
 
@@ -112,7 +120,10 @@
     $.fn.formset.styles = {
         'tab': {
             added: function(row, $$){
-                var new_tab = $('<li><a data-toggle="tab" href="#'+ row.attr('id') +'">#<span class="formset-num">'+ (row.data('row-index') + 1) +'</span></a></li>');
+                var new_tab = $('<li class="nav-item">' +
+                                 '<a class="nav-link" data-toggle="tab" href="#'+ row.attr('id') +'">#' +
+                                 '<span class="formset-num">'+ (row.data('row-index') + 1) +'</span></a>' +
+                                '</li>');
                 $$.parent().find('.nav-tabs').append(new_tab);
                 new_tab.find('a').tab('show');
             },

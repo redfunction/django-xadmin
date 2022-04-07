@@ -1,11 +1,11 @@
 {% load i18n %}
 {{ wizard.management_form }}
-<ul class="steps-nav nav nav-pills">
+<ul class="steps-nav nav nav-pills my-1">
   {% for step in wizard.steps.all %}
-  <li{% if step == wizard.steps.current %} class="active"{% endif %}>
-      <a
-      {% if wizard.steps.step0 > forloop.counter0 %} onclick="javascript:$('#wizard_goto_step').val('{{forloop.counter0}}').click();"{% endif %}
-      >
+  <li class="nav-item">
+      <a class="nav-link nav-step-goto-link {% if step == wizard.steps.current %}active{% endif %}"
+      {% if wizard.steps.step0 > forloop.counter0 %}href="#"{% endif %}
+      data-step-goto="{{ forloop.counter0 }}">
       {% if wizard.steps.step0 < forloop.counter0 %}<span class="text-muted">{% endif %}
           {{forloop.counter}}. {{step}}{% if step != wizard.steps.last %} <i class="fa fa-caret-right"></i>{% endif %}
       {% if wizard.steps.step0 < forloop.counter0 %}</span>{% endif %}
@@ -13,3 +13,9 @@
   </li>
   {% endfor %}
 </ul>
+<script type="application/javascript">
+    $("ul.steps-nav").find("a.nav-step-goto-link").click(function (evt){
+        evt.preventDefault();
+        $('#wizard_goto_step').val($(this).data("step-goto")).trigger("click");
+    });
+</script>

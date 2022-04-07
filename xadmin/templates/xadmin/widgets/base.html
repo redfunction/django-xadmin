@@ -3,17 +3,24 @@
 {% load crispy_forms_tags %}
 
 {% block box_attrs %}id="{{ widget_id }}"{% endblock box_attrs %}
-{% block box_class %}widget {{widget_type}}{% endblock box_class %}
+{% block box_class %}widget {{widget_type}} mt-1 mb-2 {% endblock box_class %}
+{% block box_collapse_target_id %}{% block box_collapse_target %}card-collapse-{{ widget_id }}{% endblock %}{% endblock %}
 
 {% block box_title %}
-  {% if widget.dashboard.widget_customiz %}
-    <i class='icon fa fa-wrench pull-right' data-toggle="modal" data-target="#{{ widget_id }}-opts-form"></i>
-  {% endif %}
   {% block title %}
     <i class='{{widget_icon}}'></i>
     {{ widget_title }}
   {% endblock title %}
-{% endblock box_title %}
+{% endblock %}
+
+{% block box_header %}
+  {% if widget.dashboard.widget_customiz %}
+    <a class="btn btn-link" href="#" role="button" data-toggle="modal" data-target="#modal-{{ widget_id }}-opts-form">
+        <i class='icon fa fa-wrench'></i>
+    </a>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
 
 {% block box_content %}
   {% block content %}
@@ -22,26 +29,29 @@
 {% endblock box_content %}
 
 {% block box_extra %}
-<div class="modal fade widget_options" tabindex="-1" role="dialog" id="{{ widget_id }}-opts-form">
-  <div class="modal-content">
-  <form method="post" class="box-form form-horizontal short_label widget-form exform">
-  {% csrf_token %}
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title">{% trans "Widget Options" %}</h4>
-  </div>
-  <div class="modal-body">
-    {% block form %}
-      {% crispy form %}
-    {% endblock form %}
-    <input type="hidden" name="_delete"/>
-  </div>
-  <div class="modal-footer">
-    <a class="btn btn-danger pull-left btn-remove">{% trans "Remove" %}</a>
-    <a class="btn btn-default" data-dismiss="modal">{% trans "Close" %}</a>
-    <input class="btn btn-primary" type="submit" value="{% trans 'Save changes' %}"/>
-  </div>
-  </form>
-  </div>
-  </div>
+<div class="modal fade widget_options" tabindex="-1" role="dialog" id="modal-{{ widget_id }}-opts-form">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{% trans "Widget Options" %}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+
+            <form method="post" class="box-form short_label widget-form exform"{% view_block 'form_tag_attrs' %}>
+                <div class="modal-body m-2">
+                    {% csrf_token %}
+                    {% block form %}
+                        {% crispy form %}
+                    {% endblock form %}
+                    <input type="hidden" name="_delete"/>
+                </div>
+                <div class="modal-footer d-flex justify-content-end">
+                  <a class="btn btn-danger btn-sm btn-remove">{% trans "Remove" %}</a>
+                  <a class="btn btn-secondary btn-sm" data-dismiss="modal">{% trans "Close" %}</a>
+                  <input class="btn btn-primary btn-sm" type="submit" value="{% trans 'Save changes' %}"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock box_extra %}

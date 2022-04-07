@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='xadmin',
-    version='0.6.2',
+    version='3.0.0',
     description='Drop-in replacement of Django admin comes with lots of goodies, fully extensible with plugin support, pretty UI based on Twitter Bootstrap.',
     long_description=open('README.rst', encoding='utf-8').read(),
     author='sshwsfc',
@@ -18,14 +18,12 @@ setup(
     include_package_data=True,
     install_requires=[
         'setuptools',
-        'django>=1.9.0',
-        'requests',
+        'django>=2,<3',
         'django-crispy-forms>=1.6.0',
         'django-import-export>=0.5.1',
         'django-reversion>=2.0.0',
-        'django-formtools>=1.0',
-        'httplib2==0.9.2',
-        'future',
+        'django-formtools>=2.1',
+        'httplib2==0.18.1',
         'six'
     ],
     extras_require={
@@ -35,7 +33,7 @@ setup(
     zip_safe=False,
     keywords=['admin', 'django', 'xadmin', 'bootstrap'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
@@ -43,8 +41,8 @@ setup(
         'Operating System :: OS Independent',
         "Programming Language :: JavaScript",
         'Programming Language :: Python',
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Python Modules",

@@ -32,7 +32,7 @@ class FooResource(resources.ModelResource):
 
 
 @xadmin.sites.register(Foo)
-class FooAdmin(object):
+class FooAdmin:
     import_export_args = {'import_resource_class': FooResource, 'export_resource_class': FooResource}
 
 ++++++++++++++++
@@ -51,7 +51,13 @@ from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ListAdminView, ModelAdminView
 from xadmin.views.base import csrf_protect_m, filter_hook
 from django.db import transaction
-from import_export.admin import DEFAULT_FORMATS, SKIP_ADMIN_LOG, TMP_STORAGE_CLASS
+from import_export.formats.base_formats import DEFAULT_FORMATS
+try:
+    from import_export.admin import SKIP_ADMIN_LOG, TMP_STORAGE_CLASS
+except ImportError:
+    from import_export.tmp_storages import TempFolderStorage
+    TMP_STORAGE_CLASS = getattr(settings, 'IMPORT_EXPORT_TMP_STORAGE_CLASS', TempFolderStorage)
+    SKIP_ADMIN_LOG = getattr(settings, 'IMPORT_EXPORT_SKIP_ADMIN_LOG', False)
 from import_export.resources import modelresource_factory
 from import_export.forms import (
     ImportForm,
@@ -60,16 +66,13 @@ from import_export.forms import (
 )
 from import_export.results import RowResult
 from import_export.signals import post_export, post_import
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.template.response import TemplateResponse
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.urls.base import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponse
 
@@ -159,6 +162,7 @@ class ImportBaseView(ModelAdminView):
 
 
 class ImportView(ImportBaseView):
+
     def get_media(self):
         media = super(ImportView, self).get_media()
         media = media + self.vendor('xadmin.plugin.importexport.css')
@@ -231,9 +235,9 @@ class ImportView(ImportBaseView):
                     data = force_text(data, self.from_encoding)
                 dataset = input_format.create_dataset(data)
             except UnicodeDecodeError as e:
-                return HttpResponse(_(u"<h1>Imported file has a wrong encoding: %s</h1>" % e))
+                return HttpResponse(_("<h1>Imported file has a wrong encoding: %s</h1>" % e))
             except Exception as e:
-                return HttpResponse(_(u"<h1>{0!s} encountered while trying to read file: {1:s}</h1>"
+                return HttpResponse(_("<h1>{0!s} encountered while trying to read file: {1:s}</h1>"
                                       .format(type(e).__name__, import_file.name)))
 
             result = resource.import_data(dataset, dry_run=True,
@@ -261,6 +265,7 @@ class ImportView(ImportBaseView):
 
 
 class ImportProcessView(ImportBaseView):
+
     @filter_hook
     @csrf_protect_m
     @transaction.atomic
@@ -320,7 +325,7 @@ class ImportProcessView(ImportBaseView):
             return HttpResponseRedirect(url)
 
 
-class ExportMixin(object):
+class ExportMixin:
     #: resource class
     resource_class = None
     #: template for change_list view

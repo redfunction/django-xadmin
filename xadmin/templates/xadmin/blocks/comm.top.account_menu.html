@@ -1,0 +1,11 @@
+{% load i18n %}
+{% if account_change_url %}
+<a class="dropdown-item" href="{{ account_change_url }}">
+    <i class="fa fa-user-edit"></i>
+    {% trans 'Change Account' %}
+</a>
+{% endif %}
+<a class="dropdown-item" href="{{ password_change_url }}">
+    <i class="fa fa-key"></i>
+    {% trans 'Change Password' %}
+</a>

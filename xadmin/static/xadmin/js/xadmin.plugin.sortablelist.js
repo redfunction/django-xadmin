@@ -2,53 +2,60 @@
     $(function() {
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie != '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = jQuery.trim(cookies[i]);
-                            // Does this cookie string begin with the name we want?
-                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
                 if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
                     // Only send the token to relative URLs i.e. locally.
-                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    xhr.setRequestHeader("X-CSRFToken", $.getCookie('csrftoken'));
                 }
             }
         });
 
         $(".results table tbody").sortable({
-            axis: 'y',
             items: 'tr',
             cursor: 'move',
             opacity: 0.8,
-            update: function(event, ui) {
+            itemSerializer: function (serializedItem, sortableContainer){
+                var order = $(serializedItem.node).attr("order-key");
+                if (order) {
+                    var expression = (/(.+)_(.+)/),
+                        match = expression.exec(order);
+                    if (match) {
+                        return {name: match[1], value: match[2]}
+                    }
+                }
+                return {name: 'order', value: serializedItem.index + 1}
+            }
+        }).each(function() {
+            this.addEventListener("sortupdate", function(evt) {
                 var $rows = $(this);
-                $("#save-order").on("click", function(e) {
-                    self = $(this);
+                $("#save-order").on("click", function(evt) {
+                    var self = $(this),
+                        serialize = $rows.sortable('serialize'),
+                        $btn_icon = $('#save-order-icon', self),
+                        btn_icon_default = $btn_icon.attr('class'),
+                        btn_icon_icon_loading = self.data('loading-icon'),
+                        data = {};
+                    serialize.each(function (idx, container){
+                        $.each(container.items, function (idx, item){
+                            if (!data.hasOwnProperty(item.name)) data[item.name] = [];
+                            data[item.name].push(item.value);
+                        });
+                    });
                     self.addClass('disabled');
+                    $btn_icon.removeClass(btn_icon_default).addClass(btn_icon_icon_loading);
                     $.ajax({
                         url: $(this).attr('post-url'),
                         method: 'POST',
-                        data: $rows.sortable('serialize', {
-                            attribute: 'order-key',
-                            expression: (/(.+)_(.+)/),
-                        })
+                        data: data,
                     }).done(function () {
                         self.removeClass('disabled'); // for safety
+                        $btn_icon.removeClass(btn_icon_icon_loading).addClass(btn_icon_default);
                         location.reload(true);
                     }).fail(function () {
                         self.removeClass('disabled');
+                        $btn_icon.removeClass(btn_icon_icon_loading).addClass(btn_icon_default);
                     });
                 }).show();
-            }
+            });
         });
     });
 

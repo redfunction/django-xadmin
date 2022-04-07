@@ -1,7 +1,21 @@
-<div class="panel panel-default {% block box_class %}{% endblock box_class %}" {% block box_attrs %}{% endblock box_attrs %}>
-  <div class="panel-heading"><i class='icon fa fa-chevron-up chevron'></i><h3 class="panel-title">{% block box_title %}{% endblock box_title %}</h3></div>
-  <div class="panel-body {% block box_content_class %}{% endblock box_content_class %}" {% block box_content_attrs %}{% endblock box_content_attrs %}>
-    {% block box_content %}{% endblock box_content %}
-  </div>
-  {% block box_extra %}{% endblock box_extra %}
+<div class="card {% block box_class %}{% endblock box_class %}" {% block box_attrs %}{% endblock box_attrs %}>
+    <div class="card-header">
+        <div class="d-flex align-items-center">
+        <h5 class="card-title mr-auto mb-0">{% block box_title %}{% endblock box_title %}</h5>
+        {% block box_header %}
+        <a class="btn btn-link shadow-none py-0" href="#" role="button" data-toggle="collapse"
+            data-target="#{% block box_collapse_target %}{% endblock %}"
+            aria-expanded="true">
+            <i class='icon fa fa-chevron-up chevron'></i>
+        </a>
+        {% endblock box_header %}
+        </div>
+    </div>
+    <div id="{% block box_collapse_target_id %}{% endblock %}" class="collapse show">
+        <div class="card-body {% block box_content_class %}{% endblock box_content_class %}"
+                {% block box_content_attrs %}{% endblock box_content_attrs %}>
+            {% block box_content %}{% endblock box_content %}
+        </div>
+    </div>
+    {% block box_extra %}{% endblock box_extra %}
 </div>

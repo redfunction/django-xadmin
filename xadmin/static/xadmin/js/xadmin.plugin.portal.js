@@ -1,15 +1,17 @@
+
 jQuery(function() {
-    $( ".column" ).sortable({
-        connectWith: ".column",
-        handle: '.panel-heading',
+    $(".column").sortable({
+        acceptFrom: ".column",
+        handle: '.card-header',
+        hoverClass: "cursor-move",
+        items: ":not(.unsort)",
         forcePlaceholderSize: true,
-        cursor: "move",
-        cancel: ".unsort, .tab-content",
-        stop: function( event, ui ) {
+    }).each(function () {
+        this.addEventListener('sortupdate',function( e ) {
             var pos = [];
             $('.column').each(function(){
                 var col = [];
-                $(this).find('.panel').each(function(){
+                $(this).find('.card').each(function(){
                     col.push($(this).attr('id'));
                 });
                 pos.push(col.join(','));
@@ -19,13 +21,17 @@ jQuery(function() {
             $.save_user_settings(key, pos_val, function(){
                 //alert('success');
             });
-        }
+        });
     });
-    var callback = function() {
-        $( this ).toggleClass( "fa fa-chevron-up" ).toggleClass( "fa fa-chevron-down" );
-        $( this ).parents( ".panel:first" ).find( ".panel-body" ).toggle('fast');
-    };
-    // It guarantees that the event will not be registered twice and with that when the
-    // quick-form plugin is called make the main form get strange behavior.
-    $(".panel-heading .icon.chevron" ).unbind("click").click(callback);
+    $(".card-header .btn.btn-link" ).each(function () {
+        var $el = $(this);
+        if (!$el.data("chevron-up-down-click")) {
+            $el.click(function() {
+                $(this).find(".icon.chevron")
+                    .toggleClass( "fa fa-chevron-up" )
+                    .toggleClass( "fa fa-chevron-down" );
+            });
+            $el.data("chevron-up-down-click", true);
+        }
+    })
 });

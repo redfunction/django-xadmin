@@ -5,6 +5,7 @@ from django.contrib.auth.forms import (UserCreationForm, UserChangeForm,
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.http import HttpResponseRedirect
@@ -44,7 +45,7 @@ class PermissionModelMultipleChoiceField(ModelMultipleChoiceField):
         return get_permission_name(p)
 
 
-class GroupAdmin(object):
+class GroupAdmin:
     search_fields = ('name',)
     ordering = ('name',)
     style_fields = {'permissions': 'm2m_transfer'}
@@ -57,7 +58,7 @@ class GroupAdmin(object):
         return attrs
 
 
-class UserAdmin(object):
+class UserAdmin:
     change_user_password_template = None
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active')
@@ -108,7 +109,7 @@ class UserAdmin(object):
         return super(UserAdmin, self).get_form_layout()
 
 
-class PermissionAdmin(object):
+class PermissionAdmin:
 
     def show_name(self, p):
         return get_permission_name(p)
@@ -168,7 +169,10 @@ site.register_plugin(ModelPermissionPlugin, ModelAdminView)
 class AccountMenuPlugin(BaseAdminPlugin):
 
     def block_top_account_menu(self, context, nodes):
-        return '<li><a href="%s"><i class="fa fa-key"></i> %s</a></li>' % (self.get_admin_url('account_password'), _('Change Password'))
+        ctx = {'password_change_url': self.get_admin_url('account_password')}
+        if self.has_model_perm(User, "change", self.request.user):
+            ctx['account_change_url'] = self.get_model_url(User, "change", self.request.user.pk)
+        return render_to_string('xadmin/blocks/comm.top.account_menu.html', context=ctx)
 
 site.register_plugin(AccountMenuPlugin, CommAdminView)
 
@@ -196,6 +200,7 @@ class ChangePasswordView(ModelAdminView):
         context = super(ChangePasswordView, self).get_context()
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         self.form.helper = helper
         context.update({

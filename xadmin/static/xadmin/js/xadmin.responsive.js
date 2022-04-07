@@ -110,20 +110,24 @@
     if(width < 768){ mode = 'xs'; }
     else if(width < 992){ mode = 'sm'; }
     else if(width < 1200){ mode = 'md'; }
-    if(lastMode != mode){
-      $('[data-toggle=breakpoint]').each(function(){
-        if(newClass = $(this).data('class-' + mode)){
-          $(this)[0].className = newClass;
+    if(lastMode !== mode){
+      $('[data-toggle=breakpoint]').each(function() {
+        var $this = $(this);
+        if(newClass = $this.data('class-' + mode)){
+          $this[0].className = newClass;
         } else {
-          $(this)[0].className = $(this).data('class-org');
+          $this[0].className = $this.data('class-org');
         }
-      })
+      });
       lastMode = mode;
     }
   });
-  $('[data-toggle=breakpoint]').each(function(){
+  var $nav = $('[data-toggle=breakpoint]');
+  $nav.each(function(){
     $(this).data('class-org', $(this)[0].className);
-  })
+  });
+  // the navbar when fixed to the top makes the browser lose its relative positioning.
+  $(document).scrollTop($(document).scrollTop() - $nav.outerHeight());
   $(window).trigger('resize');
   })
 

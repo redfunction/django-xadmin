@@ -4,13 +4,25 @@
 {% load xadmin_tags %}
 
 {% block breadcrumbs %}
-<ul class="breadcrumb">
-  <li><a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a></li>
-  <li><a href="{% url opts|admin_urlname:'changelist' %}">{{opts.verbose_name_plural|capfirst}}</a></li>
-  <li><a href="{% url opts|admin_urlname:'change' object.pk %}">{{ object|truncatewords:"18" }}</a></li>
-  <li><a href="{% url opts|admin_urlname:'revisionlist' object.pk %}">{% trans 'History' %}</a></li>
-  <li class="active">{% blocktrans with opts.verbose_name as verbose_name %}Diff {{verbose_name}}{% endblocktrans %}</li>
-</ul>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'xadmin:index' %}">{% trans 'Home' %}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url opts|admin_urlname:'change' object.pk %}">{{ object|truncatewords:"18" }}</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url opts|admin_urlname:'revisionlist' object.pk %}">{% trans 'History' %}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {% blocktrans with opts.verbose_name as verbose_name %}Diff {{ verbose_name }}{% endblocktrans %}
+        </li>
+    </ol>
+</nav>
 {% endblock %}
 
 {% block nav_title %}
@@ -29,7 +41,7 @@
     </thead>
     <tbody>
       {% for label, value_a, value_b, diff in diffs %}
-        <tr{%if diff%} class="diff-row warning"{% endif %}>
+        <tr{%if diff%} class="diff-row table-warning"{% endif %}>
           <th scope="row">{{ label }}</th>
           <td class="version-a{%if not diff%} text-muted{% endif %}">{{value_a}}</td>
           <td class="version-b{%if not diff%} text-muted{% endif %}">{{value_b}}</td>
@@ -37,8 +49,8 @@
       {% endfor %}
         <tr>
           <th scope="row">{% trans "Revert to" %}</th>
-          <td><a class="btn btn-default" href="{{revision_a_url}}"><i class="fa fa-undo"></i> {% trans 'Revert' %}</a></td>
-          <td><a class="btn btn-default" href="{{revision_b_url}}"><i class="fa fa-undo"></i> {% trans 'Revert' %}</a></td>
+          <td><a class="btn btn-primary" href="{{revision_a_url}}"><i class="fa fa-undo"></i> {% trans 'Revert' %}</a></td>
+          <td><a class="btn btn-primary" href="{{revision_b_url}}"><i class="fa fa-undo"></i> {% trans 'Revert' %}</a></td>
         </tr>
     </tbody>
   </table>

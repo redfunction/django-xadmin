@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import copy
 
 from django import forms
@@ -17,8 +16,8 @@ from xadmin import widgets
 from xadmin.layout import FormHelper, Layout, Fieldset, TabHolder, Container, Column, Col, Field
 from xadmin.util import unquote
 from xadmin.views.detail import DetailAdminUtil
+from xadmin.views.base import CommAdminView, filter_hook, csrf_protect_m
 
-from .base import CommAdminView, filter_hook, csrf_protect_m
 
 class FormAdminView(CommAdminView):
     form = forms.ModelForm
@@ -85,6 +84,7 @@ class FormAdminView(CommAdminView):
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         helper.add_layout(self.get_form_layout())
 
@@ -112,8 +112,7 @@ class FormAdminView(CommAdminView):
         if self.valid_forms():
             self.save_forms()
             response = self.post_response()
-            cls_str = str if six.PY3 else basestring
-            if isinstance(response, cls_str):
+            if isinstance(response, str):
                 return HttpResponseRedirect(response)
             else:
                 return response

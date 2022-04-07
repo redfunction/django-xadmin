@@ -14,7 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.utils.translation import ugettext as _
 
-from .util import vendor, DJANGO_11
+from .util import vendor
 
 
 class AdminDateWidget(forms.DateInput):
@@ -24,13 +24,13 @@ class AdminDateWidget(forms.DateInput):
         return vendor('datepicker.js', 'datepicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'date-field form-control', 'size': '10', 'autocomplete': 'off'}
+        final_attrs = {'class': 'date-field form-control', 'size': '10'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminDateWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None):
-        input_html = super(AdminDateWidget, self).render(name, value, attrs)
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = super(AdminDateWidget, self).render(name, value, attrs, renderer)
         return mark_safe('<div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
                          '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Today')))
 
@@ -42,13 +42,13 @@ class AdminTimeWidget(forms.TimeInput):
         return vendor('datepicker.js', 'clockpicker.js', 'clockpicker.css', 'xadmin.widget.datetime.js')
 
     def __init__(self, attrs=None, format=None):
-        final_attrs = {'class': 'time-field form-control', 'size': '8',  'autocomplete': 'off'}
+        final_attrs = {'class': 'time-field form-control', 'size': '8'}
         if attrs is not None:
             final_attrs.update(attrs)
         super(AdminTimeWidget, self).__init__(attrs=final_attrs, format=format)
 
-    def render(self, name, value, attrs=None):
-        input_html = super(AdminTimeWidget, self).render(name, value, attrs)
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = super(AdminTimeWidget, self).render(name, value, attrs, renderer)
         return mark_safe('<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
                          '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>' % (input_html, _(u'Now')))
 
@@ -69,22 +69,15 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
         widgets = [AdminDateWidget, AdminTimeWidget]
         # Note that we're calling MultiWidget, not SplitDateTimeWidget, because
         # we want to define widgets.
-        final_attrs = {'autocomplete': 'off'}
-        if attrs is not None:
-            final_attrs.update(attrs)
-        forms.MultiWidget.__init__(self, widgets, attrs=final_attrs)
+        forms.MultiWidget.__init__(self, widgets, attrs)
 
-    def render(self, name, value, attrs=None):
-        if DJANGO_11:
-            input_html = [ht for ht in super(AdminSplitDateTime, self).render(name, value, attrs).replace(
-                '/><input', '/>\n<input').split('\n') if ht != '']
-            # return input_html
-            return mark_safe('<div class="datetime clearfix"><div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
-                             '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>'
-                             '<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
-                             '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div></div>' % (input_html[0], _(u'Today'), input_html[1], _(u'Now')))
-        else:
-            return super(AdminSplitDateTime, self).render(name, value, attrs)
+    def render(self, name, value, attrs=None, renderer=None):
+        input_html = [ht for ht in super(AdminSplitDateTime, self).render(name, value, attrs, renderer).replace('><input', '>\n<input').split('\n') if ht != '']
+        # return input_html
+        return mark_safe('<div class="datetime clearfix"><div class="input-group date bootstrap-datepicker"><span class="input-group-addon"><i class="fa fa-calendar"></i></span>%s'
+                         '<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div>'
+                         '<div class="input-group time bootstrap-clockpicker"><span class="input-group-addon"><i class="fa fa-clock-o">'
+                         '</i></span>%s<span class="input-group-btn"><button class="btn btn-default" type="button">%s</button></span></div></div>' % (input_html[0], _(u'Today'), input_html[1], _(u'Now')))
 
     def format_output(self, rendered_widgets):
         return mark_safe(u'<div class="datetime clearfix">%s%s</div>' %
@@ -133,10 +126,7 @@ class AdminCheckboxSelect(forms.CheckboxSelectMultiple):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs
-        if DJANGO_11:
-            final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
-        else:
-            final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs, extra_attrs={'name': name})
         output = []
         # Normalize to strings
         str_values = set([force_text(v) for v in value])
@@ -172,7 +162,10 @@ class AdminSelectMultiple(forms.SelectMultiple):
 
 
 class AdminFileWidget(forms.ClearableFileInput):
-    """For compatibility"""
+    template_with_initial = (u'<p class="file-upload">%s</p>'
+                             % forms.ClearableFileInput.initial_text)
+    template_with_clear = (u'<span class="clearable-file-input">%s</span>'
+                           % forms.ClearableFileInput.clear_checkbox_label)
 
 
 class AdminTextareaWidget(forms.Textarea):

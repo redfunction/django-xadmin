@@ -1,12 +1,18 @@
+# 编辑器缓存文件夹
+.idea
+.idea/
+
 *.py[cod]
 
 # C extensions
 *.so
 
+htmlcov
+
 # Packages
 *.egg
 *.egg-info
-dist
+./dist
 build
 eggs
 parts
@@ -17,6 +23,8 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+venv
+venv3
 
 # Installer logs
 pip-log.txt
@@ -39,6 +47,7 @@ nosetests.xml
 .settings
 xadmin/static/xadmin/components/
 xadmin/static/xadmin/bower_components/
+xadmin/static/xadmin/node_modules
 
 .idea
 *~

@@ -2,19 +2,25 @@
 vendors = {
     "bootstrap": {
         'js': {
-            'dev': 'xadmin/vendor/bootstrap/js/bootstrap.js',
-            'production': 'xadmin/vendor/bootstrap/js/bootstrap.min.js',
-            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js'
+            'dev': [
+                'xadmin/vendor/popper/popper.js',
+                'xadmin/vendor/bootstrap/js/bootstrap.js',
+            ],
+            'production': [
+                'xadmin/vendor/popper/popper.min.js',
+                'xadmin/vendor/bootstrap/js/bootstrap.min.js',
+            ],
+            'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
         },
         'css': {
-            'dev': 'xadmin/vendor/bootstrap/css/bootstrap.css',
-            'production': 'xadmin/vendor/bootstrap/css/bootstrap.css',
-            'cdn': 'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css'
+            'dev': [
+                'xadmin/vendor/bootstrap/css/bootstrap.css',
+            ],
+            'production': [
+                'xadmin/vendor/bootstrap/css/bootstrap.min.css',
+            ],
+            'cdn': 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
         },
-        'responsive': {'css':{
-                'dev': 'xadmin/vendor/bootstrap/bootstrap-responsive.css',
-                'production': 'xadmin/vendor/bootstrap/bootstrap-responsive.css'
-            }}
     },
     'jquery': {
         "js": {
@@ -22,95 +28,138 @@ vendors = {
             'production': 'xadmin/vendor/jquery/jquery.min.js',
         }
     },
+    'nunjucks': {
+        "js": {
+            'dev': ['xadmin/vendor/nunjucks/nunjucks.js',
+                    'xadmin/js/nunjucks.engine.js'],
+            'production': ['xadmin/vendor/nunjucks/nunjucks.min.js',
+                           'xadmin/js/nunjucks.engine.js'],
+        }
+    },
     'jquery-ui-effect': {
         "js": {
-            'dev': 'xadmin/vendor/jquery-ui/jquery.ui.effect.js',
-            'production': 'xadmin/vendor/jquery-ui/jquery.ui.effect.min.js'
+            'dev': 'xadmin/vendor/jquery-ui/ui/effect.js',
+            'production': 'xadmin/vendor/jquery-ui/ui/minified/effect.js'
         }
     },
     'jquery-ui-sortable': {
         "js": {
             'dev': [
-                'xadmin/vendor/jquery-ui/jquery.ui.sortable.js'
+                'xadmin/vendor/html5sortable/html5sortable.js',
+                'xadmin/js/xadmin.plugin.sortable.js',
             ],
             'production': [
-                'xadmin/vendor/jquery-ui/jquery.ui.sortable.min.js'
+                'xadmin/vendor/html5sortable/html5sortable.min.js',
+                'xadmin/js/xadmin.plugin.sortable.js',
             ]
         }
     },
     "font-awesome": {
         "css": {
-            'dev': 'xadmin/vendor/font-awesome/css/font-awesome.css',
-            'production': 'xadmin/vendor/font-awesome/css/font-awesome.min.css',
+            'dev': [
+                'xadmin/vendor/font-awesome/css/fontawesome.css',
+                'xadmin/vendor/font-awesome/css/solid.css',
+                'xadmin/vendor/font-awesome/css/v4-shims.css',
+            ],
+            'production': [
+                'xadmin/vendor/font-awesome/css/fontawesome.min.css',
+                'xadmin/vendor/font-awesome/css/solid.min.css',
+                'xadmin/vendor/font-awesome/css/v4-shims.min.css'
+            ]
         }
     },
     "timepicker": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-timepicker/css/bootstrap-timepicker.css',
-            'production': 'xadmin/vendor/bootstrap-timepicker/css/bootstrap-timepicker.min.css',
+            'dev': 'xadmin/vendor/bootstrap-timepicker/css/timepicker.css',
+            'production': 'xadmin/vendor/bootstrap-timepicker/css/timepicker.css',
         },
         "js": {
             'dev': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.js',
-            'production': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.min.js',
+            'production': 'xadmin/vendor/bootstrap-timepicker/js/bootstrap-timepicker.js',
         }
     },
     "clockpicker": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-clockpicker/bootstrap-clockpicker.css',
-            'production': 'xadmin/vendor/bootstrap-clockpicker/bootstrap-clockpicker.min.css',
+            'dev': 'xadmin/vendor/clockpicker/dist/bootstrap-clockpicker.css',
+            'production': 'xadmin/vendor/clockpicker/dist/bootstrap-clockpicker.min.css',
         },
         "js": {
-            'dev': 'xadmin/vendor/bootstrap-clockpicker/bootstrap-clockpicker.js',
-            'production': 'xadmin/vendor/bootstrap-clockpicker/bootstrap-clockpicker.min.js',
+            'dev': 'xadmin/vendor/clockpicker/dist/bootstrap-clockpicker.js',
+            'production': 'xadmin/vendor/clockpicker/dist/bootstrap-clockpicker.min.js',
         }
     },
     "datepicker": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-datepicker/css/datepicker.css'
+            'dev': 'xadmin/vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker.css'
         },
         "js": {
-            'dev': 'xadmin/vendor/bootstrap-datepicker/js/bootstrap-datepicker.js',
+            'dev': 'xadmin/vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
+            'production': 'xadmin/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js',
         }
     },
     "flot": {
         "js": {
-            'dev': ['xadmin/vendor/flot/jquery.flot.js', 'xadmin/vendor/flot/jquery.flot.pie.js', 'xadmin/vendor/flot/jquery.flot.time.js',
-                    'xadmin/vendor/flot/jquery.flot.resize.js','xadmin/vendor/flot/jquery.flot.aggregate.js','xadmin/vendor/flot/jquery.flot.categories.js']
+            'dev': [
+                'xadmin/vendor/flot/js/jquery.canvaswrapper.js',
+                'xadmin/vendor/flot/js/jquery.flot.js',
+                'xadmin/vendor/flot/js/jquery.flot.drawSeries.js',
+                'xadmin/vendor/flot/js/jquery.colorhelpers.js',
+                'xadmin/vendor/flot/js/jquery.flot.browser.js',
+                'xadmin/vendor/flot/js/jquery.flot.uiConstants.js',
+                'xadmin/vendor/flot/js/jquery.flot.saturated.js',
+                'xadmin/vendor/flot/js/jquery.flot.pie.js',
+                'xadmin/vendor/flot/js/jquery.flot.time.js',
+                'xadmin/vendor/flot/js/jquery.flot.resize.js',
+                'xadmin/vendor/flot/js/jquery.flot.categories.js']
         }
     },
     "image-gallery": {
         "css": {
-            'dev': 'xadmin/vendor/bootstrap-image-gallery/css/bootstrap-image-gallery.css',
-            'production': 'xadmin/vendor/bootstrap-image-gallery/css/bootstrap-image-gallery.css',
+            'dev': 'xadmin/vendor/blueimp-gallery/css/blueimp-gallery.css',
+            'production': 'xadmin/vendor/blueimp-gallery/css/blueimp-gallery.min.css',
         },
         "js": {
-            'dev': ['xadmin/vendor/load-image/load-image.js', 'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js'],
-            'production': ['xadmin/vendor/load-image/load-image.min.js', 'xadmin/vendor/bootstrap-image-gallery/js/bootstrap-image-gallery.js']
+            'dev': ['xadmin/vendor/blueimp-load-image/js/load-image.js',
+                    'xadmin/vendor/blueimp-gallery/js/blueimp-gallery.js'],
+            'production': ['xadmin/vendor/blueimp-load-image/js/load-image.all.min.js',
+                           'xadmin/vendor/blueimp-gallery/js/blueimp-gallery.min.js']
         }
     },
     "select": {
         "css": {
-            'dev': ['xadmin/vendor/select2/select2.css', 'xadmin/vendor/selectize/selectize.css', 'xadmin/vendor/selectize/selectize.bootstrap3.css'],
+            'dev': ['xadmin/vendor/select2/css/select2.css',
+                    'xadmin/vendor/selectize/css/selectize.css',
+                    'xadmin/vendor/selectize/css/selectize.bootstrap4.css'],
+            'production': ['xadmin/vendor/select2/css/select2.min.css',
+                    'xadmin/vendor/selectize/css/selectize.css',
+                    'xadmin/vendor/selectize/css/selectize.bootstrap4.css'],
         },
         "js": {
-            'dev': ['xadmin/vendor/selectize/selectize.js', 'xadmin/vendor/select2/select2.js', 'xadmin/vendor/select2/select2_locale_%(lang)s.js'],
-            'production': ['xadmin/vendor/selectize/selectize.min.js', 'xadmin/vendor/select2/select2.min.js', 'xadmin/vendor/select2/select2_locale_%(lang)s.js']
+            'dev': [
+                # required by selectize
+                'xadmin/vendor/sifter/js/sifter.js',
+                'xadmin/vendor/microplugin/js/microplugin.js',
+                'xadmin/vendor/selectize/js/standalone/selectize.js',
+                'xadmin/vendor/select2/js/select2.js',
+                'xadmin/vendor/select2/js/i18n/%(lang)s.js'],
+            'production': [
+                # required by selectize
+                'xadmin/vendor/sifter/js/sifter.min.js',
+                'xadmin/vendor/microplugin/js/microplugin.js',
+                'xadmin/vendor/selectize/js/standalone/selectize.min.js',
+                'xadmin/vendor/select2/js/select2.min.js',
+                'xadmin/vendor/select2/js/i18n/%(lang)s.js'
+            ]
         }
     },
     "multiselect": {
         "css": {
             'dev': 'xadmin/vendor/bootstrap-multiselect/css/bootstrap-multiselect.css',
+            'production': 'xadmin/vendor/bootstrap-multiselect/css/bootstrap-multiselect.min.css',
         },
         "js": {
             'dev': 'xadmin/vendor/bootstrap-multiselect/js/bootstrap-multiselect.js',
+            'production': 'xadmin/vendor/bootstrap-multiselect/js/bootstrap-multiselect.min.js',
         }
-    },
-    "snapjs": {
-        "css": {
-            'dev': 'xadmin/vendor/snapjs/snap.css',
-        },
-        "js": {
-            'dev': 'xadmin/vendor/snapjs/snap.js',
-        }
-    },
+    }
 }

@@ -1,10 +1,15 @@
 {% load i18n %}
-<li class="dropdown-submenu">
-  <a><i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i> {{ title }}</a>
-  <ul class="dropdown-menu">
+<div class="dropdown-submenu">
+  <a class='dropdown-item'>
+      <i class="fa fa-filter {% if spec.is_used %}text-success{%else%}text-muted{% endif %}"></i>
+      {{ title }}
+  </a>
+  <div class="dropdown-menu">
     {% for choice in choices %}
-        <li{% if choice.selected %} class="active"{% endif %}>
-        <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
+        <a href="{{ choice.query_string|iriencode }}"
+           class="dropdown-item {% if choice.selected %} active{% endif %}">
+            {{ choice.display }}
+        </a>
     {% endfor %}
-  </ul>
-</li>
+  </div>
+</div>

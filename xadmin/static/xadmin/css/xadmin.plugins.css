@@ -10,3 +10,7 @@
 .quick-form .modal-footer {
 	margin-top: 0px;
 }
+
+.quick-form-field ~ .invalid-feedback {
+	display: block;
+}

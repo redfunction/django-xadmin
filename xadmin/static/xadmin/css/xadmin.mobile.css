@@ -31,11 +31,11 @@
   max-width: 300px;
 }
 
-.panel-content.nopadding {
+.card-content.nopadding {
   margin: -15px;
 }
 
-.panel-content.nopadding .table {
+.card-content.nopadding .table {
   margin-bottom: 0;
 }
 

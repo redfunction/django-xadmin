@@ -15,7 +15,6 @@ from xadmin.layout import FormHelper, Layout, flatatt, Container, Column, Field,
 from xadmin.plugins.utils import get_context_dict
 from xadmin.sites import site
 from xadmin.views import BaseAdminPlugin, ModelFormAdminView, DetailAdminView, filter_hook
-from collections import OrderedDict
 
 
 class ShowField(Field):
@@ -165,7 +164,7 @@ class InlineModelAdmin(ModelFormAdminView):
             "form": self.form,
             "formset": self.formset,
             "fk_name": self.fk_name,
-            'fields': self.fields if self.fields else forms.ALL_FIELDS,
+            'fields': forms.ALL_FIELDS,
             "exclude": exclude,
             "formfield_callback": self.formfield_for_dbfield,
             "extra": self.extra,
@@ -194,7 +193,6 @@ class InlineModelAdmin(ModelFormAdminView):
         helper = FormHelper()
         helper.form_tag = False
         helper.include_media = False
-        helper.label_class = 'col-md-1'
         # override form method to prevent render csrf_token in inline forms, see template 'bootstrap/whole_uni_form.html'
         helper.form_method = 'get'
 
@@ -212,7 +210,7 @@ class InlineModelAdmin(ModelFormAdminView):
 
                 rendered_fields = [i[1] for i in layout.get_field_names()]
                 layout.extend([f for f in instance[0]
-                              .fields.keys() if f not in rendered_fields])
+                               .fields.keys() if f not in rendered_fields])
 
             helper.add_layout(layout)
             style.update_layout(helper)
@@ -227,24 +225,20 @@ class InlineModelAdmin(ModelFormAdminView):
         if readonly_fields:
             for form in instance:
                 form.readonly_fields = []
-                try:
-                    # only a valid form can execute the save method
-                    form_instance = form.save(commit=False)
-                except ValueError:
-                    form_instance = form.instance
-                if form_instance:
-                    instance_fields = dict([(f.name, f) for f in form_instance._meta.get_fields()])
+                inst = form.save(commit=False)
+                if inst:
+                    meta_field_names = [field.name for field in inst._meta.get_fields()]
                     for readonly_field in readonly_fields:
                         value = None
                         label = None
-                        if readonly_field in instance_fields:
-                            label = instance_fields[readonly_field].verbose_name
-                            value = smart_text(getattr(form_instance, readonly_field))
-                        elif inspect.ismethod(getattr(form_instance, readonly_field, None)):
-                            value = getattr(form_instance, readonly_field)()
-                            label = getattr(getattr(form_instance, readonly_field), 'short_description', readonly_field)
+                        if readonly_field in meta_field_names:
+                            label = inst._meta.get_field(readonly_field).verbose_name
+                            value = smart_text(getattr(inst, readonly_field))
+                        elif inspect.ismethod(getattr(inst, readonly_field, None)):
+                            value = getattr(inst, readonly_field)()
+                            label = getattr(getattr(inst, readonly_field), 'short_description', readonly_field)
                         elif inspect.ismethod(getattr(self, readonly_field, None)):
-                            value = getattr(self, readonly_field)(form_instance)
+                            value = getattr(self, readonly_field)(inst)
                             label = getattr(getattr(self, readonly_field), 'short_description', readonly_field)
                         if value:
                             form.readonly_fields.append({'label': label, 'contents': value})
@@ -275,8 +269,8 @@ class InlineModelAdmin(ModelFormAdminView):
         opts = self.opts
         if opts.auto_created:
             for field in opts.fields:
-                if field.rel and field.rel.to != self.parent_model:
-                    opts = field.rel.to._meta
+                if field.remote_field and field.remote_field.model != self.parent_model:
+                    opts = field.remote_field.model._meta
                     break
 
         codename = get_permission_codename('change', opts)
@@ -359,7 +353,7 @@ class Inline(Fieldset):
     def __init__(self, rel_model):
         self.model = rel_model
         self.fields = []
-        super(Inline,self).__init__(legend="")
+        super(Inline, self).__init__(legend="")
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         return ""
@@ -438,8 +432,8 @@ class InlineFormsetPlugin(BaseAdminPlugin):
 
     def get_form_layout(self, layout):
         allow_blank = isinstance(self.admin_view, DetailAdminView)
-        # fixed #176, #363 bugs, change dict to list
-        fs = OrderedDict([(f.model, InlineFormset(f, allow_blank)) for f in self.formsets])
+        # fixed #176 bug, change dict to list
+        fs = [(f.model, InlineFormset(f, allow_blank)) for f in self.formsets]
         replace_inline_objects(layout, fs)
 
         if fs:
@@ -449,8 +443,8 @@ class InlineFormsetPlugin(BaseAdminPlugin):
             if not container:
                 container = layout
 
-            # fixed #176, #363 bugs, change dict to list
-            for key, value in fs.items():
+            # fixed #176 bug, change dict to list
+            for key, value in fs:
                 container.append(value)
 
         return layout
@@ -477,6 +471,7 @@ class InlineFormsetPlugin(BaseAdminPlugin):
                     form.detail = self.get_view(
                         DetailAdminUtil, fake_admin_class, instance)
         return formset
+
 
 class DetailAdminUtil(DetailAdminView):
 

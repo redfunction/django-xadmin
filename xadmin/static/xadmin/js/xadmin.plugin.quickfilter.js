@@ -30,7 +30,7 @@
   }
   
   $.each($('.nav-quickfilter li.nav-header'),function(i,v){
-	  if ($(v).nextUntil('li.nav-header').size()>max) {
+	  if ($(v).nextUntil('li.nav-header').length > max) {
 		$(v).nextUntil('li.nav-header').filter(function(i){return !$(this).find('input').is(':checked');}).slice(max).hide();
   		addShowMore($,v);
 	  }

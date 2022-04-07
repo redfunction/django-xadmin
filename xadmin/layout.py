@@ -21,7 +21,8 @@ class Fieldset(layout.Fieldset):
 class Row(layout.Div):
 
     def __init__(self, *fields, **kwargs):
-        css_class = 'form-inline form-group'
+        css_class = 'form-row'
+
         new_fields = [self.convert_field(f, len(fields)) for f in fields]
         super(Row, self).__init__(css_class=css_class, *new_fields, **kwargs)
 
@@ -48,18 +49,18 @@ class Col(layout.Column):
 
 
 class Main(layout.Column):
-    css_class = "column form-column main col col-sm-9 form-horizontal"
+    css_class = "column form-column main col-12 col-xl-9 form-horizontal"
 
 
 class Side(layout.Column):
-    css_class = "column form-column sidebar col col-sm-3"
+    css_class = "column form-column sidebar col-12 col-xl-3"
 
 
 class Container(layout.Div):
     css_class = "form-container row clearfix"
 
 
-# Override bootstrap3
+# Override bootstrap4
 class InputGroup(layout.Field):
 
     template = "xadmin/layout/input_group.html"

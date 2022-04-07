@@ -1,7 +1,14 @@
 
 VERSION = (0,6,0)
 
+import six
+import django
+setattr(django.utils, 'six', six)
+
+
 from xadmin.sites import AdminSite, site
+
+
 
 class Settings(object):
     pass

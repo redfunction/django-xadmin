@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import copy
 
 from crispy_forms.utils import TEMPLATE_PACK
@@ -16,10 +15,9 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils.html import conditional_escape
-from xadmin.layout import FormHelper, Layout, Fieldset, Container, Column, Field, Col, TabHolder
+from xadmin.layout import FormHelper, Layout, Fieldset, Container, Column, Field, Col, TabHolder, Tab
 from xadmin.util import unquote, lookup_field, display_for_field, boolean_icon, label_for_field
-
-from .base import ModelAdminView, filter_hook, csrf_protect_m
+from xadmin.views.base import ModelAdminView, filter_hook, csrf_protect_m
 
 # Text to display within change-list table cells if the value is blank.
 EMPTY_CHANGELIST_VALUE = _('Null')
@@ -58,7 +56,7 @@ class ShowField(Field):
         return html
 
 
-class ResultField(object):
+class ResultField:
 
     def __init__(self, obj, field_name, admin_view=None):
         self.text = '&nbsp;'
@@ -74,16 +72,27 @@ class ResultField(object):
 
         self.init()
 
+    def get_admin_view_form(self):
+        form_obj = getattr(self.admin_view, 'form_obj', None)
+        if form_obj is None or not isinstance(form_obj, forms.ModelForm) and \
+                hasattr(self.admin_view, 'instance_forms'):
+            self.admin_view.instance_forms()
+            form_obj = self.admin_view.form_obj
+        return form_obj
+
     def init(self):
+        try:
+            form = self.get_admin_view_form()
+        except AttributeError:
+            form = None
         self.label = label_for_field(self.field_name, self.obj.__class__,
                                      model_admin=self.admin_view,
-                                     return_attr=False
-                                     )
+                                     return_attr=False,
+                                     form=form)
         try:
-            f, attr, value = lookup_field(
-                self.field_name, self.obj, self.admin_view)
+            f, attr, value = lookup_field(self.field_name, self.obj, self.admin_view)
         except (AttributeError, ObjectDoesNotExist):
-            self.text
+            pass
         else:
             if f is None:
                 self.allow_tags = getattr(attr, 'allow_tags', False)
@@ -94,7 +103,7 @@ class ResultField(object):
                 else:
                     self.text = smart_text(value)
             else:
-                if isinstance(f.rel, models.ManyToOneRel):
+                if isinstance(f.remote_field, models.ManyToOneRel):
                     self.text = getattr(self.obj, f.name)
                 else:
                     self.text = display_for_field(value, f)
@@ -115,12 +124,28 @@ class ResultField(object):
 
 
 def replace_field_to_value(layout, cb):
-    cls_str = str if six.PY3 else basestring
+    """
+    Returns all field names registered in the layout.
+    :param layout: admin view layout
+    :param cb: callback
+    :return: bool
+    """
+    def is_nested(fields):
+        """Row(Column(Div(Col)))"""
+        for field_name in fields:
+            if not isinstance(field_name, str):
+                return True
+        return False
+
     for i, lo in enumerate(layout.fields):
         if isinstance(lo, Field) or issubclass(lo.__class__, Field):
-            layout.fields[i] = ShowField(
-                cb, *lo.fields, attrs=lo.attrs, wrapper_class=lo.wrapper_class)
-        elif isinstance(lo, cls_str):
+            if is_nested(lo.fields):
+                # bug fix: Row(Column(Div))
+                replace_field_to_value(lo, cb)
+            else:
+                layout.fields[i] = ShowField(cb, *lo.fields, attrs=lo.attrs,
+                                             wrapper_class=lo.wrapper_class)
+        elif isinstance(lo, str):
             layout.fields[i] = ShowField(cb, lo)
         elif hasattr(lo, 'get_field_names'):
             replace_field_to_value(lo, cb)
@@ -174,7 +199,11 @@ class DetailAdminView(ModelAdminView):
                                           f for f in self.form_obj.fields.keys() if f not in rendered_fields])
 
                 if len(other_fieldset.fields):
-                    if len(container) and isinstance(container[0], Column):
+                    if len(container) and isinstance(container[0].fields[0], TabHolder):
+                        other_fieldset.css_class = 'unsort no_title'
+                        container[0].fields[0].append(Tab(_('Other Fields'), other_fieldset))
+
+                    elif len(container) and isinstance(container[0], Column):
                         container[0].fields.append(other_fieldset)
                     else:
                         container.append(other_fieldset)
@@ -210,12 +239,12 @@ class DetailAdminView(ModelAdminView):
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_tag = False
+        helper.use_custom_control = False
         helper.include_media = False
         layout = self.get_form_layout()
         replace_field_to_value(layout, self.get_field_result)
         helper.add_layout(layout)
-        cls_str = str if six.PY3 else basestring
-        helper.filter(cls_str, max_level=20).wrap(ShowField, admin_view=self)
+        helper.filter(str, max_level=20).wrap(ShowField, admin_view=self)
         return helper
 
     @csrf_protect_m
@@ -278,6 +307,7 @@ class DetailAdminView(ModelAdminView):
 
 class DetailAdminUtil(DetailAdminView):
 
-    def init_request(self, obj):
+    def init_request(self, obj, form_obj=None):
         self.obj = obj
         self.org_obj = obj
+        self.form_obj = form_obj

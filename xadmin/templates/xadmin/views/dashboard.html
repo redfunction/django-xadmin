@@ -11,10 +11,14 @@
 
 {% block nav_toggles %}
 {% include "xadmin/includes/toggle_menu.html" %}
-{% if has_add_widget_permission %}
-  <a title="{% trans "Add Widget" %}" href="{{ add_widget_url }}" class="navbar-toggle pull-right">
-    <i class="fa fa-plus"></i></a>
-{% endif %}
+{% endblock %}
+
+{% block nav_brand %}
+    {{ block.super }}
+    {% if has_add_widget_permission %}
+      <a title="{% trans "Add Widget" %}" href="{{ add_widget_url }}" class="navbar-toggler">
+        <i class="fa fa-plus"></i></a>
+    {% endif %}
 {% endblock %}
 
 {% block nav_btns %}

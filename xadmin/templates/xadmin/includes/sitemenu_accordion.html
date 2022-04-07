@@ -3,12 +3,11 @@
 
 
 {% block navbar_md %}
-<div class="panel-group hide-sm nav-sitemenu col-md-2" id="nav-accordion">
+<div class="card-group d-block d-md-none d-lg-block nav-sitemenu col-md-2" id="nav-accordion">
   {% for item in nav_menu %}
-  <div class="panel panel-{% if item.selected %}info{%else%}default{% endif %}">
-    <div class="panel-heading">
-      <h6 class="panel-title">
-        <span class="badge badge-info">{{ item.menus|length }}</span>
+  <div class="card mb-2 border card-{% if item.selected %}info{%else%}default{% endif %}">
+    <div class="card-header d-flex justify-content-between align-items-start border-0">
+      <h6 class="card-title mb-0">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#nav-accordion" href="#nav-panel-{{forloop.counter}}">
           {% if item.url %}<a href="{{ item.url }}" class="section">{% endif %}
           {% if item.icon %}<i class="fa-fw {{item.icon}}"></i>
@@ -18,12 +17,13 @@
           {% if item.url %}</a>{% endif %}
         </a>
       </h6>
+      <span class="badge badge-primary">{{ item.menus|length }}</span>
     </div>
-    <div id="nav-panel-{{forloop.counter}}" class="list-group panel-collapse collapse{% if item.selected %} in{% endif %}">
+    <div id="nav-panel-{{forloop.counter}}" class="list-group list-group-flush card-collapse collapse{% if item.selected %} in{% endif %}">
       {% for sitem in item.menus %}
       <a href="{{ sitem.url|default_if_none:'#' }}" class="list-group-item{% if sitem.selected %} active{% endif %}">
         {% if sitem.icon %}<i class="fa-fw {{sitem.icon}}"></i>{%else%}<i class="fa-fw fa fa-chevron-right"></i>{% endif %}
-        {{ sitem.title }}</span>
+        {{ sitem.title }}
       </a>
       {% endfor %}
     </div>

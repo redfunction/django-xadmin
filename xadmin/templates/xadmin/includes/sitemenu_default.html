@@ -1,52 +1,75 @@
 {% load i18n xadmin_tags %}
 
-
 {% block navbar_md %}
-  <ul class="well nav nav-pills nav-stacked nav-sitemenu hide-sm">
-    <li>
-      <a href="{% url 'xadmin:index' %}"><i class="fa-fw fa fa-home"></i> {% trans 'Home' %}</a>
-    </li>
-    {% for item in nav_menu %}
-      <li class="{% if item.menus %}nav-header{% endif %} {% if item.selected %} active{% endif %}">
-        {% if item.url %}<a href="{{ item.url }}" class="section">{% endif %}
-        {% if item.icon %}<i class="fa-fw {{item.icon}}"></i>{% endif %}{{ item.title }}
-        {% if item.url %}</a>{% endif %}
-      </li>
-      {% for sitem in item.menus %}
-      <li{% if sitem.selected %} class="active"{% endif %}>
-        {% if sitem.url %}<a href="{{ sitem.url }}">{% endif %}
-        {% if sitem.icon %}<i class="fa-fw {{sitem.icon}}"></i>{%else%}<i class="fa-fw fa fa-chevron-right"></i>{% endif %}
-        {{ sitem.title }}</span>{% if sitem.url %}</a>{% endif %}
-      </li>
-      {% endfor %}
-    {% endfor %}
-    {% view_block 'menu-nav' %}
-  </ul>
+<div class="card bg-light d-flex d-md-none d-lg-flex">
+    <div class="card-body p-2">
+      <ul class="nav nav-pills nav-sitemenu flex-column">
+        <li class="nav-item">
+          <a href="{% url 'xadmin:index' %}" class="nav-link text-uppercase"><i class="fa-fw fa fa-home"></i> {% trans 'Home' %}</a>
+        </li>
+        {% for item in nav_menu %}
+          <li class="nav-item {% if item.menus %}nav-link disabled{% elif item.selected %} active{% endif %}">
+            {% if item.url %}<a href="{{ item.url }}" class="nav-link section">{% endif %}
+            {% if item.icon %}<i class="fa-fw {{item.icon}}"></i>{% endif %}{{ item.title }}
+            {% if item.url %}</a>{% endif %}
+          </li>
+          {% for sitem in item.menus %}
+            <li class="nav-item">
+              <a class="nav-link px-4{% if sitem.selected %} active{% endif %}"
+                 href="{% if sitem.url %}{{ sitem.url }}{% else %}#{% endif %}">
+              {% if sitem.icon %}
+                  <i class="fa-fw {{sitem.icon}}"></i>
+              {% else %}
+                  <i class="fa-fw fa fa-chevron-right"></i>
+              {% endif %}
+                  {{ sitem.title }}
+              </a>
+            </li>
+          {% endfor %}
+        {% endfor %}
+        {% view_block 'menu-nav' %}
+      </ul>
+    </div>
+</div>
 {% endblock navbar_md %}
 
 {% block navbar_sm %}
-  <ul class="well nav nav-list nav-sitemenu show-sm">
-    <li class="app_menu">
-      <a href="{% url 'xadmin:index' %}"><i class="icon fa-fw fa fa-home"></i></a><hr/>
-    </li>
-    {% for item in nav_menu %}
-      <li class="app_menu dropdown-submenu {% if item.selected %} active{% endif %}">
-        <a href="#" class="section">
-          {% if item.icon %}<i class="icon fa-fw {{item.icon}}"></i>
-          {% elif item.first_icon %}<i class="icon fa-fw {{item.first_icon}}"></i>
-          {%else%}<i class="icon fa-fw fa fa-chevron-right"></i>{% endif %}
-        </a><hr/>
-        <ul class="dropdown-menu">
-          {% for sitem in item.menus %}
-          <li{% if sitem.selected %} class="active"{% endif %}>
-            {% if sitem.url %}<a href="{{ sitem.url }}">{% endif %}
-            {% if sitem.icon %}<i class="fa-fw {{sitem.icon}}"></i>{%else%}<i class="fa-fw fa fa-chevron-right"></i>{% endif %}
-            {{ sitem.title }}</span>{% if sitem.url %}</a>{% endif %}
-          </li>
-          {% endfor %}
-        </ul>
+<div class="card bg-light d-none d-md-flex d-lg-none">
+  <div class="card-body p-2">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'xadmin:index' %}">
+            <i class="icon fa-fw fa fa-home"></i>
+        </a>
       </li>
-    {% endfor %}
-    {% view_block 'menu-nav' %}
-  </ul>
+      {% for item in nav_menu %}
+        <li class="nav-item dropdown-submenu">
+          <a href="#" class="dropdown-item nav-link {% if item.selected %} active{% endif %}">
+            {% if item.icon %}
+                <i class="icon fa-fw {{item.icon}}"></i>
+            {% elif item.first_icon %}
+                <i class="icon fa-fw {{item.first_icon}}"></i>
+            {% else %}
+                <i class="icon fa-fw fa fa-chevron-right"></i>
+            {% endif %}
+          </a>
+          <div class="dropdown-menu">
+            {% for sitem in item.menus %}
+              <a class="dropdown-item {% if sitem.selected %} active{% endif %}"
+                 href="{% if sitem.url %}{{ sitem.url }}{% else %}#{% endif %}">
+              {% if sitem.icon %}
+                  <i class="fa-fw {{sitem.icon}}"></i>
+              {% else %}
+                  <i class="fa-fw fa fa-chevron-right"></i>
+              {% endif %}
+                  {{ sitem.title }}
+              </a>
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+      {% view_block 'menu-nav' %}
+    </ul>
+  </div>
+</div>
 {% endblock navbar_sm %}

@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="input-group time bootstrap-clockpicker">
+    <div class="input-group-prepend">
+        <div class="input-group-text">
+            <i class="fa fa-clock"></i>
+        </div>
+    </div>
+    {{ time_input_html|safe }}
+    <span class="input-group-append">
+        <button class="btn btn-secondary" type="button">{% trans 'Now' %}</button>
+    </span>
+</div>

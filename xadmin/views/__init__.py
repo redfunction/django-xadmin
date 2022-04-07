@@ -1,14 +1,12 @@
-from __future__ import absolute_import
+from xadmin.views.base import BaseAdminPlugin, BaseAdminView, CommAdminView, ModelAdminView, filter_hook, csrf_protect_m, BaseAdminObject
 
-from .base import BaseAdminPlugin, BaseAdminView, CommAdminView, ModelAdminView, filter_hook, csrf_protect_m, BaseAdminObject
-
-from .list import ListAdminView
-from .edit import CreateAdminView, UpdateAdminView, ModelFormAdminView
-from .delete import DeleteAdminView
-from .detail import DetailAdminView
-from .form import FormAdminView
-from .dashboard import Dashboard, BaseWidget, widget_manager, ModelDashboard
-from .website import IndexView, LoginView, LogoutView, UserSettingView
+from xadmin.views.list import ListAdminView
+from xadmin.views.edit import CreateAdminView, UpdateAdminView, ModelFormAdminView
+from xadmin.views.delete import DeleteAdminView
+from xadmin.views.detail import DetailAdminView
+from xadmin.views.form import FormAdminView
+from xadmin.views.dashboard import Dashboard, BaseWidget, widget_manager, ModelDashboard
+from xadmin.views.website import IndexView, LoginView, LogoutView, UserSettingView
 
 __all__ = (
     'BaseAdminObject',
@@ -20,6 +18,8 @@ __all__ = (
 )
 
 # admin site-wide views
+
+
 def register_builtin_views(site):
     site.register_view(r'^$', IndexView, name='index')
     site.register_view(r'^login/$', LoginView, name='login')
